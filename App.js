@@ -556,7 +556,13 @@ const Goniometer = ({ navigation, route }) => {
   ///////////////////////////////////////////////////////////////////////
   //Below portion is for the Conditional Rendering Based on the Angle/////
   //////////////////////////////////////////////////////////////////////
-
+  //no week/gender function
+  function noGenderWeek(n){
+    if(selectedGenderValue==="" || selectedValue===""){
+      return true;
+    }
+    return false;
+  }
   //green function to indicate above 75th Percentile
   function green(n) {
     if (selectedGenderValue === "Male") {
@@ -682,7 +688,8 @@ const Goniometer = ({ navigation, route }) => {
   }
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedGenderValue, setSelectedGenderValue] = useState("");
-
+  const [extensionDegree, setExtensionDegree] = useState("0");
+  const [flexionDegree, setFlexionDegree] = useState("0");
   ////////////////////////////////////////////////////////////////////////////
   //Below portion is for the Rendering of Week & Gender for Picker Button/////
   ////////////////////////////////////////////////////////////////////////////
@@ -720,37 +727,42 @@ const Goniometer = ({ navigation, route }) => {
 
       <View>
         <Text style={{ textAlign: "center", fontSize: 35 }}>
-          Knee Flexion Range:
+          Knee Range:
         </Text>
-        <Text style={{ textAlign: "center", fontSize: 80, paddingLeft: 20 }}>
-          {getDegrees(round(beta))}°
-        </Text>
-      </View>
-
-      <View>
+        {noGenderWeek(getDegrees(round(beta))) ? (
+          <Text style={stylePercentile.textPercentileBlack}>
+            {getDegrees(round(beta))}°
+          </Text>
+        ) : null}
         {green(getDegrees(round(beta))) ? (
           <Text style={stylePercentile.textPercentileGreen}>
-            > 75th Percentile{" "}
+            {getDegrees(round(beta))}°
           </Text>
         ) : null}
         {blue(getDegrees(round(beta))) ? (
           <Text style={stylePercentile.textPercentileOrange}>
-            {" "}
-            Between 75th & 50th Percentile{" "}
+            {getDegrees(round(beta))}°
           </Text>
         ) : null}
         {red(getDegrees(round(beta))) ? (
           <Text style={stylePercentile.textPercentileOrange}>
-            {" "}
-            Between 50th & 25th Percentile{" "}
+            {getDegrees(round(beta))}°
           </Text>
         ) : null}
         {belowRed(getDegrees(round(beta))) ? (
           <Text style={stylePercentile.textPercentileRed}>
-            {" "}
-            25th Percentile & Below{" "}
+            {getDegrees(round(beta))}°
           </Text>
         ) : null}
+      </View>
+
+      <View>
+        <Text style={{ textAlign: "center", fontSize: 20, fontStyle: 'italic' }} >
+          Previous Flexion: {flexionDegree}°
+        </Text>
+        <Text style={{ textAlign: "center", fontSize: 20,fontStyle: 'italic'}}>
+          Previous Extension: {extensionDegree}°
+        </Text>
       </View>
 
       <View style={styles.MainRecordStartStopContainer}>
@@ -768,21 +780,28 @@ const Goniometer = ({ navigation, route }) => {
         <TouchableOpacity
           onPress={() => {
             add(getDegrees(round(beta)));
+            setFlexionDegree(getDegrees(round(beta)));
           }}
           style={styles.SubmitButtonRecordStyle}
         >
           <Text style={styles.TextStyleButton}>Record Flexion</Text>
         </TouchableOpacity>
+
       </View>
 
-      <TouchableOpacity
-        onPress={() => {
-          add1(getDegrees(round(beta)));
-        }}
-        style={styles.SubmitButtonRecordStyle}
-      >
-        <Text style={styles.TextStyleButton}>Record Extension</Text>
-      </TouchableOpacity>
+      <View style={styles.MainRecordContainer}>
+
+        <TouchableOpacity
+          onPress={() => {
+            add1(getDegrees(round(beta)));
+            setExtensionDegree(getDegrees(round(beta)));
+          }}
+          style={styles.SubmitButtonRecordStyle}>
+          <Text style={styles.TextStyleButton}>Record Extension</Text>
+        </TouchableOpacity>
+      
+      </View>
+
 
       <View style={styles.MainRecordHistoryContainer}>
         <TouchableOpacity
@@ -791,7 +810,7 @@ const Goniometer = ({ navigation, route }) => {
               name: "CalenderDataPage",
             })
           }
-          style={styles.SubmitButtonStyle}
+          style={styles.SubmitButtonHistoryStyle}
         >
           <Text style={styles.TextStyleButton}>History</Text>
         </TouchableOpacity>
@@ -800,7 +819,7 @@ const Goniometer = ({ navigation, route }) => {
       <View style={styles.MainRecordContainer}>
         <TouchableOpacity
           onPress={() => navigation.navigate("FormSG", { name: "FormSG" })}
-          style={styles.SubmitButtonStyle}
+          style={styles.SubmitButtonFormStyle}
         >
           <Text style={styles.TextStyleButton}>Submit FormSG</Text>
         </TouchableOpacity>
@@ -913,6 +932,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#fff",
   },
+  SubmitButtonHistoryStyle: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginLeft: 20,
+    marginRight: 20,
+    backgroundColor: "#2B6D6A",
+    borderRadius: 35,
+    borderWidth: 1,
+    borderColor: "#fff",
+  },  
+  SubmitButtonFormStyle: {
+    marginBottom: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginLeft: 20,
+    marginRight: 20,
+    backgroundColor: "#2B6D6A",
+    borderRadius: 35,
+    borderWidth: 1,
+    borderColor: "#fff",
+  },  
   TextStyleButton: {
     color: "#fff",
     textAlign: "center",
@@ -1030,20 +1070,29 @@ const stylePicker = StyleSheet.create({
 });
 
 const stylePercentile = StyleSheet.create({
+  textPercentileBlack: {
+    color: "black",
+    textAlign: "center", 
+    fontSize: 80, 
+    paddingLeft: 20,
+  }, 
   textPercentileGreen: {
-    textAlign: "center",
-    fontSize: 17,
     color: "green",
+    textAlign: "center", 
+    fontSize: 80, 
+    paddingLeft: 20,
   },
   textPercentileOrange: {
     textAlign: "center",
-    fontSize: 17,
-    color: "#FF8C00",
+    color: "#FF8C00", 
+    fontSize: 80, 
+    paddingLeft: 20,
   },
   textPercentileRed: {
-    textAlign: "center",
-    fontSize: 17,
     color: "red",
+    textAlign: "center", 
+    fontSize: 80, 
+    paddingLeft: 20,
   },
 });
 
