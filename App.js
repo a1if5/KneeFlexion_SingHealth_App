@@ -1,4 +1,5 @@
-import React, { useState, useEffect, Component } from "react";
+import React, { useState, useEffect, Component, useCallback, useRef } from "react";
+import YoutubePlayer from "react-native-youtube-iframe";
 import {
   ScrollView,
   StyleSheet,
@@ -169,10 +170,48 @@ const Goniometer_App = () => {
           component={CalenderDataPage}
           options={{ title: "HISTORY" }}
         />
+        <Stack.Screen
+          name="GuidePage"
+          component={GuidePage}
+          options={{ title: "GUIDE" }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
+
+// Start of Guide Page
+const GuidePage = ({ navigation, route }) => {
+
+  const [playing, setPlaying] = useState(false);
+
+  const onStateChange = useCallback((state) => {
+    if (state === "ended") {
+      setPlaying(false);
+      Alert.alert("video has finished playing!");
+    }
+  }, []);
+
+  const togglePlaying = useCallback(() => {
+    setPlaying((prev) => !prev);
+  }, []);
+
+  return (
+    <View style={styles.youtubeplayer}>
+      <YoutubePlayer
+        height={300}
+        play={playing}
+        videoId={"1cOcZcKhSJY"}
+        onChangeState={onStateChange}
+      />
+      <Text style={styles.baseText}>
+        <Text style={styles.guideContent}> Tutorial on using the measurement app</Text>
+      </Text>
+      
+    </View>
+  );
+}
+// End of Guide Page
 
 const CalenderDataPage = ({ navigation, route }) => {
   const [a, b] = useState({});
@@ -385,7 +424,7 @@ const HomeScreen = ({ navigation, route }) => {
       {
         id: 3,
         title: "Guide",
-        link: "",
+        link: "GuidePage",
         image: "https://img.icons8.com/ios/50/000000/city-guide.png",
       },
       {
@@ -973,6 +1012,12 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderColor: "#ccc",
   },
+  youtubeplayer: {
+    marginTop: 40
+  },
+  guideContent: {
+    textAlign: "center"
+  },
 });
 /** End of style sheet */
 
@@ -1002,6 +1047,9 @@ const Particular = () => {
 };
 
 const a = StyleSheet.create({
+  baseText: {
+    fontFamily: "Cochin-Bold"
+  },
   container: {
     backgroundColor: "#fff",
     flex: 1,
