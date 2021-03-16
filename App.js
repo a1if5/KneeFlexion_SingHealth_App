@@ -36,7 +36,9 @@ import { render } from "react-dom";
 const Stack = createStackNavigator();
 
 const db = SQLite.openDatabase("db.db");
+const db1 = SQLite.openDatabase("db1.db");
 
+//Flexion Display
 function Items({ done: doneHeading, onPressItem }) {
   const [items, setItems] = React.useState(null);
 
@@ -76,10 +78,53 @@ function Items({ done: doneHeading, onPressItem }) {
     </View>
   );
 }
+function Iitems({ done: doneHeading, onPressItem }) {
+  const [items, setItems] = React.useState(null);
+
+  React.useEffect(() => {
+    db1.transaction((tx) => {
+      tx.executeSql(
+        `select * from iitems where done = ?;`,
+        [doneHeading ? 1 : 0],
+        (_, { rows: { _array } }) => setItems(_array)
+      );
+    });
+  }, []);
+
+  const heading = doneHeading ? "Checked Data" : "Data";
+
+  if (items === null || items.length === 0) {
+    return null;
+  }
+
+  return (
+    <View style={styles.sectionContainer}>
+      <Text style={styles.sectionHeading}>{"Extension"}</Text>
+      {items.map(({ id, done, value }) => (
+        <TouchableOpacity
+          key={id}
+          onPress={() => onPressItem && onPressItem(id)}
+          style={{
+            backgroundColor: done ? "#1c9963" : "#fff",
+            borderColor: "#000",
+            borderWidth: 1,
+            padding: 8,
+          }}
+        >
+          <Text style={{ color: done ? "#fff" : "#000" }}>{value}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+}
 
 function useForceUpdate() {
   const [value, setValue] = useState(0);
   return [() => setValue(value + 1), value];
+}
+function useForceUpdate1() {
+  const [value1, setValue1] = useState(0);
+  return [() => setValue(value1 + 1), value1];
 }
 
 const Goniometer_App = () => {
@@ -103,20 +148,27 @@ const Goniometer_App = () => {
           component={HomeScreen}
           options={{ title: "HOME" }}
         />
-        <Stack.Screen name="Goniometer" 
+        <Stack.Screen
+          name="Goniometer"
           component={Goniometer}
           options={{ title: "MEASUREMENT" }}
-           />
-        <Stack.Screen name="FormSG" 
+        />
+        <Stack.Screen
+          name="FormSG"
           component={FormSG}
-          options={{ title: "FORMSG" }} />
-        <Stack.Screen name="UserData" 
+          options={{ title: "FORMSG" }}
+        />
+        <Stack.Screen
+          name="UserData"
           component={UserData}
-          options={{ title: "ADMIN" }} />
+          options={{ title: "ADMIN" }}
+        />
         {/* <Stack.Screen name="HomePage" component={HomePage} /> */}
-        <Stack.Screen name="CalenderDataPage" 
+        <Stack.Screen
+          name="CalenderDataPage"
           component={CalenderDataPage}
-          options={{ title: "HISTORY" }} />
+          options={{ title: "HISTORY" }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -124,6 +176,7 @@ const Goniometer_App = () => {
 
 const CalenderDataPage = ({ navigation, route }) => {
   const [a, b] = useState({});
+  const [x, y] = useState({});
   const timeToString = (time) => {
     const date = new Date(time);
     return date.toISOString().split("T")[0];
@@ -145,18 +198,34 @@ const CalenderDataPage = ({ navigation, route }) => {
               (tx, results) => {
                 var len = results.rows.length;
                 if (len > 0) {
-                  console.log(len);
-                  console.log(results.rows.item(0));
                   console.log(results.rows.item(0).value);
                   var ans = results.rows.item(0).value;
                   var g = ans.substr(-3);
-                  console.log(g);
-                  items[strTime].push({
-                    name: strTime + " Flexion" + g + "°",
-                    height: Math.max(50, Math.floor(Math.random() * 150)),
+                  db1.transaction((tx1) => {
+                    tx1.executeSql(
+                      `SELECT * FROM iitems WHERE value LIKE ?`,
+                      [strTime + "%"],
+                      (tx1, results1) => {
+                        var len1 = results1.rows.length;
+                        if (len1 > 0) {
+                          console.log(results1.rows.item(0).value);
+                          var ans1 = results1.rows.item(0).value;
+                          var h = ans1.substr(-3);
+                          items[strTime].push({
+                            dat: strTime + " ",
+                            name: g + "°",
+                            name1: +h + "°",
+                            height: Math.max(
+                              50,
+                              Math.floor(Math.random() * 150)
+                            ),
+                          });
+                          b(results.rows.item(0));
+                          y(results1.rows.item(0));
+                        }
+                      }
+                    );
                   });
-                  b(results.rows.item(0));
-                } else {
                 }
               }
             );
@@ -188,22 +257,14 @@ const CalenderDataPage = ({ navigation, route }) => {
                 alignItems: "center",
               }}
             >
-              <Text>{item.name} </Text>
-              {/* Data will still show without anything inside <Items></Items> */}
-              {/* <Items
-                key={`forceupdate-todo-${forceUpdateId}`}
-                done={false}
-                onPressItem={(id) =>
-                  db.transaction(
-                    (tx) => {
-                      tx.executeSql(`delete from items where id = ?;`, [id]);
-                    },
-                    null,
-                    forceUpdate
-                  )
-                }
-              /> */}
-
+              <Text>
+                Date: {item.dat}
+                {"\n"}
+                {"\n"}
+                Flexion: {item.name} {"\n"}
+                {"\n"}
+                Extension: {item.name1}
+              </Text>
               {/* <Avatar.Text label="DONE" /> */}
             </View>
           </Card.Content>
@@ -248,6 +309,8 @@ const UserData = ({ navigation, route }) => {
   //   );
   // };
   const [forceUpdate, forceUpdateId] = useForceUpdate();
+  const [forceUpdate1, forceUpdateId1] = useForceUpdate();
+
   return (
     <ScrollView style={a.listArea}>
       {/* <Button title="Alert with Two Options" onPress={twoOptionAlertHandler} /> */}
@@ -265,7 +328,23 @@ const UserData = ({ navigation, route }) => {
           )
         }
       />
-      {/* <Items
+      <Iitems
+        key={`forceupdate1-todo-${forceUpdateId1}`}
+        done={false}
+        onPressItem={(id) =>
+          db1.transaction(
+            (tx) => {
+              tx.executeSql(`delete from iitems where id = ?;`, [id]);
+              // tx.executeSql(`update items set done = 1 where id = ?;`, [id]);
+            },
+            null,
+            forceUpdate1
+          )
+        }
+      />
+    </ScrollView>
+
+    /* <Items
         done
         key={`forceupdate-done-${forceUpdateId}`}
         onPressItem={(id) =>
@@ -277,37 +356,9 @@ const UserData = ({ navigation, route }) => {
             forceUpdate
           )
         }
-      /> */}
-    </ScrollView>
+      /> */
   );
 };
-
-//This is the home page
-// const HomeScreen = ({ navigation }) => {
-//   return (
-//     <View>
-//       <Particular />
-//       <Button
-//         title="Proceed to Measurement"
-//         onPress={() =>
-//           navigation.navigate("Goniometer", { name: "Goniometer" })
-//         }
-//       />
-//       <Button
-//         title="View Data"
-//         onPress={() => navigation.navigate("UserData", { name: "UserData" })}
-//       />
-//       <Button
-//         title="Test"
-//         onPress={() => navigation.navigate("HomePage", { name: "HomePage" })}
-//       />
-//       <Button
-//         title="Test"
-//         onPress={() => navigation.navigate("r", { name: "r" })}
-//       />
-//     </View>
-//   );
-// };
 
 const HomeScreen = ({ navigation, route }) => {
   const state = {
@@ -413,6 +464,13 @@ const Goniometer = ({ navigation, route }) => {
       );
     });
   }, []);
+  React.useEffect(() => {
+    db1.transaction((tx) => {
+      tx.executeSql(
+        "create table if not exists iitems (id integer primary key not null, done int, value text);"
+      );
+    });
+  }, []);
 
   //Check validity of inputtttt :D
   const add = (text) => {
@@ -426,10 +484,32 @@ const Goniometer = ({ navigation, route }) => {
       (tx) => {
         tx.executeSql("insert into items (done, value) values (0, ?)", [
           moment().utcOffset("+08:00").format("YYYY-MM-DD") +
-            "Flexion:    " +
+            " Flexion:    " +
             text,
         ]);
         tx.executeSql("select * from items", [], (_, { rows }) =>
+          console.log(JSON.stringify(rows))
+        );
+      },
+      null,
+      forceUpdate
+    );
+  };
+  const add1 = (text) => {
+    var text = parseInt(text);
+    if (text === null || text === "") {
+      alert("Invalid Input!");
+      return false;
+    }
+
+    db1.transaction(
+      (tx) => {
+        tx.executeSql("insert into iitems (done, value) values (0, ?)", [
+          moment().utcOffset("+08:00").format("YYYY-MM-DD") +
+            " Extension:    " +
+            text,
+        ]);
+        tx.executeSql("select * from iitems", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
         );
       },
@@ -691,9 +771,18 @@ const Goniometer = ({ navigation, route }) => {
           }}
           style={styles.SubmitButtonRecordStyle}
         >
-          <Text style={styles.TextStyleButton}>Record</Text>
+          <Text style={styles.TextStyleButton}>Record Flexion</Text>
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity
+        onPress={() => {
+          add1(getDegrees(round(beta)));
+        }}
+        style={styles.SubmitButtonRecordStyle}
+      >
+        <Text style={styles.TextStyleButton}>Record Extension</Text>
+      </TouchableOpacity>
 
       <View style={styles.MainRecordHistoryContainer}>
         <TouchableOpacity
@@ -753,7 +842,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: 10,
-    backgroundColor: "#FFF", 
+    backgroundColor: "#FFF",
   },
   boxx: {
     flex: 1,
@@ -795,7 +884,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     backgroundColor: "#FFF",
-    paddingTop:8,
+    paddingTop: 8,
   },
   MainRecordHistoryContainer: {
     flex: 1,
@@ -917,26 +1006,26 @@ const stylePicker = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderWidth: 2,
-    borderColor: '#2B6D6A',
+    borderColor: "#2B6D6A",
     borderRadius: 8,
-    fontWeight: 'bold',
-    color: '#2B6D6A',
+    fontWeight: "bold",
+    color: "#2B6D6A",
     paddingRight: 30, // to ensure the text is never behind the icon
-    textAlign: 'center',
+    textAlign: "center",
   },
 
   inputAndroid: {
-    marginTop:6,
+    marginTop: 6,
     fontSize: 20,
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 2,
-    borderColor: '#2B6D6A',
+    borderColor: "#2B6D6A",
     borderRadius: 8,
-    fontWeight: 'bold',
-    color: '#2B6D6A',
+    fontWeight: "bold",
+    color: "#2B6D6A",
     paddingRight: 30, // to ensure the text is never behind the icon
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 
