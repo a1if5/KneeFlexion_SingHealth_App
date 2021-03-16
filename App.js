@@ -101,13 +101,22 @@ const Goniometer_App = () => {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: "Welcome" }}
+          options={{ title: "HOME" }}
         />
-        <Stack.Screen name="Goniometer" component={Goniometer} />
-        <Stack.Screen name="FormSG" component={FormSG} />
-        <Stack.Screen name="UserData" component={UserData} />
+        <Stack.Screen name="Goniometer" 
+          component={Goniometer}
+          options={{ title: "MEASUREMENT" }}
+           />
+        <Stack.Screen name="FormSG" 
+          component={FormSG}
+          options={{ title: "FORMSG" }} />
+        <Stack.Screen name="UserData" 
+          component={UserData}
+          options={{ title: "ADMIN" }} />
         {/* <Stack.Screen name="HomePage" component={HomePage} /> */}
-        <Stack.Screen name="CalenderDataPage" component={CalenderDataPage} />
+        <Stack.Screen name="CalenderDataPage" 
+          component={CalenderDataPage}
+          options={{ title: "HISTORY" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -305,7 +314,7 @@ const HomeScreen = ({ navigation, route }) => {
     data: [
       {
         id: 1,
-        title: "Record Measurement",
+        title: "Measurement",
         link: "Goniometer",
         image: "https://img.icons8.com/wired/64/000000/measurement-tool.png",
       },
@@ -604,7 +613,7 @@ const Goniometer = ({ navigation, route }) => {
         <RNPickerSelect
           onValueChange={(itemValue) => setSelectedValue(itemValue)}
           useNativeAndroidPickerStyle={false}
-          placeholder={{ label: "Select Check-Up Week", value: null }}
+          placeholder={{ label: "Select Week", value: null }}
           items={[
             { label: "Week 2", value: "2" },
             { label: "Week 4", value: "4" },
@@ -630,7 +639,7 @@ const Goniometer = ({ navigation, route }) => {
       </View>
 
       <View>
-        <Text style={{ textAlign: "center", fontSize: 30 }}>
+        <Text style={{ textAlign: "center", fontSize: 35 }}>
           Knee Flexion Range:
         </Text>
         <Text style={{ textAlign: "center", fontSize: 80, paddingLeft: 20 }}>
@@ -664,7 +673,7 @@ const Goniometer = ({ navigation, route }) => {
         ) : null}
       </View>
 
-      <View style={styles.MainRecordContainer}>
+      <View style={styles.MainRecordStartStopContainer}>
         <TouchableOpacity
           onPress={subscription ? _unsubscribe : _subscribe}
           style={styles.SubmitButtonStyle}
@@ -680,13 +689,13 @@ const Goniometer = ({ navigation, route }) => {
           onPress={() => {
             add(getDegrees(round(beta)));
           }}
-          style={styles.SubmitButtonStyle}
+          style={styles.SubmitButtonRecordStyle}
         >
           <Text style={styles.TextStyleButton}>Record</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.MainRecordContainer}>
+      <View style={styles.MainRecordHistoryContainer}>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate("CalenderDataPage", {
@@ -695,7 +704,7 @@ const Goniometer = ({ navigation, route }) => {
           }
           style={styles.SubmitButtonStyle}
         >
-          <Text style={styles.TextStyleButton}>View Results</Text>
+          <Text style={styles.TextStyleButton}>History</Text>
         </TouchableOpacity>
       </View>
 
@@ -744,7 +753,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: 10,
-    backgroundColor: "#FFF",
+    backgroundColor: "#FFF", 
   },
   boxx: {
     flex: 1,
@@ -754,7 +763,7 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-end",
     height: 1,
     marginLeft: 40,
     marginRight: 40,
@@ -762,7 +771,7 @@ const styles = StyleSheet.create({
   },
   pickerContainerGender: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     height: 1,
     marginLeft: 40,
     marginRight: 40,
@@ -777,13 +786,22 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     marginTop: 15,
   },
-
-  MainRecordContainer: {
+  MainRecordStartStopContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-end",
     backgroundColor: "#FFF",
   },
-
+  MainRecordContainer: {
+    flex: 1,
+    justifyContent: "flex-start",
+    backgroundColor: "#FFF",
+    paddingTop:8,
+  },
+  MainRecordHistoryContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "#FFF",
+  },
   SubmitButtonStyle: {
     marginTop: 15,
     paddingTop: 10,
@@ -894,24 +912,31 @@ const a = StyleSheet.create({
 
 const stylePicker = StyleSheet.create({
   inputIOS: {
-    fontSize: 16,
+    marginTop: 6,
+    fontSize: 20,
     paddingVertical: 12,
     paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: "gray",
-    borderRadius: 4,
-    color: "black",
+    borderWidth: 2,
+    borderColor: '#2B6D6A',
+    borderRadius: 8,
+    fontWeight: 'bold',
+    color: '#2B6D6A',
     paddingRight: 30, // to ensure the text is never behind the icon
+    textAlign: 'center',
   },
+
   inputAndroid: {
-    fontSize: 16,
+    marginTop:6,
+    fontSize: 20,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: "purple",
+    borderWidth: 2,
+    borderColor: '#2B6D6A',
     borderRadius: 8,
-    color: "black",
+    fontWeight: 'bold',
+    color: '#2B6D6A',
     paddingRight: 30, // to ensure the text is never behind the icon
+    textAlign: 'center',
   },
 });
 
