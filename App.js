@@ -34,6 +34,7 @@ import {
 } from "react-native-calendars";
 import { render } from "react-dom";
 
+
 const Stack = createStackNavigator();
 
 const db = SQLite.openDatabase("db.db");
@@ -483,11 +484,14 @@ const HomeScreen = ({ navigation, route }) => {
     </View>
   );
 };
-
+//extensionDegree
+//document.getElementById('603c3d5a7d837800126d12f7').value = '7';
 const FormSG = ({ navigation, route }) => {
   return (
     <WebView
-      source={{ uri: "https://form.gov.sg/#!/603c3ca2b3f2b10012a03bc4" }}
+      source={{ uri: "https://form.gov.sg/#!/603c3ca2b3f2b10012a03bc4" }} 
+      injectedJavaScript={`(function(){document.getElementById('603c3d41526b9e00127a488f').value = '4';document.getElementById('603c3d5a7d837800126d12f7').value = '7';}());`}    
+
     />
   );
 };
@@ -765,21 +769,21 @@ const Goniometer = ({ navigation, route }) => {
       </View>
 
       <View>
-        <Text style={{ textAlign: "center", fontSize: 35 }}>
-          Knee Range:
-        </Text>
-        {noGenderWeek(getDegrees(round(beta))) ? (
-          <Text style={stylePercentile.textPercentileBlack}>
-            {getDegrees(round(beta))}°
+          <Text style={{ textAlign: "center", fontSize: 35 }}>
+            Knee Range:
           </Text>
+          {noGenderWeek(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileBlack}>
+              {getDegrees(round(beta))}°
+            </Text>
         ) : null}
-        {green(getDegrees(round(beta))) ? (
-          <Text style={stylePercentile.textPercentileGreen}>
-            {getDegrees(round(beta))}°
-          </Text>
+          {green(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileGreen}>
+              {getDegrees(round(beta))}°
+            </Text>
         ) : null}
-        {blue(getDegrees(round(beta))) ? (
-          <Text style={stylePercentile.textPercentileOrange}>
+          {blue(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileOrange}>
             {getDegrees(round(beta))}°
           </Text>
         ) : null}
@@ -794,6 +798,7 @@ const Goniometer = ({ navigation, route }) => {
           </Text>
         ) : null}
       </View>
+
 
       <View>
         <Text style={{ textAlign: "center", fontSize: 20, fontStyle: 'italic' }} >
@@ -815,17 +820,18 @@ const Goniometer = ({ navigation, route }) => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.MainRecordContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            add(getDegrees(round(beta)));
-            setFlexionDegree(getDegrees(round(beta)));
-          }}
-          style={styles.SubmitButtonRecordStyle}
-        >
-          <Text style={styles.TextStyleButton}>Record Flexion</Text>
-        </TouchableOpacity>
 
+      <View style={styles.MainRecordContainer}>
+
+          <TouchableOpacity
+            onPress={() => {
+              add(getDegrees(round(beta)));
+              setFlexionDegree(getDegrees(round(beta)));
+            }}
+            style={styles.SubmitButtonRecordStyle}
+          >
+            <Text style={styles.TextStyleButton}>Record Flexion</Text>
+          </TouchableOpacity>
       </View>
 
       <View style={styles.MainRecordContainer}>
@@ -841,28 +847,50 @@ const Goniometer = ({ navigation, route }) => {
       
       </View>
 
+      <View style={styles.MainRecordContainer}>
+        {!(flexionDegree != 0 && extensionDegree != 0) ? (
+          <TouchableOpacity 
+            style={styles.SubmitButtonFormStyleDisabled}
+          >
+            <Text style={styles.TextStyleButton}>Submit FormSG</Text>
+          </TouchableOpacity>
+        ) : null}   
+
+        {flexionDegree != 0 && extensionDegree != 0 ? (
+          <TouchableOpacity
+            onPress={() => navigation.navigate("FormSG", { name: "FormSG" })}
+            style={styles.SubmitButtonFormStyle}
+          >
+            <Text style={styles.TextStyleButton}>Submit FormSG</Text>
+          </TouchableOpacity>
+        ) : null}
+      </View>
 
       <View style={styles.MainRecordHistoryContainer}>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("CalenderDataPage", {
-              name: "CalenderDataPage",
-            })
-          }
-          style={styles.SubmitButtonHistoryStyle}
-        >
-          <Text style={styles.TextStyleButton}>History</Text>
-        </TouchableOpacity>
+        {!(flexionDegree != 0 && extensionDegree != 0) ? (
+          <TouchableOpacity
+            style={styles.SubmitButtonHistoryStyleDisabled}
+          >
+            <Text style={styles.TextStyleButton}>History</Text>
+          </TouchableOpacity>
+        ) : null} 
+
+        {flexionDegree != 0 && extensionDegree != 0 ? (
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("CalenderDataPage", {
+                name: "CalenderDataPage",
+              })
+            }
+            style={styles.SubmitButtonHistoryStyle}
+          >
+            <Text style={styles.TextStyleButton}>History</Text>
+          </TouchableOpacity>
+        ) : null}      
+
       </View>
 
-      <View style={styles.MainRecordContainer}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("FormSG", { name: "FormSG" })}
-          style={styles.SubmitButtonFormStyle}
-        >
-          <Text style={styles.TextStyleButton}>Submit FormSG</Text>
-        </TouchableOpacity>
-      </View>
+
     </View>
   );
 };
@@ -981,6 +1009,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#fff",
   },  
+  SubmitButtonHistoryStyleDisabled: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginLeft: 20,
+    marginRight: 20,
+    backgroundColor: "#2B6D6A",
+    borderRadius: 35,
+    borderWidth: 1,
+    borderColor: "#fff",
+    opacity: 0.3,
+  }, 
   SubmitButtonFormStyle: {
     marginBottom: 20,
     paddingTop: 10,
@@ -991,7 +1030,20 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     borderWidth: 1,
     borderColor: "#fff",
-  },  
+  },
+  SubmitButtonFormStyleDisabled: {
+    marginBottom: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    marginLeft: 20,
+    marginRight: 20,
+    backgroundColor: "#2B6D6A",
+    borderRadius: 35,
+    borderWidth: 1,
+    borderColor: "#fff",
+    opacity:0.3,
+  }, 
+
   TextStyleButton: {
     color: "#fff",
     textAlign: "center",

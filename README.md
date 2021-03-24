@@ -14,3 +14,6 @@ Set up of Navigation
 Set Up of Picker Custom Button (https://github.com/lawnstarter/react-native-picker-select)
 1) npm install react-native-picker-select
 2) npx pod-install
+
+Set Up Intro.JS
+1) npm install react-native-intro --save (TBA)
