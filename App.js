@@ -409,13 +409,7 @@ const HomeScreen = ({ navigation, route }) => {
         link: "CalenderDataPage",
         image: "https://img.icons8.com/dotty/80/000000/activity-history.png",
       },
-      {
-        id: 3,
-        title: "Submit Record",
-        link: "FormSG",
-        image:
-          "https://img.icons8.com/pastel-glyph/64/000000/submit-document--v2.png",
-      },
+
       {
         id: 4,
         title: "Guide",
@@ -455,8 +449,8 @@ const HomeScreen = ({ navigation, route }) => {
             }}
             style={styles.NavigateMeasurement}
           >
-            <Text style = {styles.TextStyleButton} >
-              Measurement
+            <Text style = {styles.TextStyleButtonHomePage} >
+              MEASUREMENT
             </Text>
           </TouchableOpacity>
       </View>
@@ -1068,7 +1062,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 40,
   },
-
+  TextStyleButtonHomePage: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 40,
+    fontStyle: 'italic' ,
+  },
   button: {
     flex: 1,
     justifyContent: "center",
