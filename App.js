@@ -32,6 +32,7 @@ import moment from "moment";
 import RNPickerSelect, { defaultStyles } from "react-native-picker-select";
 import { Card, Avatar } from "react-native-paper";
 import PushNotification from "react-native-push-notification";
+import PushNotificationIOS from "@react-native-community/push-notification-ios";
 
 import {
   Calendar,
