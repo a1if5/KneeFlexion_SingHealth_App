@@ -404,38 +404,32 @@ const HomeScreen = ({ navigation, route }) => {
   const state = {
     data: [
       {
-        id: 1,
-        title: "Measurement",
-        link: "Goniometer",
-        image: "https://img.icons8.com/wired/64/000000/measurement-tool.png",
-      },
-      {
-        id: 1,
+        id: 2,
         title: "History",
         link: "CalenderDataPage",
         image: "https://img.icons8.com/dotty/80/000000/activity-history.png",
       },
       {
-        id: 2,
+        id: 3,
         title: "Submit Record",
         link: "FormSG",
         image:
           "https://img.icons8.com/pastel-glyph/64/000000/submit-document--v2.png",
       },
       {
-        id: 3,
+        id: 4,
         title: "Guide",
         link: "GuidePage",
         image: "https://img.icons8.com/ios/50/000000/city-guide.png",
       },
       {
-        id: 4,
+        id: 5,
         title: "Contact Us",
         link: "",
         image: "https://img.icons8.com/ios/50/000000/phone-disconnected.png",
       },
       {
-        id: 5,
+        id: 6,
         title: "Admin",
         link: "UserData",
         image: "https://img.icons8.com/windows/64/000000/microsoft-admin.png",
@@ -446,9 +440,28 @@ const HomeScreen = ({ navigation, route }) => {
   const clickEventListener = (item) => {
     navigation.navigate(item.link, { name: item.link });
   };
+  const clickEventListenerMeasurement = (item) => {
+    navigation.navigate(item, { name: item });
+  };
 
   return (
+
     <View style={pp.container}>
+      <View>
+        
+        <TouchableOpacity
+            onPress={() => {
+              clickEventListenerMeasurement(Goniometer);
+            }}
+            style={styles.NavigateMeasurement}
+          >
+            <Text style = {styles.TextStyleButton} >
+              Measurement
+            </Text>
+          </TouchableOpacity>
+      </View>
+
+
       <FlatList
         style={pp.list}
         contentContainerStyle={pp.listContainer}
@@ -456,6 +469,7 @@ const HomeScreen = ({ navigation, route }) => {
         horizontal={false}
         numColumns={2}
         keyExtractor={(item) => {
+          console.log(item.id);
           return item.id;
         }}
         renderItem={({ item }) => {
@@ -729,6 +743,12 @@ const Goniometer = ({ navigation, route }) => {
 
     return false;
   }
+
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////PERSIST GENDER WEEK BELOW//////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
+
   const [selectedValue, setSelectedValue] = useState("2");
   const [selectedGenderValue, setSelectedGenderValue] = useState("Male");
   const [extensionDegree, setExtensionDegree] = useState("0");
@@ -737,40 +757,41 @@ const Goniometer = ({ navigation, route }) => {
   ////////////////////////////////////////////////////////////////////////////
   //Below portion is for the Rendering of Week & Gender for Picker Button/////
   ////////////////////////////////////////////////////////////////////////////
+      // <View style={styles.pickerContainer}>
+      //   <RNPickerSelect
+      //     onValueChange={(itemValue) => setSelectedValue(itemValue)}
+      //     useNativeAndroidPickerStyle={false}
+      //     placeholder={{ label: "Select Week", value: null }}
+      //     items={[
+      //       { label: "Week 2", value: "2" },
+      //       { label: "Week 4", value: "4" },
+      //       { label: "Week 6", value: "6" },
+      //       { label: "Week 8", value: "8" },
+      //       { label: "Week 10", value: "10" },
+      //       { label: "Week 12", value: "12" },
+      //     ]}
+      //     style={stylePicker}
+      //   />
+      // </View>
+      // <View style={styles.pickerContainerGender}>
+      //   <RNPickerSelect
+      //     onValueChange={(itemValue) => setSelectedGenderValue(itemValue)}
+      //     useNativeAndroidPickerStyle={false}
+      //     placeholder={{ label: "Select Gender", value: null }}
+      //     items={[
+      //       { label: "Male", value: "Male" },
+      //       { label: "Female", value: "Female" },
+      //     ]}
+      //     style={stylePicker}
+      //   />
+      // </View>
 
   return (
     <View style={styles.container}>
-      <View style={styles.pickerContainer}>
-        <RNPickerSelect
-          onValueChange={(itemValue) => setSelectedValue(itemValue)}
-          useNativeAndroidPickerStyle={false}
-          placeholder={{ label: "Select Week", value: null }}
-          items={[
-            { label: "Week 2", value: "2" },
-            { label: "Week 4", value: "4" },
-            { label: "Week 6", value: "6" },
-            { label: "Week 8", value: "8" },
-            { label: "Week 10", value: "10" },
-            { label: "Week 12", value: "12" },
-          ]}
-          style={stylePicker}
-        />
-      </View>
-      <View style={styles.pickerContainerGender}>
-        <RNPickerSelect
-          onValueChange={(itemValue) => setSelectedGenderValue(itemValue)}
-          useNativeAndroidPickerStyle={false}
-          placeholder={{ label: "Select Gender", value: null }}
-          items={[
-            { label: "Male", value: "Male" },
-            { label: "Female", value: "Female" },
-          ]}
-          style={stylePicker}
-        />
-      </View>
+
 
       <View>
-          <Text style={{ textAlign: "center", fontSize: 45 }}>
+          <Text style={{ textAlign: "center", fontSize: 60 }}>
             Knee Range:
           </Text>
           {noGenderWeek(getDegrees(round(beta))) ? (
@@ -801,22 +822,22 @@ const Goniometer = ({ navigation, route }) => {
       </View>
 
 
-      <View>
-        <Text style={{ textAlign: "center", fontSize: 30, fontStyle: 'italic' }} >
+      <View style={{marginTop: 20}}>
+        <Text style={{ textAlign: "center", fontSize: 35, fontStyle: 'italic' }} >
           Previous Flexion: {flexionDegree}°
         </Text>
-        <Text style={{ textAlign: "center", fontSize: 30,fontStyle: 'italic'}}>
+        <Text style={{ textAlign: "center", fontSize: 35,fontStyle: 'italic'}}>
           Previous Extension: {extensionDegree}°
         </Text>
       </View>
-
+<ScrollView>
       <View style={styles.MainRecordStartStopContainer}>
         <TouchableOpacity
           onPress={subscription ? _unsubscribe : _subscribe}
           style={styles.SubmitButtonStyle}
         >
           <Text style={styles.TextStyleButton}>
-            {subscription ? "Stop" : "Start"}
+            {subscription ? "STOP" : "START"}
           </Text>
         </TouchableOpacity>
       </View>
@@ -890,6 +911,7 @@ const Goniometer = ({ navigation, route }) => {
         ) : null}      
 
       </View>
+      </ScrollView>
 
 
     </View>
@@ -963,92 +985,88 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   MainRecordStartStopContainer: {
-    flex: 1,
+    paddingTop: 20,
     justifyContent: "flex-end",
     backgroundColor: "#FFF",
   },
   MainRecordContainer: {
-    flex: 1,
     justifyContent: "flex-start",
     backgroundColor: "#FFF",
     paddingTop: 8,
   },
   MainRecordHistoryContainer: {
-    flex: 1,
     justifyContent: "flex-end",
     backgroundColor: "#FFF",
+    paddingTop: 8,
   },
   SubmitButtonStyle: {
-    marginTop: 15,
-    paddingTop: 10,
-    paddingBottom: 10,
+    // marginLeft: 20,
+    // marginRight: 20,
+    backgroundColor: "#2B6D6A",
+    borderRadius: 35,
+    borderWidth: 1,
+    borderColor: "#fff",
+    height: 80,
+    justifyContent: "center",
+  },
+  NavigateMeasurement:{
+    marginTop: 20,
     marginLeft: 20,
     marginRight: 20,
     backgroundColor: "#2B6D6A",
     borderRadius: 35,
     borderWidth: 1,
     borderColor: "#fff",
+    height: 100,
+    justifyContent: "center",
   },
   SubmitButtonRecordStyle: {
-    marginBottom: 20,
-    paddingTop: 10,
-    paddingBottom: 10,
-    marginLeft: 20,
-    marginRight: 20,
     backgroundColor: "#786B4A",
     borderRadius: 35,
     borderWidth: 1,
     borderColor: "#fff",
+    height: 80,
+    justifyContent: "center",
   },
   SubmitButtonHistoryStyle: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    marginLeft: 20,
-    marginRight: 20,
     backgroundColor: "#2B6D6A",
     borderRadius: 35,
     borderWidth: 1,
     borderColor: "#fff",
+    height: 80,
+    justifyContent: "center",
   },  
   SubmitButtonHistoryStyleDisabled: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    marginLeft: 20,
-    marginRight: 20,
     backgroundColor: "#2B6D6A",
     borderRadius: 35,
     borderWidth: 1,
     borderColor: "#fff",
+    height: 80,
+    justifyContent: "center",
     opacity: 0.3,
   }, 
   SubmitButtonFormStyle: {
-    marginBottom: 20,
-    paddingTop: 10,
-    paddingBottom: 10,
-    marginLeft: 20,
-    marginRight: 20,
     backgroundColor: "#2B6D6A",
     borderRadius: 35,
     borderWidth: 1,
     borderColor: "#fff",
+    height: 80,
+    justifyContent: "center",
   },
   SubmitButtonFormStyleDisabled: {
-    marginBottom: 20,
-    paddingTop: 10,
-    paddingBottom: 10,
-    marginLeft: 20,
-    marginRight: 20,
     backgroundColor: "#2B6D6A",
     borderRadius: 35,
     borderWidth: 1,
     borderColor: "#fff",
+    height: 80,
+    justifyContent: "center",
     opacity:0.3,
   }, 
 
   TextStyleButton: {
     color: "#fff",
     textAlign: "center",
-    fontSize: 26,
+    fontSize: 40,
   },
 
   button: {
@@ -1172,27 +1190,31 @@ const stylePicker = StyleSheet.create({
 
 const stylePercentile = StyleSheet.create({
   textPercentileBlack: {
+    paddingTop: 20,
     color: "black",
     textAlign: "center", 
-    fontSize: 80, 
+    fontSize: 120, 
     paddingLeft: 20,
   }, 
   textPercentileGreen: {
     color: "green",
+    paddingTop: 20,
     textAlign: "center", 
-    fontSize: 80, 
+    fontSize: 120, 
     paddingLeft: 20,
   },
   textPercentileOrange: {
     textAlign: "center",
+    paddingTop: 20,
     color: "#FFA537", 
-    fontSize: 80, 
+    fontSize: 120, 
     paddingLeft: 20,
   },
   textPercentileRed: {
     color: "#FF8C00",
+    paddingTop: 20,
     textAlign: "center", 
-    fontSize: 80, 
+    fontSize: 120, 
     paddingLeft: 20,
   },
 });
@@ -1222,17 +1244,17 @@ const pp = StyleSheet.create({
 
     elevation: 12,
     marginVertical: 20,
-    marginHorizontal: 40,
+    marginHorizontal: 20,
     backgroundColor: "#ABDDDC",
     //flexBasis: '42%',
-    width: 120,
+    width: 150,
     height: 120,
-    borderRadius: 60,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
   },
   cardHeader: {
-    paddingVertical: 17,
+    paddingVertical: 3,
     paddingHorizontal: 16,
     borderTopLeftRadius: 1,
     borderTopRightRadius: 1,
