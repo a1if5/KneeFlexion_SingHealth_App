@@ -411,7 +411,7 @@ const HomeScreen = ({ navigation, route }) => {
       },
       {
         id: 1,
-        title: "View History",
+        title: "History",
         link: "CalenderDataPage",
         image: "https://img.icons8.com/dotty/80/000000/activity-history.png",
       },
@@ -729,10 +729,11 @@ const Goniometer = ({ navigation, route }) => {
 
     return false;
   }
-  const [selectedValue, setSelectedValue] = useState("");
-  const [selectedGenderValue, setSelectedGenderValue] = useState("");
+  const [selectedValue, setSelectedValue] = useState("2");
+  const [selectedGenderValue, setSelectedGenderValue] = useState("Male");
   const [extensionDegree, setExtensionDegree] = useState("0");
   const [flexionDegree, setFlexionDegree] = useState("0");
+
   ////////////////////////////////////////////////////////////////////////////
   //Below portion is for the Rendering of Week & Gender for Picker Button/////
   ////////////////////////////////////////////////////////////////////////////
@@ -769,7 +770,7 @@ const Goniometer = ({ navigation, route }) => {
       </View>
 
       <View>
-          <Text style={{ textAlign: "center", fontSize: 35 }}>
+          <Text style={{ textAlign: "center", fontSize: 45 }}>
             Knee Range:
           </Text>
           {noGenderWeek(getDegrees(round(beta))) ? (
@@ -801,10 +802,10 @@ const Goniometer = ({ navigation, route }) => {
 
 
       <View>
-        <Text style={{ textAlign: "center", fontSize: 20, fontStyle: 'italic' }} >
+        <Text style={{ textAlign: "center", fontSize: 30, fontStyle: 'italic' }} >
           Previous Flexion: {flexionDegree}°
         </Text>
-        <Text style={{ textAlign: "center", fontSize: 20,fontStyle: 'italic'}}>
+        <Text style={{ textAlign: "center", fontSize: 30,fontStyle: 'italic'}}>
           Previous Extension: {extensionDegree}°
         </Text>
       </View>
@@ -1184,12 +1185,12 @@ const stylePercentile = StyleSheet.create({
   },
   textPercentileOrange: {
     textAlign: "center",
-    color: "#FF8C00", 
+    color: "#FFA537", 
     fontSize: 80, 
     paddingLeft: 20,
   },
   textPercentileRed: {
-    color: "red",
+    color: "#FF8C00",
     textAlign: "center", 
     fontSize: 80, 
     paddingLeft: 20,
@@ -1199,8 +1200,8 @@ const stylePercentile = StyleSheet.create({
 const pp = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 40,
     backgroundColor: "#f6f6f6",
+
   },
   list: {
     paddingHorizontal: 5,
@@ -1222,7 +1223,7 @@ const pp = StyleSheet.create({
     elevation: 12,
     marginVertical: 20,
     marginHorizontal: 40,
-    backgroundColor: "#e2e2e2",
+    backgroundColor: "#ABDDDC",
     //flexBasis: '42%',
     width: 120,
     height: 120,
@@ -1256,6 +1257,7 @@ const pp = StyleSheet.create({
     height: 50,
     width: 50,
     alignSelf: "center",
+
   },
   title: {
     fontSize: 18,
