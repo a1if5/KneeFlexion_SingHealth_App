@@ -7,6 +7,8 @@ import React, {
 } from "react";
 import YoutubePlayer from "react-native-youtube-iframe";
 import {
+  Pressable,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -31,8 +33,7 @@ import { Dropdown } from "react-bootstrap";
 import moment from "moment";
 import RNPickerSelect, { defaultStyles } from "react-native-picker-select";
 import { Card, Avatar } from "react-native-paper";
-import PushNotification from "react-native-push-notification";
-import PushNotificationIOS from "@react-native-community/push-notification-ios";
+import * as Notifications from "expo-notifications";
 
 import {
   Calendar,
@@ -42,18 +43,51 @@ import {
 } from "react-native-calendars";
 import { render } from "react-dom";
 
-PushNotification.localNotificationSchedule({
-  repeatType: day,
-  //... You can use all the options from localNotifications
-  message: "My Notification Message", // (required)
-  date: new Date(Date.now() + 60 * 1000), // in 60 secs
-  allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
-});
+// Notifications.setNotificationHandler({
+//   handleNotification: async () => ({
+//     shouldShowAlert: true,
+//     shouldPlaySound: false,
+//     shouldSetBadge: false,
+//   }),
+// });
 
 const Stack = createStackNavigator();
 
 const db = SQLite.openDatabase("db.db");
 const db1 = SQLite.openDatabase("db1.db");
+const userInfo = SQLite.openDatabase("userInfo.db");
+const userGender = SQLite.openDatabase("userGender.db");
+
+//User Info Display
+// function UserInfos({ done: doneHeading, onPressItem }) {
+//   const [items, setItems] = React.useState(null);
+
+//   // select * from userInfo ORDER BY done ASC LIMIT 1
+//   React.useEffect(() => {
+//     // select * from userInfo where done = ?;
+//     userInfo.transaction((tx) => {
+//       tx.executeSql(
+//         `select * from userInfo ORDER BY done ASC LIMIT 1`,
+//         [doneHeading ? 1 : 0],
+//         (_, { rows: { _array } }) => setItems(_array)
+//       );
+//     });
+//   }, []);
+
+//   const heading = doneHeading ? "Checked Data" : "Data";
+
+//   if (items === null || items.length === 0) {
+//     return null;
+//   }
+
+//   return (
+//     <View>
+//       {items.map(({ id, value }) => (
+//         <Text key={id}>{value}</Text>
+//       ))}
+//     </View>
+//   );
+// }
 
 //Flexion Display
 function Items({ done: doneHeading, onPressItem }) {
@@ -199,18 +233,15 @@ const Goniometer_App = () => {
 // Start of Guide Page
 const GuidePage = ({ navigation, route }) => {
   const [playing, setPlaying] = useState(false);
-
   const onStateChange = useCallback((state) => {
     if (state === "ended") {
       setPlaying(false);
       Alert.alert("video has finished playing!");
     }
   }, []);
-
   const togglePlaying = useCallback(() => {
     setPlaying((prev) => !prev);
   }, []);
-
   return (
     <View style={styles.youtubeplayer}>
       <YoutubePlayer
@@ -227,6 +258,100 @@ const GuidePage = ({ navigation, route }) => {
       </Text>
     </View>
   );
+  // async function schedulePushNotification() {
+  //   x = 0;
+  //   if (x == 1) {
+  //     const g = await Notifications.scheduleNotificationAsync({
+  //       content: {
+  //         title: "You've got mail! 📬",
+  //         body: "Here is the notification body",
+  //         data: { data: "goes here" },
+  //       },
+  //       trigger: { seconds: 2 },
+  //     });
+  //     // await Notifications.cancelScheduledNotificationAsync(g);
+  //   }
+  // }
+  //   const [expoPushToken, setExpoPushToken] = useState("");
+  //   const [notification, setNotification] = useState(false);
+  //   const notificationListener = useRef();
+  //   const responseListener = useRef();
+  //   useEffect(() => {
+  //     registerForPushNotificationsAsync().then((token) =>
+  //       setExpoPushToken(token)
+  //     );
+  //     notificationListener.current = Notifications.addNotificationReceivedListener(
+  //       (notification) => {
+  //         setNotification(notification);
+  //       }
+  //     );
+  //     responseListener.current = Notifications.addNotificationResponseReceivedListener(
+  //       (response) => {
+  //         console.log(response);
+  //       }
+  //     );
+  //     return () => {
+  //       Notifications.removeNotificationSubscription(notificationListener);
+  //       Notifications.removeNotificationSubscription(responseListener);
+  //     };
+  //   }, []);
+  //   return (
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         alignItems: "center",
+  //         justifyContent: "space-around",
+  //       }}
+  //     >
+  //       <Text>Your expo push token: {expoPushToken}</Text>
+  //       <View style={{ alignItems: "center", justifyContent: "center" }}>
+  //         <Text>
+  //           Title: {notification && notification.request.content.title}{" "}
+  //         </Text>
+  //         <Text>Body: {notification && notification.request.content.body}</Text>
+  //         <Text>
+  //           Data:{" "}
+  //           {notification && JSON.stringify(notification.request.content.data)}
+  //         </Text>
+  //       </View>
+  //       <Button
+  //         title="Press to schedule a notification"
+  //         onPress={async () => {
+  //           await schedulePushNotification();
+  //         }}
+  //       />
+  //     </View>
+  //   );
+  // };
+  // async function registerForPushNotificationsAsync() {
+  //   let token;
+  //   if (Constants.isDevice) {
+  //     const {
+  //       status: existingStatus,
+  //     } = await Notifications.getPermissionsAsync();
+  //     let finalStatus = existingStatus;
+  //     if (existingStatus !== "granted") {
+  //       const { status } = await Notifications.requestPermissionsAsync();
+  //       finalStatus = status;
+  //     }
+  //     if (finalStatus !== "granted") {
+  //       alert("Failed to get push token for push notification!");
+  //       return;
+  //     }
+  //     token = (await Notifications.getExpoPushTokenAsync()).data;
+  //     console.log(token);
+  //   } else {
+  //     alert("Must use physical device for Push Notifications");
+  //   }
+  //   if (Platform.OS === "android") {
+  //     Notifications.setNotificationChannelAsync("default", {
+  //       name: "default",
+  //       importance: Notifications.AndroidImportance.MAX,
+  //       vibrationPattern: [0, 250, 250, 250],
+  //       lightColor: "#FF231F7C",
+  //     });
+  //   }
+  //   return token;
 };
 // End of Guide Page
 
@@ -342,77 +467,141 @@ const CalenderDataPage = ({ navigation, route }) => {
 };
 
 const UserData = ({ navigation, route }) => {
-  // const twoOptionAlertHandler = () => {
-  //   //function to make two option alert
-  //   Alert.alert(
-  //     //title
-  //     "Warning",
-  //     //body
-  //     "Confirm delete?",
-  //     [
-  //       {
-  //         text: "Yes",
-  //         onPress: () => console.log("Deleted"),
-  //       },
-  //       {
-  //         text: "No",
-  //         onPress: () => console.log("Not Deleted"),
-  //         style: "cancel",
-  //       },
-  //     ],
-  //     { cancelable: false }
-  //     //clicking out side of alert will not cancel
-  //   );
-  // };
+  const [text, setText] = React.useState(null);
   const [forceUpdate, forceUpdateId] = useForceUpdate();
   const [forceUpdate1, forceUpdateId1] = useForceUpdate();
+  const [selectedValue, setSelectedValue] = useState("2");
+  const [selectedGenderValue, setSelectedGenderValue] = useState("Male");
+  //user week data
+  React.useEffect(() => {
+    userInfo.transaction((tx) => {
+      tx.executeSql(
+        "create table if not exists userInfo (id integer primary key not null, done int, value text);"
+      );
+    });
+  }, []);
+  //user gender data
+  React.useEffect(() => {
+    userGender.transaction((tx) => {
+      tx.executeSql(
+        "create table if not exists userGender (id integer primary key not null, done int, value text);"
+      );
+    });
+  }, []);
+
+  const add2 = (text) => {
+    var text = parseInt(text);
+    if (text === null || text === "") {
+      alert("Invalid Input!");
+      return false;
+    }
+
+    userInfo.transaction(
+      (tx) => {
+        tx.executeSql("insert into userInfo (done, value) values (0, ?)", [
+          text,
+        ]);
+        tx.executeSql("select * from userInfo", [], (_, { rows }) =>
+          console.log(JSON.stringify(rows))
+        );
+      },
+      null,
+      forceUpdate
+    );
+  };
+  const add3 = (text) => {
+    var text = text;
+    if (text === null || text === "") {
+      alert("Invalid Input!");
+      return false;
+    }
+
+    userGender.transaction(
+      (tx) => {
+        tx.executeSql("insert into userGender (done, value) values (0, ?)", [
+          text,
+        ]);
+        tx.executeSql("select * from userGender", [], (_, { rows }) =>
+          console.log(JSON.stringify(rows))
+        );
+      },
+      null,
+      forceUpdate1
+    );
+  };
 
   return (
-    <ScrollView style={a.listArea}>
-      {/* <Button title="Alert with Two Options" onPress={twoOptionAlertHandler} /> */}
-      <Items
-        key={`forceupdate-todo-${forceUpdateId}`}
-        done={false}
-        onPressItem={(id) =>
-          db.transaction(
-            (tx) => {
-              tx.executeSql(`delete from items where id = ?;`, [id]);
-              // tx.executeSql(`update items set done = 1 where id = ?;`, [id]);
-            },
-            null,
-            forceUpdate
-          )
-        }
-      />
-      <Iitems
-        key={`forceupdate1-todo-${forceUpdateId1}`}
-        done={false}
-        onPressItem={(id) =>
-          db1.transaction(
-            (tx) => {
-              tx.executeSql(`delete from iitems where id = ?;`, [id]);
-              // tx.executeSql(`update items set done = 1 where id = ?;`, [id]);
-            },
-            null,
-            forceUpdate1
-          )
-        }
-      />
-    </ScrollView>
+    <View style={styles.container}>
+      <View style={styles.pickerContainer}>
+        <RNPickerSelect
+          // onValueChange={(itemValue) => setSelectedValue(itemValue)}
+          // (itemValue) => setSelectedValue(itemValue)
+          onValueChange={(itemValue) => {
+            add2(itemValue);
+            setSelectedValue(itemValue);
+          }}
+          useNativeAndroidPickerStyle={false}
+          placeholder={{ label: "Select Week", value: null }}
+          items={[
+            { label: "Week 2", value: "2" },
+            { label: "Week 4", value: "4" },
+            { label: "Week 6", value: "6" },
+            { label: "Week 8", value: "8" },
+            { label: "Week 10", value: "10" },
+            { label: "Week 12", value: "12" },
+          ]}
+          style={stylePicker}
+        />
+      </View>
 
-    /* <Items
-        done
-        key={`forceupdate-done-${forceUpdateId}`}
-        onPressItem={(id) =>
-          db.transaction(
-            (tx) => {
-              tx.executeSql(`delete from items where id = ?;`, [id]);
-            },
-            null,
-            forceUpdate
-          )
-        }
-      /> */
+      <View style={styles.pickerContainerGender}>
+        <RNPickerSelect
+          // onValueChange={(itemValue) => setSelectedGenderValue(itemValue)}
+          onValueChange={(itemvalu) => {
+            add3(itemvalu);
+            setSelectedGenderValue(itemvalu);
+            console.log(itemvalu);
+          }}
+          useNativeAndroidPickerStyle={false}
+          placeholder={{ label: "Select Gender", value: null }}
+          items={[
+            { label: "Male", value: "Male" },
+            { label: "Female", value: "Female" },
+          ]}
+          style={stylePicker}
+        />
+      </View>
+    </View>
+    // <ScrollView style={a.listArea}>
+    //   <Items
+    //     key={`forceupdate-todo-${forceUpdateId}`}
+    //     done={false}
+    //     onPressItem={(id) =>
+    //       db.transaction(
+    //         (tx) => {
+    //           tx.executeSql(`delete from items where id = ?;`, [id]);
+    //           // tx.executeSql(`update items set done = 1 where id = ?;`, [id]);
+    //         },
+    //         null,
+    //         forceUpdate
+    //       )
+    //     }
+    //   />
+    //   <Iitems
+    //     key={`forceupdate1-todo-${forceUpdateId1}`}
+    //     done={false}
+    //     onPressItem={(id) =>
+    //       db1.transaction(
+    //         (tx) => {
+    //           tx.executeSql(`delete from iitems where id = ?;`, [id]);
+    //           // tx.executeSql(`update items set done = 1 where id = ?;`, [id]);
+    //         },
+    //         null,
+    //         forceUpdate1
+    //       )
+    //     }
+    //   />
+    // </ScrollView>
   );
 };
 
@@ -474,7 +663,7 @@ const HomeScreen = ({ navigation, route }) => {
         horizontal={false}
         numColumns={2}
         keyExtractor={(item) => {
-          console.log(item.id);
+          // console.log(item.id);
           return item.id;
         }}
         renderItem={({ item }) => {
@@ -752,47 +941,133 @@ const Goniometer = ({ navigation, route }) => {
   //////////////////////////PERSIST GENDER WEEK BELOW//////////////////////////
   ////////////////////////////////////////////////////////////////////////////
 
-  const [selectedValue, setSelectedValue] = useState("2");
-  const [selectedGenderValue, setSelectedGenderValue] = useState("Male");
+  const [selectedValue, setSelectedValue] = useState(null);
+  const [selectedGenderValue, setSelectedGenderValue] = useState(null);
   const [extensionDegree, setExtensionDegree] = useState("0");
   const [flexionDegree, setFlexionDegree] = useState("0");
 
   ////////////////////////////////////////////////////////////////////////////
   //Below portion is for the Rendering of Week & Gender for Picker Button/////
   ////////////////////////////////////////////////////////////////////////////
-  // <View style={styles.pickerContainer}>
-  //   <RNPickerSelect
-  //     onValueChange={(itemValue) => setSelectedValue(itemValue)}
-  //     useNativeAndroidPickerStyle={false}
-  //     placeholder={{ label: "Select Week", value: null }}
-  //     items={[
-  //       { label: "Week 2", value: "2" },
-  //       { label: "Week 4", value: "4" },
-  //       { label: "Week 6", value: "6" },
-  //       { label: "Week 8", value: "8" },
-  //       { label: "Week 10", value: "10" },
-  //       { label: "Week 12", value: "12" },
-  //     ]}
-  //     style={stylePicker}
-  //   />
-  // </View>
-  // <View style={styles.pickerContainerGender}>
-  //   <RNPickerSelect
-  //     onValueChange={(itemValue) => setSelectedGenderValue(itemValue)}
-  //     useNativeAndroidPickerStyle={false}
-  //     placeholder={{ label: "Select Gender", value: null }}
-  //     items={[
-  //       { label: "Male", value: "Male" },
-  //       { label: "Female", value: "Female" },
-  //     ]}
-  //     style={stylePicker}
-  //   />
-  // </View>
+
+  // const [expoPushToken, setExpoPushToken] = useState("");
+  // const [notification, setNotification] = useState(false);
+  // const notificationListener = useRef();
+  // const responseListener = useRef();
+
+  // useEffect(() => {
+  //   registerForPushNotificationsAsync().then((token) =>
+  //     setExpoPushToken(token)
+  //   );
+
+  //   notificationListener.current = Notifications.addNotificationReceivedListener(
+  //     (notification) => {
+  //       setNotification(notification);
+  //     }
+  //   );
+
+  //   responseListener.current = Notifications.addNotificationResponseReceivedListener(
+  //     (response) => {
+  //       console.log(response);
+  //     }
+  //   );
+
+  //   return () => {
+  //     Notifications.removeNotificationSubscription(notificationListener);
+  //     Notifications.removeNotificationSubscription(responseListener);
+  //   };
+  // }, []);
+
+  // async function schedulePushNotification() {
+  //   //if no record then send notification at 12pm (12 hours from 0000hrs)
+  //   db.transaction((tx) => {
+  //     tx.executeSql(
+  //       `SELECT * FROM items WHERE value LIKE ?`,
+  //       [moment().utcOffset("+08:00").format("YYYY-MM-DD") + "%"],
+  //       (tx, results) => {
+  //         var len = results.rows.length;
+  //         if (len == 0) {
+  //           Notifications.scheduleNotificationAsync({
+  //             content: {
+  //               title: "Reminder to take your measurements!",
+  //               body: "Here is the notification body",
+  //               data: { data: "goes here" },
+  //             },
+  //             trigger: { seconds: 7200 },
+  //           });
+  //         }
+  //       }
+  //     );
+  //   });
+  //}
+  const [items, setItems] = useState({});
+  // function lol() {
+  //   userInfo.transaction((tx) => {
+  //     var x = "2";
+  //     tx.executeSql(
+  //       `SELECT * FROM userInfo WHERE value LIKE ?`,
+  //       [x + "%"],
+  //       (tx, results) => {
+  //         var len = results.rows.item(0).value;
+  //         console.log(results);
+  //         return <Text>{items.a}</Text>;
+  //       }
+  //     );
+  //   });
+  // }
+
+  function wee() {
+    userInfo.transaction((tx) => {
+      tx.executeSql(
+        `select * from userInfo ORDER BY id DESC LIMIT ?`,
+        [1],
+        (tx, results) => {
+          var len = results.rows.length;
+          // console.log("pass");
+          if (len > 0) {
+            userGender.transaction((tx) => {
+              tx.executeSql(
+                `select * from userGender ORDER BY id DESC LIMIT ?`,
+                [1],
+                (tx, r) => {
+                  var len = r.rows.length;
+                  // console.log("pass");
+                  if (len > 0) {
+                    // console.log(r.rows.item(0).value);
+                    //convert int
+                    // var x = parseInt(r.rows.item(0).value);
+                    //convert string
+                    var g = r.rows.item(0).value.toString();
+                    console.log("gender: " + g);
+                    setSelectedGenderValue(g);
+                  }
+                }
+              );
+            });
+            // console.log(results.rows.item(0).value);
+            //convert int
+            var x = parseInt(results.rows.item(0).value);
+            //convert string
+            var y = x.toString();
+            console.log("week: " + y);
+            setSelectedValue(y);
+          } else {
+          }
+        }
+      );
+    });
+  }
 
   return (
     <View style={styles.container}>
       <View>
-        <Text style={{ textAlign: "center", fontSize: 60 }}>Knee Range:</Text>
+        {/* <Button
+          title="Press to schedule a notification"
+          onPress={async () => {
+            await schedulePushNotification();
+          }}
+        /> */}
+        <Text style={{ textAlign: "center", fontSize: 60 }}>Knee Range: </Text>
         {noGenderWeek(getDegrees(round(beta))) ? (
           <Text style={stylePercentile.textPercentileBlack}>
             {getDegrees(round(beta))}°
@@ -819,6 +1094,75 @@ const Goniometer = ({ navigation, route }) => {
           </Text>
         ) : null}
       </View>
+      <View>
+        {useEffect(() => {
+          wee();
+        }, [])}
+        {/* <TouchableOpacity
+          style={styles.SubmitButtonRecordStyle}
+          onPress={() => {
+            userInfo.transaction((tx) => {
+              tx.executeSql(
+                `select * from userInfo ORDER BY id DESC LIMIT ?`,
+                [1],
+                (tx, results) => {
+                  var len = results.rows.length;
+                  // console.log("pass");
+                  if (len > 0) {
+                    userGender.transaction((tx) => {
+                      tx.executeSql(
+                        `select * from userGender ORDER BY id DESC LIMIT ?`,
+                        [1],
+                        (tx, r) => {
+                          var len = r.rows.length;
+                          // console.log("pass");
+                          if (len > 0) {
+                            // console.log(r.rows.item(0).value);
+                            //convert int
+                            // var x = parseInt(r.rows.item(0).value);
+                            //convert string
+                            var g = r.rows.item(0).value.toString();
+                            console.log("gender: " + g);
+                            setSelectedGenderValue(g);
+                          }
+                        }
+                      );
+                    });
+                    // console.log(results.rows.item(0).value);
+                    //convert int
+                    var x = parseInt(results.rows.item(0).value);
+                    //convert string
+                    var y = x.toString();
+                    console.log("week: " + y);
+                    setSelectedValue(y);
+                  } else {
+                  }
+                }
+              );
+            });
+          }}
+        >
+          <Text style={styles.TextStyleButton}>View Degree</Text>
+        </TouchableOpacity> */}
+        {/* <View style={styles.pickerContainer}>
+          
+          <RNPickerSelect
+            onValueChange={(itemValue) => setSelectedValue(itemValue)}
+            useNativeAndroidPickerStyle={false}
+            placeholder={{ label: "Select Week", value: null }}
+            items={[
+              { label: "Week 2", value: "2" },
+              { label: "Week 4", value: "4" },
+              { label: "Week 6", value: "6" },
+              { label: "Week 8", value: "8" },
+              { label: "Week 10", value: "10" },
+              { label: "Week 12", value: "12" },
+            ]}
+            style={stylePicker}
+          />
+        </View> */}
+        {/* <UserInfos /> */}
+      </View>
 
       <View style={{ marginTop: 20 }}>
         <Text
@@ -826,6 +1170,7 @@ const Goniometer = ({ navigation, route }) => {
         >
           Previous Flexion: {flexionDegree}°
         </Text>
+
         <Text
           style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
         >
@@ -939,6 +1284,11 @@ function radians_to_degrees(radians) {
 
 /** Start of style sheet */
 const styles = StyleSheet.create({
+  input1: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+  },
   container: {
     flex: 1,
     justifyContent: "center",
