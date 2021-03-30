@@ -1,14 +1,6 @@
-import React, {
-  useState,
-  useEffect,
-  Component,
-  useCallback,
-  useRef,
-} from "react";
+import React, { useState, useEffect, Component, useCallback } from "react";
 import YoutubePlayer from "react-native-youtube-iframe";
 import {
-  Pressable,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -18,9 +10,7 @@ import {
   FlatList,
   Image,
   Alert,
-  Button,
 } from "react-native";
-import { Accelerometer } from "expo-sensors";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -28,68 +18,28 @@ import { DeviceMotion } from "expo-sensors";
 import { WebView } from "react-native-webview";
 import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
-import { Picker } from "@react-native-picker/picker";
-import { Dropdown } from "react-bootstrap";
 import moment from "moment";
 import RNPickerSelect, { defaultStyles } from "react-native-picker-select";
 import { Card, Avatar } from "react-native-paper";
-import * as Notifications from "expo-notifications";
-
 import {
   Calendar,
   CalendarList,
   Agenda,
   calendarTheme,
 } from "react-native-calendars";
-import { render } from "react-dom";
 
-// Notifications.setNotificationHandler({
-//   handleNotification: async () => ({
-//     shouldShowAlert: true,
-//     shouldPlaySound: false,
-//     shouldSetBadge: false,
-//   }),
-// });
-
+//To handle all the pages
 const Stack = createStackNavigator();
-
+//Database for knee flexion
 const db = SQLite.openDatabase("db.db");
+//Database for knee extension
 const db1 = SQLite.openDatabase("db1.db");
+//Database for week of recovery (Percentile)
 const userInfo = SQLite.openDatabase("userInfo.db");
+//Database for user gender (Percentile)
 const userGender = SQLite.openDatabase("userGender.db");
 
-//User Info Display
-// function UserInfos({ done: doneHeading, onPressItem }) {
-//   const [items, setItems] = React.useState(null);
-
-//   // select * from userInfo ORDER BY done ASC LIMIT 1
-//   React.useEffect(() => {
-//     // select * from userInfo where done = ?;
-//     userInfo.transaction((tx) => {
-//       tx.executeSql(
-//         `select * from userInfo ORDER BY done ASC LIMIT 1`,
-//         [doneHeading ? 1 : 0],
-//         (_, { rows: { _array } }) => setItems(_array)
-//       );
-//     });
-//   }, []);
-
-//   const heading = doneHeading ? "Checked Data" : "Data";
-
-//   if (items === null || items.length === 0) {
-//     return null;
-//   }
-
-//   return (
-//     <View>
-//       {items.map(({ id, value }) => (
-//         <Text key={id}>{value}</Text>
-//       ))}
-//     </View>
-//   );
-// }
-
-//Flexion Display
+//Knee flexion database display
 function Items({ done: doneHeading, onPressItem }) {
   const [items, setItems] = React.useState(null);
 
@@ -129,6 +79,8 @@ function Items({ done: doneHeading, onPressItem }) {
     </View>
   );
 }
+
+//Knee extension database display
 function Iitems({ done: doneHeading, onPressItem }) {
   const [items, setItems] = React.useState(null);
 
@@ -169,15 +121,7 @@ function Iitems({ done: doneHeading, onPressItem }) {
   );
 }
 
-function useForceUpdate() {
-  const [value, setValue] = useState(0);
-  return [() => setValue(value + 1), value];
-}
-function useForceUpdate1() {
-  const [value1, setValue1] = useState(0);
-  return [() => setValue(value1 + 1), value1];
-}
-
+//Main controller
 const Goniometer_App = () => {
   return (
     <NavigationContainer>
@@ -214,7 +158,6 @@ const Goniometer_App = () => {
           component={UserData}
           options={{ title: "ADMIN" }}
         />
-        {/* <Stack.Screen name="HomePage" component={HomePage} /> */}
         <Stack.Screen
           name="CalenderDataPage"
           component={CalenderDataPage}
@@ -230,7 +173,7 @@ const Goniometer_App = () => {
   );
 };
 
-// Start of Guide Page
+// Guide Page
 const GuidePage = ({ navigation, route }) => {
   const [playing, setPlaying] = useState(false);
   const onStateChange = useCallback((state) => {
@@ -353,8 +296,8 @@ const GuidePage = ({ navigation, route }) => {
   //   }
   //   return token;
 };
-// End of Guide Page
 
+//History Page
 const CalenderDataPage = ({ navigation, route }) => {
   const [a, b] = useState({});
   const [x, y] = useState({});
@@ -466,6 +409,7 @@ const CalenderDataPage = ({ navigation, route }) => {
   );
 };
 
+//Admin Page
 const UserData = ({ navigation, route }) => {
   const [text, setText] = React.useState(null);
   const [forceUpdate, forceUpdateId] = useForceUpdate();
@@ -605,30 +549,31 @@ const UserData = ({ navigation, route }) => {
   );
 };
 
+//Main Page
 const HomeScreen = ({ navigation, route }) => {
   const state = {
     data: [
       {
-        id: 2,
+        id: 1,
         title: "History",
         link: "CalenderDataPage",
         image: "https://img.icons8.com/dotty/80/000000/activity-history.png",
       },
 
       {
-        id: 4,
+        id: 2,
         title: "Guide",
         link: "GuidePage",
         image: "https://img.icons8.com/ios/50/000000/city-guide.png",
       },
       {
-        id: 5,
+        id: 3,
         title: "Contact Us",
         link: "",
         image: "https://img.icons8.com/ios/50/000000/phone-disconnected.png",
       },
       {
-        id: 6,
+        id: 4,
         title: "Admin",
         link: "UserData",
         image: "https://img.icons8.com/windows/64/000000/microsoft-admin.png",
@@ -692,8 +637,8 @@ const HomeScreen = ({ navigation, route }) => {
     </View>
   );
 };
-//extensionDegree
-//document.getElementById('603c3d5a7d837800126d12f7').value = '7';
+
+//FormSG Page
 const FormSG = ({ navigation, route }) => {
   return (
     <WebView
@@ -703,9 +648,32 @@ const FormSG = ({ navigation, route }) => {
   );
 };
 
+//Goniometer Page
 const Goniometer = ({ navigation, route }) => {
   const [text, setText] = React.useState(null);
   const [forceUpdate, forceUpdateId] = useForceUpdate();
+  function round(n) {
+    if (!n) {
+      return 0;
+    }
+    return Math.floor(n * 100) / 100;
+  }
+
+  function getDegrees(n) {
+    if (!n) {
+      return 0;
+    }
+    var pitchraw2 = Math.abs(radians_to_degrees(n));
+    var pitchtrig = Math.acos(Math.sin(n) / 1.2);
+    var pitch = Math.round(90 + pitchraw2 - radians_to_degrees(pitchtrig)); //Add a plus 10 correction
+
+    return pitch;
+  }
+
+  function radians_to_degrees(radians) {
+    var pi = Math.PI;
+    return radians * (180 / pi);
+  }
 
   React.useEffect(() => {
     db.transaction((tx) => {
@@ -722,7 +690,6 @@ const Goniometer = ({ navigation, route }) => {
     });
   }, []);
 
-  //Check validity of inputtttt :D
   const add = (text) => {
     var text = parseInt(text);
     if (text === null || text === "") {
@@ -773,14 +740,6 @@ const Goniometer = ({ navigation, route }) => {
     gamma: 0,
   });
   const [subscription, setSubscription] = useState(null);
-
-  const _slow = () => {
-    DeviceMotion.setUpdateInterval(1000);
-  };
-
-  const _fast = () => {
-    DeviceMotion.setUpdateInterval(16);
-  };
 
   const _subscribe = () => {
     setSubscription(
@@ -937,93 +896,19 @@ const Goniometer = ({ navigation, route }) => {
     return false;
   }
 
-  ////////////////////////////////////////////////////////////////////////////
-  //////////////////////////PERSIST GENDER WEEK BELOW//////////////////////////
-  ////////////////////////////////////////////////////////////////////////////
-
   const [selectedValue, setSelectedValue] = useState(null);
   const [selectedGenderValue, setSelectedGenderValue] = useState(null);
   const [extensionDegree, setExtensionDegree] = useState("0");
   const [flexionDegree, setFlexionDegree] = useState("0");
-
-  ////////////////////////////////////////////////////////////////////////////
-  //Below portion is for the Rendering of Week & Gender for Picker Button/////
-  ////////////////////////////////////////////////////////////////////////////
-
-  // const [expoPushToken, setExpoPushToken] = useState("");
-  // const [notification, setNotification] = useState(false);
-  // const notificationListener = useRef();
-  // const responseListener = useRef();
-
-  // useEffect(() => {
-  //   registerForPushNotificationsAsync().then((token) =>
-  //     setExpoPushToken(token)
-  //   );
-
-  //   notificationListener.current = Notifications.addNotificationReceivedListener(
-  //     (notification) => {
-  //       setNotification(notification);
-  //     }
-  //   );
-
-  //   responseListener.current = Notifications.addNotificationResponseReceivedListener(
-  //     (response) => {
-  //       console.log(response);
-  //     }
-  //   );
-
-  //   return () => {
-  //     Notifications.removeNotificationSubscription(notificationListener);
-  //     Notifications.removeNotificationSubscription(responseListener);
-  //   };
-  // }, []);
-
-  // async function schedulePushNotification() {
-  //   //if no record then send notification at 12pm (12 hours from 0000hrs)
-  //   db.transaction((tx) => {
-  //     tx.executeSql(
-  //       `SELECT * FROM items WHERE value LIKE ?`,
-  //       [moment().utcOffset("+08:00").format("YYYY-MM-DD") + "%"],
-  //       (tx, results) => {
-  //         var len = results.rows.length;
-  //         if (len == 0) {
-  //           Notifications.scheduleNotificationAsync({
-  //             content: {
-  //               title: "Reminder to take your measurements!",
-  //               body: "Here is the notification body",
-  //               data: { data: "goes here" },
-  //             },
-  //             trigger: { seconds: 7200 },
-  //           });
-  //         }
-  //       }
-  //     );
-  //   });
-  //}
   const [items, setItems] = useState({});
-  // function lol() {
-  //   userInfo.transaction((tx) => {
-  //     var x = "2";
-  //     tx.executeSql(
-  //       `SELECT * FROM userInfo WHERE value LIKE ?`,
-  //       [x + "%"],
-  //       (tx, results) => {
-  //         var len = results.rows.item(0).value;
-  //         console.log(results);
-  //         return <Text>{items.a}</Text>;
-  //       }
-  //     );
-  //   });
-  // }
 
-  function wee() {
+  function displayAngle() {
     userInfo.transaction((tx) => {
       tx.executeSql(
         `select * from userInfo ORDER BY id DESC LIMIT ?`,
         [1],
         (tx, results) => {
           var len = results.rows.length;
-          // console.log("pass");
           if (len > 0) {
             userGender.transaction((tx) => {
               tx.executeSql(
@@ -1031,11 +916,7 @@ const Goniometer = ({ navigation, route }) => {
                 [1],
                 (tx, r) => {
                   var len = r.rows.length;
-                  // console.log("pass");
                   if (len > 0) {
-                    // console.log(r.rows.item(0).value);
-                    //convert int
-                    // var x = parseInt(r.rows.item(0).value);
                     //convert string
                     var g = r.rows.item(0).value.toString();
                     console.log("gender: " + g);
@@ -1044,10 +925,9 @@ const Goniometer = ({ navigation, route }) => {
                 }
               );
             });
-            // console.log(results.rows.item(0).value);
-            //convert int
+            //convert to int
             var x = parseInt(results.rows.item(0).value);
-            //convert string
+            //convert to string
             var y = x.toString();
             console.log("week: " + y);
             setSelectedValue(y);
@@ -1061,12 +941,6 @@ const Goniometer = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <View>
-        {/* <Button
-          title="Press to schedule a notification"
-          onPress={async () => {
-            await schedulePushNotification();
-          }}
-        /> */}
         <Text style={{ textAlign: "center", fontSize: 60 }}>Knee Range: </Text>
         {noGenderWeek(getDegrees(round(beta))) ? (
           <Text style={stylePercentile.textPercentileBlack}>
@@ -1096,72 +970,8 @@ const Goniometer = ({ navigation, route }) => {
       </View>
       <View>
         {useEffect(() => {
-          wee();
+          displayAngle();
         }, [])}
-        {/* <TouchableOpacity
-          style={styles.SubmitButtonRecordStyle}
-          onPress={() => {
-            userInfo.transaction((tx) => {
-              tx.executeSql(
-                `select * from userInfo ORDER BY id DESC LIMIT ?`,
-                [1],
-                (tx, results) => {
-                  var len = results.rows.length;
-                  // console.log("pass");
-                  if (len > 0) {
-                    userGender.transaction((tx) => {
-                      tx.executeSql(
-                        `select * from userGender ORDER BY id DESC LIMIT ?`,
-                        [1],
-                        (tx, r) => {
-                          var len = r.rows.length;
-                          // console.log("pass");
-                          if (len > 0) {
-                            // console.log(r.rows.item(0).value);
-                            //convert int
-                            // var x = parseInt(r.rows.item(0).value);
-                            //convert string
-                            var g = r.rows.item(0).value.toString();
-                            console.log("gender: " + g);
-                            setSelectedGenderValue(g);
-                          }
-                        }
-                      );
-                    });
-                    // console.log(results.rows.item(0).value);
-                    //convert int
-                    var x = parseInt(results.rows.item(0).value);
-                    //convert string
-                    var y = x.toString();
-                    console.log("week: " + y);
-                    setSelectedValue(y);
-                  } else {
-                  }
-                }
-              );
-            });
-          }}
-        >
-          <Text style={styles.TextStyleButton}>View Degree</Text>
-        </TouchableOpacity> */}
-        {/* <View style={styles.pickerContainer}>
-          
-          <RNPickerSelect
-            onValueChange={(itemValue) => setSelectedValue(itemValue)}
-            useNativeAndroidPickerStyle={false}
-            placeholder={{ label: "Select Week", value: null }}
-            items={[
-              { label: "Week 2", value: "2" },
-              { label: "Week 4", value: "4" },
-              { label: "Week 6", value: "6" },
-              { label: "Week 8", value: "8" },
-              { label: "Week 10", value: "10" },
-              { label: "Week 12", value: "12" },
-            ]}
-            style={stylePicker}
-          />
-        </View> */}
-        {/* <UserInfos /> */}
       </View>
 
       <View style={{ marginTop: 20 }}>
@@ -1255,31 +1065,13 @@ const Goniometer = ({ navigation, route }) => {
   );
 };
 
-function round(n) {
-  if (!n) {
-    return 0;
-  }
-  return Math.floor(n * 100) / 100;
-}
-
-function getDegrees(n) {
-  if (!n) {
-    return 0;
-  }
-  var pitchraw2 = Math.abs(radians_to_degrees(n));
-  var pitchtrig = Math.acos(Math.sin(n) / 1.2);
-  var pitch = Math.round(90 + pitchraw2 - radians_to_degrees(pitchtrig)); //Add a plus 10 correction
-
-  return pitch;
-}
-
-function radians_to_degrees(radians) {
-  var pi = Math.PI;
-  return radians * (180 / pi);
+function useForceUpdate() {
+  const [value, setValue] = useState(0);
+  return [() => setValue(value + 1), value];
 }
 
 ////////////////////////////////////////////////////////////////////////////
-//////////////////////////STYLESHEET SECTION BELOW//////////////////////////
+//////////////////////////STYLESHEET SECTION////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 
 /** Start of style sheet */
@@ -1438,31 +1230,6 @@ const styles = StyleSheet.create({
   },
 });
 /** End of style sheet */
-
-const Particular = () => {
-  return (
-    <View>
-      <Text>Name</Text>
-      <TextInput
-        style={{
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-        }}
-        defaultValue=""
-      />
-      <Text>Age</Text>
-      <TextInput
-        style={{
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-        }}
-        defaultValue=""
-      />
-    </View>
-  );
-};
 
 const a = StyleSheet.create({
   baseText: {
