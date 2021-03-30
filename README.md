@@ -15,3 +15,6 @@ Set Up of Picker Custom Button (https://github.com/lawnstarter/react-native-pick
 1) npm install react-native-picker-select
 2) npx pod-install
 
+Set Up of notifications
+1) expo install expo-notifications
+
