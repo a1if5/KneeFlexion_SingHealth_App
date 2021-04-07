@@ -72,6 +72,11 @@ const Goniometer_App = () => {
           options={{ title: "FORMSG" }}
         />
         <Stack.Screen
+          name="Contact"
+          component={Contact}
+          options={{ title: "Contact Us" }}
+        />
+        <Stack.Screen
           name="UserData"
           component={UserData}
           options={{ title: "ADMIN" }}
@@ -395,7 +400,11 @@ const UserData = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
+      <Text></Text>
+      <Text style={{ textAlign: "center", fontSize: 40 }}>Admin Setup</Text>
       <View style={styles.pickerContainer}>
+        <Text style={{ textAlign: "center", fontSize: 40 }}>Week</Text>
+<Text></Text>
         <RNPickerSelect
           // onValueChange={(itemValue) => setSelectedValue(itemValue)}
           // (itemValue) => setSelectedValue(itemValue)
@@ -416,7 +425,9 @@ const UserData = ({ navigation, route }) => {
           style={stylePicker}
         />
       </View>
-
+      <Text></Text>
+      <Text style={{ textAlign: "center", fontSize: 40 }}>Gender</Text>
+      <Text></Text>
       <View style={styles.pickerContainerGender}>
         <RNPickerSelect
           // onValueChange={(itemValue) => setSelectedGenderValue(itemValue)}
@@ -488,7 +499,7 @@ const HomeScreen = ({ navigation, route }) => {
       {
         id: 3,
         title: "Contact Us",
-        link: "",
+        link: "Contact",
         image: "https://img.icons8.com/ios/50/000000/phone-disconnected.png",
       },
       {
@@ -499,6 +510,9 @@ const HomeScreen = ({ navigation, route }) => {
       },
     ],
   };
+
+
+
 
   const clickEventListener = (item) => {
     navigation.navigate(item.link, { name: item.link });
@@ -553,6 +567,28 @@ const HomeScreen = ({ navigation, route }) => {
           );
         }}
       />
+    </View>
+  );
+};
+
+const Contact = ({ navigation, route }) => {
+  return (
+    <View style={styles.container}>
+
+<Image source={require('./sgh-logo.png')} />
+<Text>
+  
+</Text>
+<Text>
+    </Text>
+    <Text style={{ textAlign: "center", fontSize: 20 }}>General Enquiries: {"\n"}+65 6222 3322</Text>
+    <Text>
+    </Text>
+    <Text style={{ textAlign: "center", fontSize: 20 }}>Address: {"\n"}Outram Road
+Singapore 169608
+
+</Text>
+    
     </View>
   );
 };
