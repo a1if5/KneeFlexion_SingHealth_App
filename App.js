@@ -235,7 +235,8 @@ const CalenderDataPage = ({ navigation, route }) => {
           items[strTime] = [];
           db.transaction((tx) => {
             tx.executeSql(
-              `SELECT * FROM items WHERE value LIKE ?`,
+              // `select * from userInfo ORDER BY id DESC LIMIT ?`,
+              `SELECT * FROM items WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
               [strTime + "%"],
               (tx, results) => {
                 var len = results.rows.length;
@@ -245,7 +246,7 @@ const CalenderDataPage = ({ navigation, route }) => {
                   var g = ans.substr(-3);
                   db1.transaction((tx1) => {
                     tx1.executeSql(
-                      `SELECT * FROM iitems WHERE value LIKE ?`,
+                      `SELECT * FROM iitems WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
                       [strTime + "%"],
                       (tx1, results1) => {
                         var len1 = results1.rows.length;
@@ -256,7 +257,7 @@ const CalenderDataPage = ({ navigation, route }) => {
                           items[strTime].push({
                             dat: strTime + " ",
                             name: g + "°",
-                            name1: +h + "°",
+                            name1: + h + "°",
                             height: Math.max(
                               50,
                               Math.floor(Math.random() * 150)
