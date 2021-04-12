@@ -41,6 +41,7 @@ import {
 } from "react-native-chart-kit";
 import { withOrientation } from "react-navigation";
 import { Picker } from '@react-native-picker/picker';
+import ButtonToggleGroup from 'react-native-button-toggle-group';
 
 
 
@@ -965,22 +966,32 @@ const Graph = ({ navigation, route }) => {
         <Text>
 
         </Text>
-      <TouchableOpacity 
+      
+      {/*<TouchableOpacity 
       style={styles.SubmitButtonStyle} 
       onPress={()=>setSelectedLanguage("flexion")}> 
       <Text style={styles.TextStyleButton}>Flexion</Text>
       </TouchableOpacity>
+      
       <Text>
-          
-        </Text>
+      </Text>
+
       <TouchableOpacity 
       style={styles.SubmitButtonStyle} 
       onPress={()=>setSelectedLanguage("extension")}> 
       <Text style={styles.TextStyleButton}>Extension</Text>
-      </TouchableOpacity>
-      <Text>
-          
-        </Text>
+      </TouchableOpacity>*/}
+      
+
+      <ButtonToggleGroup
+          highlightBackgroundColor={'blue'}
+          highlightTextColor={'white'}
+          inactiveBackgroundColor={'transparent'}
+          inactiveTextColor={'grey'}
+          values={['Flexion', 'Extension']}
+          onSelect={val => setSelectedLanguage(val.toLowerCase())}
+      />
+
     </View>
       {/* <View style={styles.container}>
       <Switch

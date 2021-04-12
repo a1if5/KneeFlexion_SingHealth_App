@@ -18,3 +18,9 @@ Set Up of Picker Custom Button (https://github.com/lawnstarter/react-native-pick
 Set Up of notifications
 1) expo install expo-notifications
 
+Set Up of Graphs
+1) npm i react-native-chart-kit
+
+
+Set Up Toggle Group
+1) npm i --save react-native-button-toggle-group
