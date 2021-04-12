@@ -987,7 +987,9 @@ const Graph = ({ navigation, route }) => {
           highlightBackgroundColor={'blue'}
           highlightTextColor={'white'}
           inactiveBackgroundColor={'transparent'}
-          inactiveTextColor={'grey'}
+          inactiveTextColor= {'grey'}
+          style={{ }}
+          textStyle={{fontSize:30}}
           values={['Flexion', 'Extension']}
           onSelect={val => setSelectedLanguage(val.toLowerCase())}
       />
