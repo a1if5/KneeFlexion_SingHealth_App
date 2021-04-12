@@ -10,7 +10,11 @@ import {
   FlatList,
   Image,
   Alert,
+  Button,
+  Platform,
 } from "react-native";
+import { Dimensions,Switch } from 'react-native';
+const screenWidth = Dimensions.get("window").width;
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -27,6 +31,18 @@ import {
   Agenda,
   calendarTheme,
 } from "react-native-calendars";
+import {
+  LineChart,
+  BarChart,
+  PieChart,
+  ProgressChart,
+  ContributionGraph,
+  StackedBarChart
+} from "react-native-chart-kit";
+import { withOrientation } from "react-navigation";
+import { Picker } from '@react-native-picker/picker';
+
+
 
 //To handle all the pages
 const Stack = createStackNavigator();
@@ -39,6 +55,33 @@ const userInfo = SQLite.openDatabase("userInfo.db");
 //Database for user gender (Percentile)
 const userGender = SQLite.openDatabase("userGender.db");
 
+// function rest() {
+//   db.transaction((tx) => {
+//     tx.executeSql(`DROP TABLE items`)
+//   });
+// };
+
+// function rest1() {
+//   db1.transaction((tx1) => {
+//     tx1.executeSql(`DROP TABLE iitems`)
+//   });
+// };
+
+// rest();
+// rest1();
+
+var xx = [];
+var xxx = [];
+var xxxx = [];
+flexionAprilCall();
+flexionMarchCall();
+flexionMayCall();
+var yy = [];
+var yyy = [];
+var yyyy = [];
+extensionAprilCall();
+extensionMarchCall();
+extensionMayCall();
 //Main controller
 const Goniometer_App = () => {
   return (
@@ -91,6 +134,11 @@ const Goniometer_App = () => {
           component={GuidePage}
           options={{ title: "GUIDE" }}
         />
+        <Stack.Screen
+          name="Graph"
+          component={Graph}
+          options={{ title: "HISTORY CHART" }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -124,6 +172,31 @@ const GuidePage = ({ navigation, route }) => {
       </Text>
     </View>
   );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // async function schedulePushNotification() {
   //   x = 0;
   //   if (x == 1) {
@@ -293,7 +366,7 @@ const CalenderDataPage = ({ navigation, route }) => {
   };
   const [forceUpdate, forceUpdateId] = useForceUpdate();
 
-  const renderItem = (item) => {
+  const renderItem = (x) => {
     return (
       <TouchableOpacity style={{ marginRight: 10, marginTop: 17 }}>
         <Card>
@@ -306,12 +379,12 @@ const CalenderDataPage = ({ navigation, route }) => {
               }}
             >
               <Text>
-                Date: {item.dat}
+                Date: {x.dat}
                 {"\n"}
                 {"\n"}
-                Flexion: {item.name} {"\n"}
+                Flexion: {x.name} {"\n"}
                 {"\n"}
-                Extension: {item.name1}
+                Extension: {x.name1}
               </Text>
               {/* <Avatar.Text label="DONE" /> */}
             </View>
@@ -404,7 +477,7 @@ const UserData = ({ navigation, route }) => {
       <Text style={{ textAlign: "center", fontSize: 40 }}>Admin Setup</Text>
       <View style={styles.pickerContainer}>
         <Text style={{ textAlign: "center", fontSize: 40 }}>Week</Text>
-<Text></Text>
+        <Text></Text>
         <RNPickerSelect
           // onValueChange={(itemValue) => setSelectedValue(itemValue)}
           // (itemValue) => setSelectedValue(itemValue)
@@ -508,6 +581,12 @@ const HomeScreen = ({ navigation, route }) => {
         link: "UserData",
         image: "https://img.icons8.com/windows/64/000000/microsoft-admin.png",
       },
+      {
+        id: 5,
+        title: "Graph",
+        link: "Graph",
+        image: "https://img.icons8.com/material-rounded/64/000000/graph.png",
+      },
     ],
   };
 
@@ -520,7 +599,6 @@ const HomeScreen = ({ navigation, route }) => {
   const clickEventListenerMeasurement = (item) => {
     navigation.navigate(item, { name: item });
   };
-
   return (
     <View style={pp.container}>
       <View>
@@ -570,31 +648,483 @@ const HomeScreen = ({ navigation, route }) => {
     </View>
   );
 };
+async function flexionApril() {
+  var total = 0;
+  var finals = 0;
+  return new Promise((resolve, reject) => {
+    db.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM items WHERE value LIKE ?`,
+        ["2021-04%"],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function flexionMarch() {
+  var total = 0;
+  var finals = 0;
+  return new Promise((resolve, reject) => {
+    db.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM items WHERE value LIKE ?`,
+        ["2021-03%"],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          if (len1 > 0) {
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function flexionMay() {
+  var total = 0;
+  var finals = 0;
+  return new Promise((resolve, reject) => {
+    db.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM items WHERE value LIKE ?`,
+        ["2021-05%"],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          if (len1 > 0) {
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function flexionMarchCall() {
+  flexionMarch().then((val) => xxx = val);
+}
+async function flexionAprilCall() {
+  flexionApril().then((val) => xx = val);
+}
+async function flexionMayCall() {
+  flexionMay().then((val) => xxxx = val);
+}
+async function extensionApril() {
+  var total = 0;
+  var finals = 0;
+  return new Promise((resolve, reject) => {
+    db1.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM iitems WHERE value LIKE ?`,
+        ["2021-04%"],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function extensionMarch() {
+  var total = 0;
+  var finals = 0;
+  return new Promise((resolve, reject) => {
+    db1.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM iitems WHERE value LIKE ?`,
+        ["2021-03%"],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          if (len1 > 0) {
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function extensionMay() {
+  var total = 0;
+  var finals = 0;
+  return new Promise((resolve, reject) => {
+    db1.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM iitems WHERE value LIKE ?`,
+        ["2021-05%"],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          if (len1 > 0) {
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function extensionMarchCall() {
+  extensionMarch().then((val) => yyy = val);
+}
+async function extensionAprilCall() {
+  extensionApril().then((val) => yy = val);
+}
+async function extensionMayCall() {
+  extensionMay().then((val) => yyyy = val);
+}
+
+
+
+function rr() {
+  return (
+    <View>
+      <Text style={{ textAlign: "center", fontSize: 40 }}>Knee Extension</Text>
+      <Text>
+            
+            </Text>
+      <LineChart
+        data={{
+          labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11"],
+          datasets: [
+            {
+              data: [98, 99, 100, 103, 105, 110, 113, 115, 116, 117, 117],
+            }
+          ],
+          // legend: ["Knee Extension"]
+        }}
+        width={Dimensions.get("window").width} // from react-native
+      height={700}
+      yAxisLabel=""
+      yAxisSuffix="°"
+      yAxisInterval={1} // optional, defaults to 1
+      chartConfig={{
+        backgroundColor: "#e26a00",
+        backgroundGradientFrom: "#1d807b",
+        backgroundGradientTo: "#1d807b",
+        decimalPlaces: 1, // optional, defaults to 2dp
+        color: () => `rgba(255, 255, 255)`,
+        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        style: {
+          borderRadius: 2,
+        },
+        propsForDots: {
+          r: "8",
+          strokeWidth: "4",
+          stroke: "#9cd9d7"
+        }
+      }}
+        bezier
+        style={{
+          marginVertical: 8,
+          borderRadius: 16
+        }}
+      />
+    </View>
+  )
+}
+
+function rrr() {
+  return (
+  <View>
+          <Text style={{ textAlign: "center", fontSize: 40 }}>Knee Flexion</Text>
+          <Text>
+
+          </Text>
+
+    <LineChart
+      data={{
+        labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11"],
+        datasets: [
+          {
+            // data: [60, xx[0],0,0,0,0,0,0,0,0,0],
+            data: [100, 102, 104, 105, 105, 106, 104, 105, 105, 106, 106],
+            strokeWidth: 4,
+
+          },
+        ],
+      }}
+      width={Dimensions.get("window").width} // from react-native
+      height={700}
+      yAxisLabel=""
+      yAxisSuffix="°"
+      yAxisInterval={1} // optional, defaults to 1
+      chartConfig={{
+        backgroundColor: "#e26a00",
+        backgroundGradientFrom: "#1d807b",
+        backgroundGradientTo: "#1d807b",
+        decimalPlaces: 1, // optional, defaults to 2dp
+        color: () => `rgba(255, 255, 255)`,
+        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        style: {
+          borderRadius: 2,
+        },
+        propsForDots: {
+          r: "8",
+          strokeWidth: "4",
+          stroke: "#9cd9d7"
+        }
+      }}
+    bezier
+    style={{
+      marginVertical: 0,
+      borderRadius: 16
+    }}
+    />
+  </View>
+  )
+}
+
+const Graph = ({ navigation, route }) => {
+  console.log(xx);
+  const [selectedLanguage, setSelectedLanguage] = useState();
+
+  console.log(yy);
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
+  return (
+
+    <ScrollView>
+      {/* {selectedLanguage="extension"} */}
+
+      {/* <Button title = "Extension" onPress={()=>setSelectedLanguage("extension")}></Button>
+      <Button title = "Flexion" onPress={()=>setSelectedLanguage("flexion")}></Button> */}
+      <View>
+        <Text>
+
+        </Text>
+      <TouchableOpacity 
+      style={styles.SubmitButtonStyle} 
+      onPress={()=>setSelectedLanguage("flexion")}> 
+      <Text style={styles.TextStyleButton}>Flexion</Text>
+      </TouchableOpacity>
+      <Text>
+          
+        </Text>
+      <TouchableOpacity 
+      style={styles.SubmitButtonStyle} 
+      onPress={()=>setSelectedLanguage("extension")}> 
+      <Text style={styles.TextStyleButton}>Extension</Text>
+      </TouchableOpacity>
+      <Text>
+          
+        </Text>
+    </View>
+      {/* <View style={styles.container}>
+      <Switch
+        trackColor={{ false: "#767577", true: "#81b0ff" }}
+        thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+        ios_backgroundColor="#3e3e3e"
+        onValueChange={toggleSwitch,
+          () =>
+          setSelectedLanguage("extension")}
+        value={isEnabled}
+      />
+    </View> */}
+            {/* <Picker
+        selectedValue={selectedLanguage}
+        onValueChange={(itemValue, itemIndex) =>
+          setSelectedLanguage(itemValue)
+        }>
+        <Picker.Item label="Knee Extension" value="extension" />
+        <Picker.Item label="Knee Flexion" value="flexion" />
+      </Picker> */}
+      <View>
+        {selectedLanguage == 'extension' ? rr() : rrr()}
+      </View>
+      {/* <Text style={{ textAlign: "center", fontSize: 40 }}>Knee Extension</Text>
+      <LineChart
+        data={{
+          labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11"],
+          datasets: [
+            {
+              data: [50, xx[0], 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            }
+          ],
+          // legend: ["Knee Extension"]
+        }}
+        width={Dimensions.get("window").width} // from react-native
+        height={300}
+        yAxisLabel=""
+        yAxisSuffix="°"
+        yAxisInterval={1} // optional, defaults to 1
+        chartConfig={{
+          backgroundColor: "#e26a00",
+          backgroundGradientFrom: "#9cd9d7",
+          backgroundGradientTo: "#9cd9d7",
+          decimalPlaces: 1, // optional, defaults to 2dp
+          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+          labelColor: (opacity = 1) => `rgba(30, 30, 30, ${opacity})`,
+          style: {
+            borderRadius: 16
+          },
+          propsForDots: {
+            r: "6",
+            strokeWidth: "2",
+            stroke: "#67f5f0"
+          }
+        }}
+        bezier
+        style={{
+          marginVertical: 8,
+          borderRadius: 16
+        }}
+      />
+      <Text>
+
+      </Text>
+      <Text style={{ textAlign: "center", fontSize: 40 }}>Knee Flexion</Text>
+      <LineChart
+        data={{
+          labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11"],
+          datasets: [
+            {
+              // data: [60, xx[0],0,0,0,0,0,0,0,0,0],
+              data: [98, 99, 100, 103, 105, 110, 113, 115, 116, 117, 117],
+              strokeWidth: 4,
+
+            },
+            {
+              // data: [60, xx[0],0,0,0,0,0,0,0,0,0],
+              data: [100, 102, 104, 105, 105, 106, 104, 105, 105, 106, 106],
+              strokeWidth: 4,
+              color: (opacity = 1) => `rgba(255,0,0,${opacity})`
+
+            }
+          ],
+          legend: ['yolo', 'yolo'],
+        }}
+        width={Dimensions.get("window").width} // from react-native
+        height={300}
+        yAxisLabel=""
+        yAxisSuffix="°"
+        yAxisInterval={1} // optional, defaults to 1
+        chartConfig={{
+          backgroundColor: "#e26a00",
+          backgroundGradientFrom: "#1d807b",
+          backgroundGradientTo: "#1d807b",
+          decimalPlaces: 1, // optional, defaults to 2dp
+          color: () => `rgba(255, 255, 255)`,
+          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+          style: {
+            borderRadius: 2,
+          },
+          propsForDots: {
+            r: "8",
+            strokeWidth: "4",
+            stroke: "#9cd9d7"
+          }
+        }}
+      // bezier
+      // style={{
+      //   marginVertical: 8,
+      //   borderRadius: 16
+      // }}
+      /> */}
+    </ScrollView>
+  );
+};
 
 const Contact = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
 
-<Image source={require('./sgh-logo.png')} />
-<Text>
-  
-</Text>
-<Text>
-    </Text>
-    <Text style={{ textAlign: "center", fontSize: 20 }}>General Enquiries: {"\n"}+65 6222 3322</Text>
-    <Text>
-    </Text>
-    <Text style={{ textAlign: "center", fontSize: 20 }}>Address: {"\n"}Outram Road
-Singapore 169608
+      <Image source={require('./sgh-logo.png')} />
+      <Text>
+      </Text>
+      <Text>
+      </Text>
+      <Text style={{ textAlign: "center", fontSize: 20 }}>General Enquiries: {"\n"}+65 6222 3322</Text>
+      <Text>
+      </Text>
+      <Text style={{ textAlign: "center", fontSize: 20 }}>Address: {"\n"}Outram Road Singapore 169608
 
 </Text>
-    
     </View>
   );
 };
 
+
 //FormSG Page
 const FormSG = ({ navigation, route }) => {
+  flexionAprilCall();
+  flexionMarchCall();
+  flexionMayCall();
+  extensionAprilCall();
+  extensionMarchCall();
+  extensionMayCall();
   return (
     <WebView
       source={{ uri: "https://form.gov.sg/#!/603c3ca2b3f2b10012a03bc4" }}
@@ -656,8 +1186,8 @@ const Goniometer = ({ navigation, route }) => {
       (tx) => {
         tx.executeSql("insert into items (done, value) values (0, ?)", [
           moment().utcOffset("+08:00").format("YYYY-MM-DD") +
-            " Flexion:    " +
-            text,
+          " Flexion:    " +
+          text,
         ]);
         tx.executeSql("select * from items", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
@@ -678,8 +1208,8 @@ const Goniometer = ({ navigation, route }) => {
       (tx) => {
         tx.executeSql("insert into iitems (done, value) values (0, ?)", [
           moment().utcOffset("+08:00").format("YYYY-MM-DD") +
-            " Extension:    " +
-            text,
+          " Extension:    " +
+          text,
         ]);
         tx.executeSql("select * from iitems", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
@@ -1353,6 +1883,13 @@ const pp = StyleSheet.create({
     flex: 1,
     alignSelf: "center",
     color: "#696969",
+  },
+});
+const styless = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
 });
 
