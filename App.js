@@ -158,19 +158,21 @@ const GuidePage = ({ navigation, route }) => {
     setPlaying((prev) => !prev);
   }, []);
   return (
-    <View style={styles.youtubeplayer}>
+    <View >
+<Text>
+  </Text>       
+   <Text style={{ textAlign: "center", fontSize: 40 }}>
+          {" "}
+          Exercise Video
+      </Text>
+      <Text>
+  </Text>  
       <YoutubePlayer
         height={300}
         play={playing}
-        videoId={"1cOcZcKhSJY"}
+        videoId={"yL5maSn3M-g"}
         onChangeState={onStateChange}
       />
-      <Text style={styles.baseText}>
-        <Text style={styles.guideContent}>
-          {" "}
-          Tutorial on using the measurement app
-        </Text>
-      </Text>
     </View>
   );
 
