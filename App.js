@@ -850,8 +850,8 @@ async function extensionMayCall() {
 
 function rr() {
   return (
-    <View>
-      <Text style={{ textAlign: "center", fontSize: 40 }}>Knee Extension</Text>
+    <View style={{backgroundColor:"white"}}>
+      <Text style={{backgroundColor:"white", textAlign: "center", fontSize: 40 }}>Knee Extension</Text>
       <Text>
             
             </Text>
@@ -860,37 +860,37 @@ function rr() {
           labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11"],
           datasets: [
             {
-              data: [98, 99, 100, 103, 105, 110, 113, 115, 116, 117, 117],
+              data: [10, 10, 9.5, 9, 8.8, 8.3, 7, 6.5, 6, 5.6, 5],
             }
           ],
           // legend: ["Knee Extension"]
         }}
         width={Dimensions.get("window").width} // from react-native
-      height={700}
+      height={850}
       yAxisLabel=""
       yAxisSuffix="°"
       yAxisInterval={1} // optional, defaults to 1
       chartConfig={{
         backgroundColor: "#e26a00",
-        backgroundGradientFrom: "#1d807b",
-        backgroundGradientTo: "#1d807b",
+        backgroundGradientFrom: "#ffffff",
+        backgroundGradientTo: "#ffffff",
         decimalPlaces: 1, // optional, defaults to 2dp
-        color: () => `rgba(255, 255, 255)`,
-        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        color: () => `rgba(62, 107, 106)`,
+        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         style: {
           borderRadius: 2,
         },
         propsForDots: {
           r: "8",
-          strokeWidth: "4",
+          strokeWidth: "2",
           stroke: "#9cd9d7"
         }
       }}
-        bezier
-        style={{
-          marginVertical: 8,
-          borderRadius: 16
-        }}
+        // bezier
+        // style={{
+        //   marginVertical: 8,
+        //   borderRadius: 16
+        // }}
       />
     </View>
   )
@@ -898,8 +898,8 @@ function rr() {
 
 function rrr() {
   return (
-  <View>
-          <Text style={{ textAlign: "center", fontSize: 40 }}>Knee Flexion</Text>
+  <View style={{backgroundColor:"white"}}>
+          <Text style={{ backgroundColor:"white", textAlign: "center", fontSize: 40 }}>Knee Flexion</Text>
           <Text>
 
           </Text>
@@ -910,38 +910,38 @@ function rrr() {
         datasets: [
           {
             // data: [60, xx[0],0,0,0,0,0,0,0,0,0],
-            data: [100, 102, 104, 105, 105, 106, 104, 105, 105, 106, 106],
+            data: [105, 106, 107, 107.5, 108, 109, 109.5, 110, 110.2, 110.3, 110.5],
             strokeWidth: 4,
 
           },
         ],
       }}
       width={Dimensions.get("window").width} // from react-native
-      height={700}
+      height={850}
       yAxisLabel=""
       yAxisSuffix="°"
       yAxisInterval={1} // optional, defaults to 1
       chartConfig={{
         backgroundColor: "#e26a00",
-        backgroundGradientFrom: "#1d807b",
-        backgroundGradientTo: "#1d807b",
+        backgroundGradientFrom: "#ffffff",
+        backgroundGradientTo: "#ffffff",
         decimalPlaces: 1, // optional, defaults to 2dp
-        color: () => `rgba(255, 255, 255)`,
-        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        color: () => `rgba(62, 107, 106)`,
+        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         style: {
           borderRadius: 2,
         },
         propsForDots: {
           r: "8",
-          strokeWidth: "4",
+          strokeWidth: "2",
           stroke: "#9cd9d7"
         }
       }}
-    bezier
-    style={{
-      marginVertical: 0,
-      borderRadius: 16
-    }}
+    // bezier
+    // style={{
+    //   marginVertical: 0,
+    //   borderRadius: 16
+    // }}
     />
   </View>
   )
@@ -962,7 +962,7 @@ const Graph = ({ navigation, route }) => {
 
       {/* <Button title = "Extension" onPress={()=>setSelectedLanguage("extension")}></Button>
       <Button title = "Flexion" onPress={()=>setSelectedLanguage("flexion")}></Button> */}
-      <View>
+      <View style={{backgroundColor:"white"}}>
         <Text>
 
         </Text>
