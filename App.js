@@ -57,7 +57,16 @@ const db1 = SQLite.openDatabase("db1.db");
 const userInfo = SQLite.openDatabase("userInfo.db");
 //Database for user gender (Percentile)
 const userGender = SQLite.openDatabase("userGender.db");
+//Database for NRIC
+const userNRIC = SQLite.openDatabase("userNRIC.db");
 
+
+// function restNRIC() {
+//   userNRIC.transaction((tx) => {
+//     tx.executeSql(`DROP TABLE userNRIC`)
+//   });
+// };
+// restNRIC();
 // function rest() {
 //   db.transaction((tx) => {
 //     tx.executeSql(`DROP TABLE items`)
@@ -72,7 +81,31 @@ const userGender = SQLite.openDatabase("userGender.db");
 
 // rest();
 // rest1();
-
+var nricUser = [];
+nricAsyncCall();
+async function nricAsync() {
+  var total = "";
+  return new Promise((resolve, reject) => {
+    userNRIC.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM userNRIC ORDER BY id DESC LIMIT ?`,
+        ["1"],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          if (len1 > 0) {           
+              total = results1.rows.item(0).value;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function nricAsyncCall() {
+  nricAsync().then((val) => nricUser = val);
+}
 var xx = [];
 var xxx = [];
 var xxxx = [];
@@ -413,11 +446,13 @@ const CalenderDataPage = ({ navigation, route }) => {
 
 //Admin Page
 const UserData = ({ navigation, route }) => {
-  const [text, setText] = React.useState(null);
+  // const [text, setText] = React.useState(null);
   const [forceUpdate, forceUpdateId] = useForceUpdate();
   const [forceUpdate1, forceUpdateId1] = useForceUpdate();
+  // const [nric, setSelectedNRICValue] = useState("");
   const [selectedValue, setSelectedValue] = useState("2");
   const [selectedGenderValue, setSelectedGenderValue] = useState("Male");
+  const [text, onChangeText] = React.useState(null);
   //user week data
   React.useEffect(() => {
     userInfo.transaction((tx) => {
@@ -431,6 +466,14 @@ const UserData = ({ navigation, route }) => {
     userGender.transaction((tx) => {
       tx.executeSql(
         "create table if not exists userGender (id integer primary key not null, done int, value text);"
+      );
+    });
+  }, []);
+  //User NRIC data
+  React.useEffect(() => {
+    userNRIC.transaction((tx) => {
+      tx.executeSql(
+        "create table if not exists userNRIC (id integer primary key not null, done int, value text);"
       );
     });
   }, []);
@@ -475,11 +518,46 @@ const UserData = ({ navigation, route }) => {
       forceUpdate1
     );
   };
+  const addNRIC = (text) => {
+    var text = text;
+    if (text === null || text === "") {
+      alert("Invalid Input!");
+      return false;
+    }
+
+    userNRIC.transaction(
+      (tx) => {
+        tx.executeSql("insert into userNRIC (done, value) values (0, ?)", [
+          text,
+        ]);
+        tx.executeSql("select * from userNRIC", [], (_, { rows }) =>
+          console.log(JSON.stringify(rows))
+        );
+      },
+      null,
+      forceUpdate1
+    );
+  };
 
   return (
     <View style={styles.container}>
       <Text></Text>
       <Text style={{ textAlign: "center", fontSize: 40 }}>Admin Setup</Text>
+      <Text></Text>
+      <View style={styles.pickerContainerGender}>
+        <Text style={{ textAlign: "center", fontSize: 40 }}>NRIC</Text>
+        <Text></Text>
+        <TextInput
+        placeholder="S0000000N"
+          style={inpttext.input}
+          onSubmitEditing={(nric) => {
+            addNRIC(nric.nativeEvent.text);
+            onChangeText(nric.nativeEvent.text);
+            console.log(nric.nativeEvent.text);
+          }}
+          // value={text}
+        />
+      </View>
       <View style={styles.pickerContainer}>
         <Text style={{ textAlign: "center", fontSize: 40 }}>Week</Text>
         <Text></Text>
@@ -523,6 +601,7 @@ const UserData = ({ navigation, route }) => {
           style={stylePicker}
         />
       </View>
+      
     </View>
     // <ScrollView style={a.listArea}>
     //   <Items
@@ -1153,9 +1232,21 @@ const FormSG = ({ navigation, route }) => {
   extensionAprilCall();
   extensionMarchCall();
   extensionMayCall();
+  nricAsyncCall();
+
+  const { flexData } = (route.params);
+  const { extenData } = (route.params);
+  console.log(flexData);
+
   const x = route.params.paramKey;
   const flexStr = "Flexion: " + x;
   const extenStr = "Extension: " + x;
+  const nricVal = String(nricUser[0]);
+  console.log(nricVal);
+  const flexx = parseInt(flexData);
+  console.log(flexx);
+
+
   // const runFirst = `
   //     document.getElementById('603c3d41526b9e00127a488f') = '4';
   //     document.body.style.backgroundColor = 'red';
@@ -1163,10 +1254,14 @@ const FormSG = ({ navigation, route }) => {
   //     true; 
   //   `; 
 
-    const runFirst = `setTimeout(function() {document.getElementById('603c3d41526b9e00127a488f').value = '${x}';}, 100)`;
+  const runFirst = `setTimeout(function() {
+    document.getElementById('603c3ccc399059001247a1ee').value = '${nricVal}';
+    document.getElementById('603c3d41526b9e00127a488f').value = '${flexx}';
+    document.getElementById('603c3d5a7d837800126d12f7').value = '${extenData}';
+  }, 200)`;
 
-      // document.querySelector("#\\36 03c3d41526b9e00127a488f") = '4';
-    // document.querySelector("#\\36 03c3d41526b9e00127a488f")
+  // document.querySelector("#\\36 03c3d41526b9e00127a488f") = '4';
+  // document.querySelector("#\\36 03c3d41526b9e00127a488f")
   // const amt = 2;
   // const x = document.getElementById('603c3d41526b9e00127a488f').value = '${amt}';
   return (
@@ -1178,22 +1273,22 @@ const FormSG = ({ navigation, route }) => {
     //   Extension: {route.params.paramKey}
     //   </Text>
     <WebView
-    javaScriptEnabled={true}  
+      javaScriptEnabled={true}
       source={{ uri: "https://form.gov.sg/#!/603c3ca2b3f2b10012a03bc4" }}
-      onMessage={(event) => {}}
-      injectedJavaScript = {runFirst}
-      style={{flex:1}}
+      onMessage={(event) => { }}
+      injectedJavaScript={runFirst}
+      style={{ flex: 1 }}
       javaScriptEnabled
-      // true
-      // injectedJavaScript={`(
-      //   function(){
-      //   document.getElementById('603c3d41526b9e00127a488f').value = '4';
-      //   document.getElementById('603c3d5a7d837800126d12f7').value = '7';
-      //   }
-      // ());`}
-      // injectedJavaScript={x}
+    // true
+    // injectedJavaScript={`(
+    //   function(){
+    //   document.getElementById('603c3d41526b9e00127a488f').value = '4';
+    //   document.getElementById('603c3d5a7d837800126d12f7').value = '7';
+    //   }
+    // ());`}
+    // injectedJavaScript={x}
     />
-        // </View>
+    // </View>
   );
 };
 
@@ -1488,8 +1583,8 @@ const Goniometer = ({ navigation, route }) => {
       );
     });
   }
-const [val, setVal] = useState('AboutReact');
-const [vals, setVals] = useState('AboutReacts');
+  const [val, setVal] = useState('AboutReact');
+  const [vals, setVals] = useState('AboutReacts');
 
   return (
 
@@ -1593,8 +1688,8 @@ const [vals, setVals] = useState('AboutReacts');
           {flexionDegree != 0 && extensionDegree != 0 ? (
             <TouchableOpacity
               onPress={() => navigation.navigate("FormSG", {
-                paramKey: val,
-                paramKey: vals,
+                flexData: val,
+                extenData: vals,
                 name: "FormSG",
                 flex: 1,
               })}
@@ -1897,6 +1992,34 @@ const stylePercentile = StyleSheet.create({
     paddingLeft: 20,
   },
 });
+
+const inpttext = StyleSheet.create({
+  container: {
+    paddingTop: 23
+  },
+  input: {
+    marginTop: 6,
+    fontSize: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 2,
+    borderColor: "#2B6D6A",
+    borderRadius: 8,
+    fontWeight: "bold",
+    color: "#2B6D6A",
+    paddingRight: 30, // to ensure the text is never behind the icon
+    textAlign: "center",
+  },
+  submitButton: {
+    backgroundColor: '#7a42f4',
+    padding: 10,
+    margin: 15,
+    height: 40,
+  },
+  submitButtonText: {
+    color: 'white'
+  }
+})
 
 const pp = StyleSheet.create({
   container: {
