@@ -13,7 +13,7 @@ import {
   Button,
   Platform,
 } from "react-native";
-import { Dimensions,Switch } from 'react-native';
+import { Dimensions, Switch } from 'react-native';
 const screenWidth = Dimensions.get("window").width;
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
@@ -42,6 +42,8 @@ import {
 import { withOrientation } from "react-navigation";
 import { Picker } from '@react-native-picker/picker';
 import ButtonToggleGroup from 'react-native-button-toggle-group';
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+
 
 
 
@@ -77,9 +79,9 @@ var xxxx = [];
 flexionAprilCall();
 flexionMarchCall();
 flexionMayCall();
-var yy = [];
-var yyy = [];
-var yyyy = [];
+var apr = [];
+var mar = [];
+var may = [];
 extensionAprilCall();
 extensionMarchCall();
 extensionMayCall();
@@ -159,14 +161,14 @@ const GuidePage = ({ navigation, route }) => {
   }, []);
   return (
     <View >
-<Text>
-  </Text>       
-   <Text style={{ textAlign: "center", fontSize: 40 }}>
-          {" "}
+      <Text>
+      </Text>
+      <Text style={{ textAlign: "center", fontSize: 40 }}>
+        {" "}
           Exercise Video
       </Text>
       <Text>
-  </Text>  
+      </Text>
       <YoutubePlayer
         height={300}
         play={playing}
@@ -607,7 +609,7 @@ const HomeScreen = ({ navigation, route }) => {
       <View>
         <TouchableOpacity
           onPress={() => {
-            clickEventListenerMeasurement(Goniometer);
+            clickEventListenerMeasurement("Goniometer");
           }}
           style={styles.NavigateMeasurement}
         >
@@ -839,60 +841,73 @@ async function extensionMay() {
   });
 }
 async function extensionMarchCall() {
-  extensionMarch().then((val) => yyy = val);
+  extensionMarch().then((val) => mar = val);
 }
 async function extensionAprilCall() {
-  extensionApril().then((val) => yy = val);
+  extensionApril().then((val) => apr = val);
 }
 async function extensionMayCall() {
-  extensionMay().then((val) => yyyy = val);
+  extensionMay().then((val) => may = val);
 }
 
 
 
 function rr() {
   return (
-    <View style={{backgroundColor:"white"}}>
-      <Text style={{backgroundColor:"white", textAlign: "center", fontSize: 40 }}>Knee Extension</Text>
+    <View style={{ backgroundColor: "white" }}>
+      <Text></Text>
+      <Text style={{ backgroundColor: "white", textAlign: "center", fontSize: 40 }}>Knee Extension</Text>
       <Text>
-            
-            </Text>
+
+      </Text>
       <LineChart
         data={{
-          labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11"],
+          labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11", "w12"],
           datasets: [
             {
-              data: [10, 10, 9.5, 9, 8.8, 8.3, 7, 6.5, 6, 5.6, 5],
+              data: [
+                0,
+                0,
+                mar[0] ? mar[0] : 0,
+                apr[0] ? apr[0] : 0,
+                may[0] ? may[0] : 0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0],
             }
           ],
           // legend: ["Knee Extension"]
         }}
         width={Dimensions.get("window").width} // from react-native
-      height={850}
-      yAxisLabel=""
-      yAxisSuffix="°"
-      yAxisInterval={1} // optional, defaults to 1
-      chartConfig={{
-        backgroundColor: "#e26a00",
-        backgroundGradientFrom: "#ffffff",
-        backgroundGradientTo: "#ffffff",
-        decimalPlaces: 1, // optional, defaults to 2dp
-        color: () => `rgba(62, 107, 106)`,
-        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        style: {
-          borderRadius: 2,
-        },
-        propsForDots: {
-          r: "8",
-          strokeWidth: "2",
-          stroke: "#9cd9d7"
-        }
-      }}
-        // bezier
-        // style={{
-        //   marginVertical: 8,
-        //   borderRadius: 16
-        // }}
+        height={850}
+        yAxisLabel=""
+        yAxisSuffix="°"
+        yAxisInterval={1} // optional, defaults to 1
+        chartConfig={{
+          backgroundColor: "#e26a00",
+          backgroundGradientFrom: "#ffffff",
+          backgroundGradientTo: "#ffffff",
+          decimalPlaces: 1, // optional, defaults to 2dp
+          color: () => `rgba(62, 107, 106)`,
+          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          style: {
+            borderRadius: 2,
+          },
+          propsForDots: {
+            r: "8",
+            strokeWidth: "2",
+            stroke: "#9cd9d7"
+          }
+        }}
+      // bezier
+      // style={{
+      //   marginVertical: 8,
+      //   borderRadius: 16
+      // }}
       />
     </View>
   )
@@ -900,60 +915,58 @@ function rr() {
 
 function rrr() {
   return (
-  <View style={{backgroundColor:"white"}}>
-          <Text style={{ backgroundColor:"white", textAlign: "center", fontSize: 40 }}>Knee Flexion</Text>
-          <Text>
+    <View style={{ backgroundColor: "white" }}>
+      <Text style={{ backgroundColor: "white", textAlign: "center", fontSize: 40 }}>Knee Flexion</Text>
+      <Text>
+      </Text>
+      <LineChart
+        data={{
+          labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11", "w12"],
+          datasets: [
+            {
+              // data: [60, xx[0],0,0,0,0,0,0,0,0,0],
+              data: [105, 106, 107, 107.5, 108, 109, 109.5, 110, 110.2, 110.3, 110.5, 111],
+              strokeWidth: 4,
 
-          </Text>
-
-    <LineChart
-      data={{
-        labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11"],
-        datasets: [
-          {
-            // data: [60, xx[0],0,0,0,0,0,0,0,0,0],
-            data: [105, 106, 107, 107.5, 108, 109, 109.5, 110, 110.2, 110.3, 110.5],
-            strokeWidth: 4,
-
+            },
+          ],
+        }}
+        width={Dimensions.get("window").width} // from react-native
+        height={850}
+        yAxisLabel=""
+        yAxisSuffix="°"
+        yAxisInterval={1} // optional, defaults to 1
+        chartConfig={{
+          backgroundColor: "#e26a00",
+          backgroundGradientFrom: "#ffffff",
+          backgroundGradientTo: "#ffffff",
+          decimalPlaces: 1, // optional, defaults to 2dp
+          color: () => `rgba(62, 107, 106)`,
+          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          style: {
+            borderRadius: 2,
           },
-        ],
-      }}
-      width={Dimensions.get("window").width} // from react-native
-      height={850}
-      yAxisLabel=""
-      yAxisSuffix="°"
-      yAxisInterval={1} // optional, defaults to 1
-      chartConfig={{
-        backgroundColor: "#e26a00",
-        backgroundGradientFrom: "#ffffff",
-        backgroundGradientTo: "#ffffff",
-        decimalPlaces: 1, // optional, defaults to 2dp
-        color: () => `rgba(62, 107, 106)`,
-        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        style: {
-          borderRadius: 2,
-        },
-        propsForDots: {
-          r: "8",
-          strokeWidth: "2",
-          stroke: "#9cd9d7"
-        }
-      }}
-    // bezier
-    // style={{
-    //   marginVertical: 0,
-    //   borderRadius: 16
-    // }}
-    />
-  </View>
+          propsForDots: {
+            r: "8",
+            strokeWidth: "2",
+            stroke: "#9cd9d7"
+          }
+        }}
+      // bezier
+      // style={{
+      //   marginVertical: 0,
+      //   borderRadius: 16
+      // }}
+      />
+    </View>
   )
 }
 
 const Graph = ({ navigation, route }) => {
-  console.log(xx);
+  // console.log(xx);
   const [selectedLanguage, setSelectedLanguage] = useState();
 
-  console.log(yy);
+  // console.log(yy);
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
@@ -964,12 +977,12 @@ const Graph = ({ navigation, route }) => {
 
       {/* <Button title = "Extension" onPress={()=>setSelectedLanguage("extension")}></Button>
       <Button title = "Flexion" onPress={()=>setSelectedLanguage("flexion")}></Button> */}
-      <View style={{backgroundColor:"white"}}>
+      <View style={{ backgroundColor: "white" }}>
         <Text>
 
         </Text>
-      
-      {/*<TouchableOpacity 
+
+        {/*<TouchableOpacity 
       style={styles.SubmitButtonStyle} 
       onPress={()=>setSelectedLanguage("flexion")}> 
       <Text style={styles.TextStyleButton}>Flexion</Text>
@@ -983,20 +996,20 @@ const Graph = ({ navigation, route }) => {
       onPress={()=>setSelectedLanguage("extension")}> 
       <Text style={styles.TextStyleButton}>Extension</Text>
       </TouchableOpacity>*/}
-      
 
-      <ButtonToggleGroup
+
+        <ButtonToggleGroup
           highlightBackgroundColor={'blue'}
           highlightTextColor={'white'}
           inactiveBackgroundColor={'transparent'}
-          inactiveTextColor= {'grey'}
-          style={{ }}
-          textStyle={{fontSize:30}}
+          inactiveTextColor={'grey'}
+          style={{}}
+          textStyle={{ fontSize: 30 }}
           values={['Flexion', 'Extension']}
           onSelect={val => setSelectedLanguage(val.toLowerCase())}
-      />
+        />
 
-    </View>
+      </View>
       {/* <View style={styles.container}>
       <Switch
         trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -1008,7 +1021,7 @@ const Graph = ({ navigation, route }) => {
         value={isEnabled}
       />
     </View> */}
-            {/* <Picker
+      {/* <Picker
         selectedValue={selectedLanguage}
         onValueChange={(itemValue, itemIndex) =>
           setSelectedLanguage(itemValue)
@@ -1140,13 +1153,51 @@ const FormSG = ({ navigation, route }) => {
   extensionAprilCall();
   extensionMarchCall();
   extensionMayCall();
+  const x = route.params.paramKey;
+  const flexStr = "Flexion: " + x;
+  const extenStr = "Extension: " + x;
+  // const runFirst = `
+  //     document.getElementById('603c3d41526b9e00127a488f') = '4';
+  //     document.body.style.backgroundColor = 'red';
+  //     setTimeout(function() { window.alert("${flexStr}") }, 1000);
+  //     true; 
+  //   `; 
+
+    const runFirst = `setTimeout(function() {document.getElementById('603c3d41526b9e00127a488f').value = '${x}';}, 100)`;
+
+      // document.querySelector("#\\36 03c3d41526b9e00127a488f") = '4';
+    // document.querySelector("#\\36 03c3d41526b9e00127a488f")
+  // const amt = 2;
+  // const x = document.getElementById('603c3d41526b9e00127a488f').value = '${amt}';
   return (
+    // <View style={{flex:1}}>
+    //   <Text style={{ textAlign: "center", fontSize: 60 }}>
+    //     Flexion: {route.params.paramKey} 
+    //   </Text>
+    //   <Text style={{ textAlign: "center", fontSize: 60 }}>
+    //   Extension: {route.params.paramKey}
+    //   </Text>
     <WebView
+    javaScriptEnabled={true}  
       source={{ uri: "https://form.gov.sg/#!/603c3ca2b3f2b10012a03bc4" }}
-      injectedJavaScript={`(function(){document.getElementById('603c3d41526b9e00127a488f').value = '4';document.getElementById('603c3d5a7d837800126d12f7').value = '7';}());`}
+      onMessage={(event) => {}}
+      injectedJavaScript = {runFirst}
+      style={{flex:1}}
+      javaScriptEnabled
+      // true
+      // injectedJavaScript={`(
+      //   function(){
+      //   document.getElementById('603c3d41526b9e00127a488f').value = '4';
+      //   document.getElementById('603c3d5a7d837800126d12f7').value = '7';
+      //   }
+      // ());`}
+      // injectedJavaScript={x}
     />
+        // </View>
   );
 };
+
+// const wow = document.getElementById('603c3d41526b9e00127a488f').value = '4';
 
 //Goniometer Page
 const Goniometer = ({ navigation, route }) => {
@@ -1437,8 +1488,11 @@ const Goniometer = ({ navigation, route }) => {
       );
     });
   }
+const [val, setVal] = useState('AboutReact');
+const [vals, setVals] = useState('AboutReacts');
 
   return (
+
     <View style={styles.container}>
       <View>
         <Text style={{ textAlign: "center", fontSize: 60 }}>Knee Range: </Text>
@@ -1502,8 +1556,11 @@ const Goniometer = ({ navigation, route }) => {
         <View style={styles.MainRecordContainer}>
           <TouchableOpacity
             onPress={() => {
-              add(getDegrees(round(beta)));
+              var degr = getDegrees(round(beta));
+              add(degr);
               setFlexionDegree(getDegrees(round(beta)));
+              // add(getDegrees(round(beta)));
+              setVal(degr);
             }}
             style={styles.SubmitButtonRecordStyle}
           >
@@ -1514,8 +1571,11 @@ const Goniometer = ({ navigation, route }) => {
         <View style={styles.MainRecordContainer}>
           <TouchableOpacity
             onPress={() => {
-              add1(getDegrees(round(beta)));
+              var a = getDegrees(round(beta));
+              add1(a);
+              // add1(getDegrees(round(beta)));
               setExtensionDegree(getDegrees(round(beta)));
+              setVals(a);
             }}
             style={styles.SubmitButtonRecordStyle}
           >
@@ -1532,7 +1592,12 @@ const Goniometer = ({ navigation, route }) => {
 
           {flexionDegree != 0 && extensionDegree != 0 ? (
             <TouchableOpacity
-              onPress={() => navigation.navigate("FormSG", { name: "FormSG" })}
+              onPress={() => navigation.navigate("FormSG", {
+                paramKey: val,
+                paramKey: vals,
+                name: "FormSG",
+                flex: 1,
+              })}
               style={styles.SubmitButtonFormStyle}
             >
               <Text style={styles.TextStyleButton}>Submit FormSG</Text>
@@ -1889,12 +1954,13 @@ const pp = StyleSheet.create({
     borderBottomRightRadius: 1,
   },
   cardImage: {
-    height: 50,
-    width: 50,
+    height: 60,
+    width: 60,
     alignSelf: "center",
   },
   title: {
-    fontSize: 18,
+    fontSize: 35,
+    fontWeight: "bold",
     flex: 1,
     alignSelf: "center",
     color: "#696969",
@@ -1905,6 +1971,19 @@ const styless = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between'
+  },
+});
+const duh = StyleSheet.create({
+  welcome: {
+    fontSize: RFValue(24, 580), // second argument is standardScreenHeight(optional),
+    textAlign: "center",
+    margin: 10,
+  },
+  instructions: {
+    textAlign: "center",
+    color: "#333333",
+    marginBottom: 5,
+    fontSize: RFPercentage(5),
   },
 });
 
