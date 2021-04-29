@@ -673,6 +673,40 @@ async function flexionApril() {
     });
   });
 }
+
+// async function flexionApril() {
+//   var total = 0;
+//   var finals = 0;
+//   return new Promise((resolve, reject) => {
+//     db.transaction((tx1) => {
+//       tx1.executeSql(
+//         `SELECT * FROM items WHERE value LIKE ?`,
+//         ["2021-04%"],
+//         (tx1, results1) => {
+//           var len1 = results1.rows.length;
+//           if (len1 > 0) {
+//             // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+//             // count1 = count1 + 1;
+//             // avr1 = total1/count1;
+//             // console.log(avr1);
+//             // console.log(total1);
+//             for (var x = 0; x < len1; x++) {
+//               var ans1 = results1.rows.item(x).value;
+//               var h = ans1.substr(-3);
+//               var num = parseInt(h);
+//               total = total + num;
+//             }
+//             finals = total / len1;
+//             total = finals;
+//             var data = [];
+//             data.push(total);
+//             resolve(data);
+//             return data;
+//           }
+//         });
+//     });
+//   });
+// }
 async function flexionMarch() {
   var total = 0;
   var finals = 0;
@@ -840,6 +874,7 @@ async function extensionMayCall() {
 
 
 function rr() {
+  console.log(weeks[0]);
   return (
     <View style={{ backgroundColor: "white" }}>
       <Text></Text>
@@ -849,7 +884,7 @@ function rr() {
       </Text>
       <LineChart
         data={{
-          labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11", "w12"],
+          labels: [weeks[0], weeks[1], weeks[2],weeks[3],weeks[4], weeks[5], weeks[6], weeks[7], weeks[8], weeks[9], weeks[10], weeks[11]],
           datasets: [
             {
               data: [
