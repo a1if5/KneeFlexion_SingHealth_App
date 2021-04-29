@@ -27,3 +27,6 @@ Set Up of Graphs
 
 Set Up Toggle Group
 1) npm i --save react-native-button-toggle-group
+
+Set Up of StopWatch
+1) npm i react-native-stopwatch-timer
