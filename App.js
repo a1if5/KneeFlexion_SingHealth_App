@@ -61,26 +61,7 @@ const userGender = SQLite.openDatabase("userGender.db");
 const userNRIC = SQLite.openDatabase("userNRIC.db");
 
 
-// function restNRIC() {
-//   userNRIC.transaction((tx) => {
-//     tx.executeSql(`DROP TABLE userNRIC`)
-//   });
-// };
-// restNRIC();
-// function rest() {
-//   db.transaction((tx) => {
-//     tx.executeSql(`DROP TABLE items`)
-//   });
-// };
-
-// function rest1() {
-//   db1.transaction((tx1) => {
-//     tx1.executeSql(`DROP TABLE iitems`)
-//   });
-// };
-
-// rest();
-// rest1();
+//To store user NRIC
 var nricUser = [];
 nricAsyncCall();
 async function nricAsync() {
@@ -182,6 +163,7 @@ const Goniometer_App = () => {
 
 // Guide Page
 const GuidePage = ({ navigation, route }) => {
+
   const [playing, setPlaying] = useState(false);
   const onStateChange = useCallback((state) => {
     if (state === "ended") {
@@ -193,142 +175,24 @@ const GuidePage = ({ navigation, route }) => {
     setPlaying((prev) => !prev);
   }, []);
   return (
-    <View >
+    <View>
       <Text>
       </Text>
       <Text style={{ textAlign: "center", fontSize: 40 }}>
         {" "}
           Exercise Video
       </Text>
+
       <Text>
       </Text>
+      
       <YoutubePlayer
         height={300}
         play={playing}
         videoId={"yL5maSn3M-g"}
-        onChangeState={onStateChange}
-      />
+        onChangeState={onStateChange}/>
     </View>
   );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // async function schedulePushNotification() {
-  //   x = 0;
-  //   if (x == 1) {
-  //     const g = await Notifications.scheduleNotificationAsync({
-  //       content: {
-  //         title: "You've got mail! 📬",
-  //         body: "Here is the notification body",
-  //         data: { data: "goes here" },
-  //       },
-  //       trigger: { seconds: 2 },
-  //     });
-  //     // await Notifications.cancelScheduledNotificationAsync(g);
-  //   }
-  // }
-  //   const [expoPushToken, setExpoPushToken] = useState("");
-  //   const [notification, setNotification] = useState(false);
-  //   const notificationListener = useRef();
-  //   const responseListener = useRef();
-  //   useEffect(() => {
-  //     registerForPushNotificationsAsync().then((token) =>
-  //       setExpoPushToken(token)
-  //     );
-  //     notificationListener.current = Notifications.addNotificationReceivedListener(
-  //       (notification) => {
-  //         setNotification(notification);
-  //       }
-  //     );
-  //     responseListener.current = Notifications.addNotificationResponseReceivedListener(
-  //       (response) => {
-  //         console.log(response);
-  //       }
-  //     );
-  //     return () => {
-  //       Notifications.removeNotificationSubscription(notificationListener);
-  //       Notifications.removeNotificationSubscription(responseListener);
-  //     };
-  //   }, []);
-  //   return (
-  //     <View
-  //       style={{
-  //         flex: 1,
-  //         alignItems: "center",
-  //         justifyContent: "space-around",
-  //       }}
-  //     >
-  //       <Text>Your expo push token: {expoPushToken}</Text>
-  //       <View style={{ alignItems: "center", justifyContent: "center" }}>
-  //         <Text>
-  //           Title: {notification && notification.request.content.title}{" "}
-  //         </Text>
-  //         <Text>Body: {notification && notification.request.content.body}</Text>
-  //         <Text>
-  //           Data:{" "}
-  //           {notification && JSON.stringify(notification.request.content.data)}
-  //         </Text>
-  //       </View>
-  //       <Button
-  //         title="Press to schedule a notification"
-  //         onPress={async () => {
-  //           await schedulePushNotification();
-  //         }}
-  //       />
-  //     </View>
-  //   );
-  // };
-  // async function registerForPushNotificationsAsync() {
-  //   let token;
-  //   if (Constants.isDevice) {
-  //     const {
-  //       status: existingStatus,
-  //     } = await Notifications.getPermissionsAsync();
-  //     let finalStatus = existingStatus;
-  //     if (existingStatus !== "granted") {
-  //       const { status } = await Notifications.requestPermissionsAsync();
-  //       finalStatus = status;
-  //     }
-  //     if (finalStatus !== "granted") {
-  //       alert("Failed to get push token for push notification!");
-  //       return;
-  //     }
-  //     token = (await Notifications.getExpoPushTokenAsync()).data;
-  //     console.log(token);
-  //   } else {
-  //     alert("Must use physical device for Push Notifications");
-  //   }
-  //   if (Platform.OS === "android") {
-  //     Notifications.setNotificationChannelAsync("default", {
-  //       name: "default",
-  //       importance: Notifications.AndroidImportance.MAX,
-  //       vibrationPattern: [0, 250, 250, 250],
-  //       lightColor: "#FF231F7C",
-  //     });
-  //   }
-  //   return token;
 };
 
 //History Page
@@ -389,10 +253,6 @@ const CalenderDataPage = ({ navigation, route }) => {
               }
             );
           });
-          // items[strTime].push({
-          //   name: strTime  + results.rows.item(0).value,
-          //   height: Math.max(50, Math.floor(Math.random() * 150)),
-          // });
         }
       }
       const newItems = {};
@@ -446,10 +306,10 @@ const CalenderDataPage = ({ navigation, route }) => {
 
 //Admin Page
 const UserData = ({ navigation, route }) => {
-  // const [text, setText] = React.useState(null);
+
   const [forceUpdate, forceUpdateId] = useForceUpdate();
   const [forceUpdate1, forceUpdateId1] = useForceUpdate();
-  // const [nric, setSelectedNRICValue] = useState("");
+
   const [selectedValue, setSelectedValue] = useState("2");
   const [selectedGenderValue, setSelectedGenderValue] = useState("Male");
   const [text, onChangeText] = React.useState(null);
@@ -562,8 +422,7 @@ const UserData = ({ navigation, route }) => {
         <Text style={{ textAlign: "center", fontSize: 40 }}>Week</Text>
         <Text></Text>
         <RNPickerSelect
-          // onValueChange={(itemValue) => setSelectedValue(itemValue)}
-          // (itemValue) => setSelectedValue(itemValue)
+
           onValueChange={(itemValue) => {
             add2(itemValue);
             setSelectedValue(itemValue);
@@ -603,36 +462,6 @@ const UserData = ({ navigation, route }) => {
       </View>
       
     </View>
-    // <ScrollView style={a.listArea}>
-    //   <Items
-    //     key={`forceupdate-todo-${forceUpdateId}`}
-    //     done={false}
-    //     onPressItem={(id) =>
-    //       db.transaction(
-    //         (tx) => {
-    //           tx.executeSql(`delete from items where id = ?;`, [id]);
-    //           // tx.executeSql(`update items set done = 1 where id = ?;`, [id]);
-    //         },
-    //         null,
-    //         forceUpdate
-    //       )
-    //     }
-    //   />
-    //   <Iitems
-    //     key={`forceupdate1-todo-${forceUpdateId1}`}
-    //     done={false}
-    //     onPressItem={(id) =>
-    //       db1.transaction(
-    //         (tx) => {
-    //           tx.executeSql(`delete from iitems where id = ?;`, [id]);
-    //           // tx.executeSql(`update items set done = 1 where id = ?;`, [id]);
-    //         },
-    //         null,
-    //         forceUpdate1
-    //       )
-    //     }
-    //   />
-    // </ScrollView>
   );
 };
 
@@ -1054,8 +883,6 @@ const Graph = ({ navigation, route }) => {
     <ScrollView>
       {/* {selectedLanguage="extension"} */}
 
-      {/* <Button title = "Extension" onPress={()=>setSelectedLanguage("extension")}></Button>
-      <Button title = "Flexion" onPress={()=>setSelectedLanguage("flexion")}></Button> */}
       <View style={{ backgroundColor: "white" }}>
         <Text>
 
@@ -1194,11 +1021,7 @@ const Graph = ({ navigation, route }) => {
             stroke: "#9cd9d7"
           }
         }}
-      // bezier
-      // style={{
-      //   marginVertical: 8,
-      //   borderRadius: 16
-      // }}
+
       /> */}
     </ScrollView>
   );
@@ -1247,31 +1070,15 @@ const FormSG = ({ navigation, route }) => {
   console.log(flexx);
 
 
-  // const runFirst = `
-  //     document.getElementById('603c3d41526b9e00127a488f') = '4';
-  //     document.body.style.backgroundColor = 'red';
-  //     setTimeout(function() { window.alert("${flexStr}") }, 1000);
-  //     true; 
-  //   `; 
-
   const runFirst = `setTimeout(function() {
     document.getElementById('603c3ccc399059001247a1ee').value = '${nricVal}';
     document.getElementById('603c3d41526b9e00127a488f').value = '${flexx}';
     document.getElementById('603c3d5a7d837800126d12f7').value = '${extenData}';
   }, 200)`;
 
-  // document.querySelector("#\\36 03c3d41526b9e00127a488f") = '4';
-  // document.querySelector("#\\36 03c3d41526b9e00127a488f")
-  // const amt = 2;
-  // const x = document.getElementById('603c3d41526b9e00127a488f').value = '${amt}';
+
   return (
-    // <View style={{flex:1}}>
-    //   <Text style={{ textAlign: "center", fontSize: 60 }}>
-    //     Flexion: {route.params.paramKey} 
-    //   </Text>
-    //   <Text style={{ textAlign: "center", fontSize: 60 }}>
-    //   Extension: {route.params.paramKey}
-    //   </Text>
+
     <WebView
       javaScriptEnabled={true}
       source={{ uri: "https://form.gov.sg/#!/603c3ca2b3f2b10012a03bc4" }}
@@ -1279,20 +1086,12 @@ const FormSG = ({ navigation, route }) => {
       injectedJavaScript={runFirst}
       style={{ flex: 1 }}
       javaScriptEnabled
-    // true
-    // injectedJavaScript={`(
-    //   function(){
-    //   document.getElementById('603c3d41526b9e00127a488f').value = '4';
-    //   document.getElementById('603c3d5a7d837800126d12f7').value = '7';
-    //   }
-    // ());`}
-    // injectedJavaScript={x}
+
     />
-    // </View>
+
   );
 };
 
-// const wow = document.getElementById('603c3d41526b9e00127a488f').value = '4';
 
 //Goniometer Page
 const Goniometer = ({ navigation, route }) => {
@@ -1311,7 +1110,7 @@ const Goniometer = ({ navigation, route }) => {
     }
     var pitchraw2 = Math.abs(radians_to_degrees(n));
     var pitchtrig = Math.acos(Math.sin(n) / 1.2);
-    var pitch = Math.round(90 + pitchraw2 - radians_to_degrees(pitchtrig)); //Add a plus 10 correction
+    var pitch = Math.round(90 + pitchraw2 - radians_to_degrees(pitchtrig));
 
     return pitch;
   }
@@ -1390,7 +1189,6 @@ const Goniometer = ({ navigation, route }) => {
   const _subscribe = () => {
     setSubscription(
       DeviceMotion.addListener(({ rotation }) => {
-        //const betaVal = orientation
         setData(rotation);
       })
     );
