@@ -43,6 +43,8 @@ import { withOrientation } from "react-navigation";
 import { Picker } from '@react-native-picker/picker';
 import ButtonToggleGroup from 'react-native-button-toggle-group';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 
 
@@ -60,6 +62,22 @@ const userGender = SQLite.openDatabase("userGender.db");
 //Database for NRIC
 const userNRIC = SQLite.openDatabase("userNRIC.db");
 
+var week1;
+var week2;
+var week3;
+var week4;
+var week5;
+var week6;
+var week7;
+var week8;
+var week9;
+var week10;
+var week11;
+var week12;
+
+let weeks = [week1,week2,week3,week4,week5,week6,week7,week8,week9,week10,week11,week12];
+
+
 
 //To store user NRIC
 var nricUser = [];
@@ -73,8 +91,8 @@ async function nricAsync() {
         ["1"],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          if (len1 > 0) {           
-              total = results1.rows.item(0).value;
+          if (len1 > 0) {
+            total = results1.rows.item(0).value;
             var data = [];
             data.push(total);
             resolve(data);
@@ -185,12 +203,12 @@ const GuidePage = ({ navigation, route }) => {
 
       <Text>
       </Text>
-      
+
       <YoutubePlayer
         height={300}
         play={playing}
         videoId={"yL5maSn3M-g"}
-        onChangeState={onStateChange}/>
+        onChangeState={onStateChange} />
     </View>
   );
 };
@@ -398,30 +416,91 @@ const UserData = ({ navigation, route }) => {
       forceUpdate1
     );
   };
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+    var last = new Date(currentDate.getTime() + (7 * 24 * 60 * 60 * 1000));    
+    // console.log(last);
+    var yyyy;
+    var mm;
+    var dd;
+    for (var i = 0; i < 12; i++) {
+    var nextWeek = new Date(currentDate.getTime() + ((i*7) * 24 * 60 * 60 * 1000));    
+    if (nextWeek.getMonth().toString().length == 1) {
+      mm = "0" + nextWeek.getMonth();
+    } else {
+      mm = nextWeek.getMonth();
+    }
+    if (nextWeek.getDate().toString().length == 1) {
+      dd = "0" + nextWeek.getDate();
+    } else {
+      dd = nextWeek.getDate();
+    }
+    yyyy = "20" +  nextWeek.getYear().toString().substring(1,3);
+    var x = yyyy + "-" + mm + "-" + dd;
+    weeks[i] = x;
+    // console.log(weeks[i]);
+    yyyy=null;
+    mm=null;
+    dd=null;
+  }
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode('date');
+  };
+
 
   return (
     <View style={styles.container}>
+
       <Text></Text>
       <Text style={{ textAlign: "center", fontSize: 40 }}>Admin Setup</Text>
       <Text></Text>
       <View style={styles.pickerContainerGender}>
         <Text style={{ textAlign: "center", fontSize: 40 }}>NRIC</Text>
         <Text></Text>
+
         <TextInput
-        placeholder="S0000000N"
+          placeholder="S0000000N"
           style={inpttext.input}
           onSubmitEditing={(nric) => {
             addNRIC(nric.nativeEvent.text);
             onChangeText(nric.nativeEvent.text);
             console.log(nric.nativeEvent.text);
           }}
-          // value={text}
+        // value={text}
         />
       </View>
       <View style={styles.pickerContainer}>
-        <Text style={{ textAlign: "center", fontSize: 40 }}>Week</Text>
+        {/* <Text style={{ textAlign: "center", fontSize: 40 }}>Week</Text> */}
         <Text></Text>
-        <RNPickerSelect
+        <View>
+          <View>
+            <Button onPress={showDatepicker} title="Set Week" />
+          </View>
+
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              display="default"
+              onChange={onChange}
+            />
+          )}
+        </View>
+        {/* <RNPickerSelect
 
           onValueChange={(itemValue) => {
             add2(itemValue);
@@ -438,7 +517,7 @@ const UserData = ({ navigation, route }) => {
             { label: "Week 12", value: "12" },
           ]}
           style={stylePicker}
-        />
+        /> */}
       </View>
       <Text></Text>
       <Text style={{ textAlign: "center", fontSize: 40 }}>Gender</Text>
@@ -460,7 +539,7 @@ const UserData = ({ navigation, route }) => {
           style={stylePicker}
         />
       </View>
-      
+
     </View>
   );
 };
@@ -1028,6 +1107,7 @@ const Graph = ({ navigation, route }) => {
 };
 
 const Contact = ({ navigation, route }) => {
+
   return (
     <View style={styles.container}>
 
