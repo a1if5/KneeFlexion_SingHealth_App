@@ -12,6 +12,8 @@ import {
   Alert,
   Button,
   Platform,
+  TouchableHighlight,
+  SafeAreaView,
 } from "react-native";
 import { Dimensions, Switch } from 'react-native';
 const screenWidth = Dimensions.get("window").width;
@@ -44,7 +46,8 @@ import { Picker } from '@react-native-picker/picker';
 import ButtonToggleGroup from 'react-native-button-toggle-group';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import DateTimePicker from '@react-native-community/datetimepicker';
-
+//importing library to use Stopwatch and Timer
+import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
 
 
 
@@ -117,7 +120,10 @@ var may = [];
 extensionAprilCall();
 extensionMarchCall();
 extensionMayCall();
-//Main controller
+
+//////////////////////////////////////////////////////////
+////////////MAIN CONTROLLER & NAVIGATION//////////////////
+//////////////////////////////////////////////////////////
 const Goniometer_App = () => {
   return (
     <NavigationContainer>
@@ -174,12 +180,20 @@ const Goniometer_App = () => {
           component={Graph}
           options={{ title: "HISTORY CHART" }}
         />
+        <Stack.Screen
+          name="SitStand"
+          component={SitStand}
+          options={{ title: "SIT TO STAND" }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-// Guide Page
+//////////////////////////////////////////////////////////
+/////////////////////GUIDE PAGE///////////////////////////
+//////////////////////////////////////////////////////////
+
 const GuidePage = ({ navigation, route }) => {
 
   const [playing, setPlaying] = useState(false);
@@ -213,7 +227,64 @@ const GuidePage = ({ navigation, route }) => {
   );
 };
 
-//History Page
+//////////////////////////////////////////////////////////
+/////////////////////STOP WATCH PAGE//////////////////////
+//////////////////////////////////////////////////////////
+
+const SitStand = ({ navigation, route }) => {
+
+  const [isTimerStart, setIsTimerStart] = useState(false);
+  const [isStopwatchStart, setIsStopwatchStart] = useState(false);
+  const [timerDuration, setTimerDuration] = useState(90000);
+  const [resetTimer, setResetTimer] = useState(false);
+  const [resetStopwatch, setResetStopwatch] = useState(false);
+
+  return (
+    <SafeAreaView style={stylesSitStand.container}>
+      <View style={stylesSitStand.container}>
+
+        <View style={stylesSitStand.sectionStyle}>
+          <Stopwatch
+            laps
+            hrs={false}
+            msecs={false}
+            start={isStopwatchStart}
+            //To start
+            reset={resetStopwatch}
+            //To reset
+            options={options}
+            //options for the styling
+            getTime={(time) => {
+              //console.log(time);
+            }}
+          />
+          <TouchableHighlight
+            onPress={() => {
+              setIsStopwatchStart(!isStopwatchStart);
+              setResetStopwatch(false);
+            }}>
+            <Text style={stylesSitStand.buttonText}>
+              {!isStopwatchStart ? 'START' : 'STOP'}
+            </Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() => {
+              setIsStopwatchStart(false);
+              setResetStopwatch(true);
+            }}>
+            <Text style={stylesSitStand.buttonText}>RESET</Text>
+          </TouchableHighlight>
+        </View>
+
+      </View>
+    </SafeAreaView>
+  );
+};
+
+//////////////////////////////////////////////////////////
+////////////////////HISTORY PAGE//////////////////////////
+//////////////////////////////////////////////////////////
+
 const CalenderDataPage = ({ navigation, route }) => {
   const [a, b] = useState({});
   const [x, y] = useState({});
@@ -322,7 +393,9 @@ const CalenderDataPage = ({ navigation, route }) => {
   );
 };
 
-//Admin Page
+//////////////////////////////////////////////////////////
+//////////////////////ADMIN PAGE//////////////////////////
+//////////////////////////////////////////////////////////
 const UserData = ({ navigation, route }) => {
 
   const [forceUpdate, forceUpdateId] = useForceUpdate();
@@ -544,7 +617,9 @@ const UserData = ({ navigation, route }) => {
   );
 };
 
-//Main Page
+//////////////////////////////////////////////////////////
+//////////////////MAIN NAVIGATION PAGE////////////////////
+//////////////////////////////////////////////////////////
 const HomeScreen = ({ navigation, route }) => {
   const state = {
     data: [
@@ -579,10 +654,14 @@ const HomeScreen = ({ navigation, route }) => {
         link: "Graph",
         image: "https://img.icons8.com/material-rounded/64/000000/graph.png",
       },
+      {
+        id: 6,
+        title: "Sit-Stand",
+        link: "SitStand",
+        image: "https://img.icons8.com/material-rounded/64/000000/graph.png",
+      },
     ],
   };
-
-
 
 
   const clickEventListener = (item) => {
@@ -640,6 +719,10 @@ const HomeScreen = ({ navigation, route }) => {
     </View>
   );
 };
+
+//////////////////////////////////////////////////////////
+//////////////////////GRAPH PAGE//////////////////////////
+//////////////////////////////////////////////////////////
 async function flexionApril() {
   var total = 0;
   var finals = 0;
@@ -1208,7 +1291,9 @@ const FormSG = ({ navigation, route }) => {
 };
 
 
-//Goniometer Page
+//////////////////////////////////////////////////////////
+////////////////////MEASUREMENT PAGE//////////////////////
+//////////////////////////////////////////////////////////
 const Goniometer = ({ navigation, route }) => {
   const [text, setText] = React.useState(null);
   const [forceUpdate, forceUpdateId] = useForceUpdate();
@@ -2022,5 +2107,47 @@ const duh = StyleSheet.create({
     fontSize: RFPercentage(5),
   },
 });
+
+const stylesSitStand = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    padding: 20,
+  },
+  sectionStyle: {
+    flex: 1,
+    marginTop: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: 60,
+    marginTop: 10,
+    alignItems: 'center',
+    textAlign: 'center',
+  },
+});
+
+const options = {
+  container: {
+    backgroundColor: '#2B6D6A',
+    padding: 5,
+    borderRadius: 5,
+    width: 350,
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 50,
+    color: '#FFF',
+    marginLeft: 7,
+  },
+};
 
 export default Goniometer_App;
