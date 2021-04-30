@@ -78,9 +78,28 @@ var week10;
 var week11;
 var week12;
 
-let weeks = [week1,week2,week3,week4,week5,week6,week7,week8,week9,week10,week11,week12];
+let weeks = [week1, week2, week3, week4, week5, week6, week7, week8, week9, week10, week11, week12];
 
+// function restNRIC() {
+//   userNRIC.transaction((tx) => {
+//     tx.executeSql(`DROP TABLE userNRIC`)
+//   });
+// };
+// restNRIC();
+// function rest() {
+//   db.transaction((tx) => {
+//     tx.executeSql(`DROP TABLE items`)
+//   });
+// };
 
+// function rest1() {
+//   db1.transaction((tx1) => {
+//     tx1.executeSql(`DROP TABLE iitems`)
+//   });
+// };
+
+// rest();
+// rest1();
 
 //To store user NRIC
 var nricUser = [];
@@ -489,39 +508,62 @@ const UserData = ({ navigation, route }) => {
       forceUpdate1
     );
   };
-  const [date, setDate] = useState(new Date(1598051730000));
+  const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
-    var last = new Date(currentDate.getTime() + (7 * 24 * 60 * 60 * 1000));    
+    var last = new Date(currentDate.getTime() + (7 * 24 * 60 * 60 * 1000));
     // console.log(last);
     var yyyy;
     var mm;
     var dd;
-    for (var i = 0; i < 12; i++) {
-    var nextWeek = new Date(currentDate.getTime() + ((i*7) * 24 * 60 * 60 * 1000));    
-    if (nextWeek.getMonth().toString().length == 1) {
-      mm = "0" + nextWeek.getMonth();
-    } else {
-      mm = nextWeek.getMonth();
+    for (var i = 0; i < 84; i++) {
+      var nextDay = new Date(currentDate.getTime() + ((i) * 24 * 60 * 60 * 1000));
+      if (nextDay.getMonth().toString().length == 1) {
+        var amend = nextDay.getMonth() + 1;
+        mm = "0" + amend;
+      } else {
+        mm = amend;
+      }
+      if (nextDay.getDate().toString().length == 1) {
+        dd = "0" + nextDay.getDate();
+      } else {
+        dd = nextDay.getDate();
+      }
+      yyyy = "20" + nextDay.getYear().toString().substring(1, 3);
+      var x = yyyy + "-" + mm + "-" + dd;
+      weeks[i] = x;
+      console.log(weeks[i]);
+      yyyy = null;
+      mm = null;
+      dd = null;
     }
-    if (nextWeek.getDate().toString().length == 1) {
-      dd = "0" + nextWeek.getDate();
-    } else {
-      dd = nextWeek.getDate();
-    }
-    yyyy = "20" +  nextWeek.getYear().toString().substring(1,3);
-    var x = yyyy + "-" + mm + "-" + dd;
-    weeks[i] = x;
-    // console.log(weeks[i]);
-    yyyy=null;
-    mm=null;
-    dd=null;
-  }
   };
+
+
+  // for (var i = 0; i < 12; i++) {
+  //   var nextWeek = new Date(currentDate.getTime() + ((i * 7) * 24 * 60 * 60 * 1000));
+  //   if (nextWeek.getMonth().toString().length == 1) {
+  //     mm = "0" + nextWeek.getMonth();
+  //   } else {
+  //     mm = nextWeek.getMonth();
+  //   }
+  //   if (nextWeek.getDate().toString().length == 1) {
+  //     dd = "0" + nextWeek.getDate();
+  //   } else {
+  //     dd = nextWeek.getDate();
+  //   }
+  //   yyyy = "20" + nextWeek.getYear().toString().substring(1, 3);
+  //   var x = yyyy + "-" + mm + "-" + dd;
+  //   weeks[i] = x;
+  //   // console.log(weeks[i]);
+  //   yyyy = null;
+  //   mm = null;
+  //   dd = null;
+  // }
 
   const showMode = (currentMode) => {
     setShow(true);
@@ -549,7 +591,7 @@ const UserData = ({ navigation, route }) => {
           onSubmitEditing={(nric) => {
             addNRIC(nric.nativeEvent.text);
             onChangeText(nric.nativeEvent.text);
-            console.log(nric.nativeEvent.text);
+            // console.log(nric.nativeEvent.text);
           }}
         // value={text}
         />
@@ -727,12 +769,15 @@ async function flexionApril() {
   var total = 0;
   var finals = 0;
   return new Promise((resolve, reject) => {
+    var woo = weeks[3];
+    var boo = weeks[4];
     db.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ?`,
-        ["2021-04%"],
+        `SELECT * FROM items WHERE value BETWEEN ` + woo + ` AND ` + boo + `?`,
+        [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
+          console.log(len1 + "dwgefsege");
           if (len1 > 0) {
             // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
             // count1 = count1 + 1;
@@ -858,13 +903,22 @@ async function flexionMayCall() {
 async function extensionApril() {
   var total = 0;
   var finals = 0;
+  var today = "'" + weeks[0] + "%'";
+  var tmr1 = "'" + weeks[1] + "%'";
+  var tmr2 = "'" +weeks[2]+ "%'";
+  var tmr3 = "'" +weeks[3]+ "%'";
+  var tmr4 = "'" +weeks[4]+ "%'";
+  var tmr5 = "'" +weeks[5]+ "%'";
+  var tmr6 = "'" +weeks[6]+ "%'";
   return new Promise((resolve, reject) => {
     db1.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ?`,
-        ["2021-04%"],
+        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
+          //this console log not printing
+          console.log(len1 + "successful");
           if (len1 > 0) {
             // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
             // count1 = count1 + 1;
@@ -967,7 +1021,7 @@ function rr() {
       </Text>
       <LineChart
         data={{
-          labels: [weeks[0], weeks[1], weeks[2],weeks[3],weeks[4], weeks[5], weeks[6], weeks[7], weeks[8], weeks[9], weeks[10], weeks[11]],
+          labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
           datasets: [
             {
               data: [
@@ -1257,15 +1311,15 @@ const FormSG = ({ navigation, route }) => {
 
   const { flexData } = (route.params);
   const { extenData } = (route.params);
-  console.log(flexData);
+  // console.log(flexData);
 
   const x = route.params.paramKey;
   const flexStr = "Flexion: " + x;
   const extenStr = "Extension: " + x;
   const nricVal = String(nricUser[0]);
-  console.log(nricVal);
+  // console.log(nricVal);
   const flexx = parseInt(flexData);
-  console.log(flexx);
+  // console.log(flexx);
 
 
   const runFirst = `setTimeout(function() {
