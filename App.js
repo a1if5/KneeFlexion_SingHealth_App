@@ -10,11 +10,12 @@ import {
   FlatList,
   Image,
   Alert,
-  Button,
+  // Button,
   Platform,
   TouchableHighlight,
   SafeAreaView,
 } from "react-native";
+import { Button, ThemeProvider } from 'react-native-elements';
 import { Dimensions, Switch } from 'react-native';
 const screenWidth = Dimensions.get("window").width;
 import "react-native-gesture-handler";
@@ -80,6 +81,13 @@ var week12;
 
 let weeks = [week1, week2, week3, week4, week5, week6, week7, week8, week9, week10, week11, week12];
 
+let initDate = [];
+
+let nricCheck = [];
+let nameCheck = [];
+let checker = [];
+// var week1ex, week2ex, week3ex, week4ex, week5ex, week6ex, week7ex, week8ex, week9ex, week10ex, week11ex, week12ex;
+
 // function restNRIC() {
 //   userNRIC.transaction((tx) => {
 //     tx.executeSql(`DROP TABLE userNRIC`)
@@ -127,18 +135,60 @@ async function nricAsync() {
 async function nricAsyncCall() {
   nricAsync().then((val) => nricUser = val);
 }
-var xx = [];
-var xxx = [];
-var xxxx = [];
-flexionAprilCall();
-flexionMarchCall();
-flexionMayCall();
-var apr = [];
-var mar = [];
-var may = [];
-extensionAprilCall();
-extensionMarchCall();
-extensionMayCall();
+// var xx = [];
+// var xxx = [];
+// var xxxx = [];
+
+var weekOneList = [];
+var weekTwoList = [];
+var weekThreeList = [];
+var weekFourList = [];
+var weekFiveList = [];
+var weekSixList = [];
+var weekSevenList = [];
+var weekEightList = [];
+var weekNineList = [];
+var weekTenList = [];
+var weekTwelveList = [];
+var weekElevenList = [];
+weekOneCall();
+weekTwoCall();
+weekThreeCall();
+weekFourCall();
+weekFiveCall();
+weekSixCall();
+weekSevenCall();
+weekEightCall();
+weekNineCall();
+weekTenCall();
+weekElevenCall();
+weekTwelveCall();
+
+var weekOneExtensionList = [];
+var weekTwoExtensionList = [];
+var weekThreeExtensionList = [];
+var weekFourExtensionList = [];
+var weekFiveExtensionList = [];
+var weekSixExtensionList = [];
+var weekSevenExtensionList = [];
+var weekEightExtensionList = [];
+var weekNineExtensionList = [];
+var weekTenExtensionList = [];
+var weekTwelveExtensionList = [];
+var weekElevenExtensionList = [];
+weekOneExtensionCall();
+weekTwoExtensionCall();
+weekThreeExtensionCall();
+weekFourExtensionCall();
+weekFiveExtensionCall();
+weekSixExtensionCall();
+weekSevenExtensionCall();
+weekEightExtensionCall();
+weekNineExtensionCall();
+weekTenExtensionCall();
+weekElevenExtensionCall();
+weekTwelveExtensionCall();
+
 
 //////////////////////////////////////////////////////////
 ////////////MAIN CONTROLLER & NAVIGATION//////////////////
@@ -179,11 +229,11 @@ const Goniometer_App = () => {
           component={Contact}
           options={{ title: "Contact Us" }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="UserData"
           component={UserData}
           options={{ title: "ADMIN" }}
-        />
+        /> */}
         <Stack.Screen
           name="CalenderDataPage"
           component={CalenderDataPage}
@@ -415,8 +465,311 @@ const CalenderDataPage = ({ navigation, route }) => {
 //////////////////////////////////////////////////////////
 //////////////////////ADMIN PAGE//////////////////////////
 //////////////////////////////////////////////////////////
-const UserData = ({ navigation, route }) => {
+// const UserData = ({ navigation, route }) => {
 
+//   const [forceUpdate, forceUpdateId] = useForceUpdate();
+//   const [forceUpdate1, forceUpdateId1] = useForceUpdate();
+
+//   const [selectedValue, setSelectedValue] = useState("2");
+//   const [selectedGenderValue, setSelectedGenderValue] = useState("Male");
+//   const [text, onChangeText] = React.useState(null);
+//   //user week data
+//   React.useEffect(() => {
+//     userInfo.transaction((tx) => {
+//       tx.executeSql(
+//         "create table if not exists userInfo (id integer primary key not null, done int, value text);"
+//       );
+//     });
+//   }, []);
+//   //user gender data
+//   React.useEffect(() => {
+//     userGender.transaction((tx) => {
+//       tx.executeSql(
+//         "create table if not exists userGender (id integer primary key not null, done int, value text);"
+//       );
+//     });
+//   }, []);
+//   //User NRIC data
+//   React.useEffect(() => {
+//     userNRIC.transaction((tx) => {
+//       tx.executeSql(
+//         "create table if not exists userNRIC (id integer primary key not null, done int, value text);"
+//       );
+//     });
+//   }, []);
+
+//   const add2 = (text) => {
+//     var text = parseInt(text);
+//     if (text === null || text === "") {
+//       alert("Invalid Input!");
+//       return false;
+//     }
+
+//     userInfo.transaction(
+//       (tx) => {
+//         tx.executeSql("insert into userInfo (done, value) values (0, ?)", [
+//           text,
+//         ]);
+//         tx.executeSql("select * from userInfo", [], (_, { rows }) =>
+//           console.log(JSON.stringify(rows))
+//         );
+//       },
+//       null,
+//       forceUpdate
+//     );
+//   };
+//   const add3 = (text) => {
+//     var text = text;
+//     if (text === null || text === "") {
+//       alert("Invalid Input!");
+//       return false;
+//     }
+
+//     userGender.transaction(
+//       (tx) => {
+//         tx.executeSql("insert into userGender (done, value) values (0, ?)", [
+//           text,
+//         ]);
+//         tx.executeSql("select * from userGender", [], (_, { rows }) =>
+//           console.log(JSON.stringify(rows))
+//         );
+//       },
+//       null,
+//       forceUpdate1
+//     );
+//   };
+//   const addNRIC = (text) => {
+//     var text = text;
+//     if (text === null || text === "") {
+//       alert("Invalid Input!");
+//       return false;
+//     }
+
+//     userNRIC.transaction(
+//       (tx) => {
+//         tx.executeSql("insert into userNRIC (done, value) values (0, ?)", [
+//           text,
+//         ]);
+//         tx.executeSql("select * from userNRIC", [], (_, { rows }) =>
+//           console.log(JSON.stringify(rows))
+//         );
+//       },
+//       null,
+//       forceUpdate1
+//     );
+//   };
+//   var dayBefore = new Date();
+//   dayBefore.setDate(new Date().getDate() - 1);
+//   const [date, setDate] = useState(dayBefore);
+//   const [mode, setMode] = useState('date');
+//   const [show, setShow] = useState(false);
+//   const onChange = (event, selectedDate) => {
+//     const currentDate = selectedDate || date;
+//     initDate[0] = currentDate;
+//     setShow(Platform.OS === 'ios');
+//     setDate(currentDate);
+//     var last = new Date(currentDate.getTime() + (7 * 24 * 60 * 60 * 1000));
+//     // console.log(last);
+//     var yyyy;
+//     var mm;
+//     var dd;
+//     for (var i = 0; i < 84; i++) {
+//       var nextDay = new Date(currentDate.getTime() + ((i) * 24 * 60 * 60 * 1000));
+//       if (nextDay.getMonth().toString().length == 1) {
+//         var amend = nextDay.getMonth() + 1;
+//         mm = "0" + amend;
+//       } else {
+//         mm = amend;
+//       }
+//       if (nextDay.getDate().toString().length == 1) {
+//         dd = "0" + nextDay.getDate();
+//       } else {
+//         dd = nextDay.getDate();
+//       }
+//       yyyy = "20" + nextDay.getYear().toString().substring(1, 3);
+//       var x = yyyy + "-" + mm + "-" + dd;
+//       weeks[i] = x;
+//       console.log(weeks[i]);
+//       yyyy = null;
+//       mm = null;
+//       dd = null;
+//     }
+//   };
+
+
+//   // for (var i = 0; i < 12; i++) {
+//   //   var nextWeek = new Date(currentDate.getTime() + ((i * 7) * 24 * 60 * 60 * 1000));
+//   //   if (nextWeek.getMonth().toString().length == 1) {
+//   //     mm = "0" + nextWeek.getMonth();
+//   //   } else {
+//   //     mm = nextWeek.getMonth();
+//   //   }
+//   //   if (nextWeek.getDate().toString().length == 1) {
+//   //     dd = "0" + nextWeek.getDate();
+//   //   } else {
+//   //     dd = nextWeek.getDate();
+//   //   }
+//   //   yyyy = "20" + nextWeek.getYear().toString().substring(1, 3);
+//   //   var x = yyyy + "-" + mm + "-" + dd;
+//   //   weeks[i] = x;
+//   //   // console.log(weeks[i]);
+//   //   yyyy = null;
+//   //   mm = null;
+//   //   dd = null;
+//   // }
+
+//   const showMode = (currentMode) => {
+//     setShow(true);
+//     setMode(currentMode);
+//   };
+
+//   const showDatepicker = () => {
+//     showMode('date');
+//   };
+
+
+//   return (
+//     <View style={styles.container}>
+
+//       <Text></Text>
+//       <Text style={{ textAlign: "center", fontSize: 40 }}>Admin Setup</Text>
+//       <Text></Text>
+//       <View style={styles.pickerContainerGender}>
+//         <Text style={{ textAlign: "center", fontSize: 40 }}>NRIC</Text>
+//         <Text></Text>
+
+//         <TextInput
+//           placeholder="S0000000N"
+//           style={inpttext.input}
+//           onSubmitEditing={(nric) => {
+//             addNRIC(nric.nativeEvent.text);
+//             onChangeText(nric.nativeEvent.text);
+//             // console.log(nric.nativeEvent.text);
+//           }}
+//         // value={text}
+//         />
+//       </View>
+//       <View style={styles.pickerContainer}>
+//         {/* <Text style={{ textAlign: "center", fontSize: 40 }}>Week</Text> */}
+//         <Text></Text>
+//         <View>
+//           {/* <View>
+//             <Button onPress={showDatepicker} title="Set Week"/>
+//           </View>
+
+//           {show && ( */}
+//           <Text style={{ textAlign: "center", fontSize: 40 }}>Start Date</Text>
+//           <Text></Text>
+//           <View style={styles.pickerContainerDate}>
+//             <DateTimePicker
+//               style={{ marginRight: 40 }}
+//               testID="dateTimePicker"
+//               value={date}
+//               mode={mode}
+//               is24Hour={true}
+//               display="default"
+//               onChange={onChange}
+//             />
+//           </View>
+//           {/* )} */}
+//         </View>
+//         {/* <RNPickerSelect
+
+//           onValueChange={(itemValue) => {
+//             add2(itemValue);
+//             setSelectedValue(itemValue);
+//           }}
+//           useNativeAndroidPickerStyle={false}
+//           placeholder={{ label: "Select Week", value: null }}
+//           items={[
+//             { label: "Week 2", value: "2" },
+//             { label: "Week 4", value: "4" },
+//             { label: "Week 6", value: "6" },
+//             { label: "Week 8", value: "8" },
+//             { label: "Week 10", value: "10" },
+//             { label: "Week 12", value: "12" },
+//           ]}
+//           style={stylePicker}
+//         /> */}
+//       </View>
+//       <Text></Text>
+//       <Text style={{ textAlign: "center", fontSize: 40 }}>Gender</Text>
+//       <Text></Text>
+//       <View style={styles.pickerContainerGender}>
+//         <RNPickerSelect
+//           // onValueChange={(itemValue) => setSelectedGenderValue(itemValue)}
+//           onValueChange={(itemvalu) => {
+//             add3(itemvalu);
+//             setSelectedGenderValue(itemvalu);
+//             console.log(itemvalu);
+//           }}
+//           useNativeAndroidPickerStyle={false}
+//           placeholder={{ label: "Select Gender", value: null }}
+//           items={[
+//             { label: "Male", value: "Male" },
+//             { label: "Female", value: "Female" },
+//           ]}
+//           style={stylePicker}
+//         />
+//       </View>
+
+//     </View>
+//   );
+// };
+
+//////////////////////////////////////////////////////////
+//////////////////MAIN NAVIGATION PAGE////////////////////
+//////////////////////////////////////////////////////////
+const HomeScreen = ({ navigation, route }) => {
+  const state = {
+    data: [
+      {
+        id: 1,
+        title: "History",
+        link: "CalenderDataPage",
+        image: "https://img.icons8.com/dotty/80/000000/activity-history.png",
+      },
+
+      {
+        id: 2,
+        title: "Guide",
+        link: "GuidePage",
+        image: "https://img.icons8.com/ios/50/000000/city-guide.png",
+      },
+      {
+        id: 3,
+        title: "Contact Us",
+        link: "Contact",
+        image: "https://img.icons8.com/ios/50/000000/phone-disconnected.png",
+      },
+      // {
+      //   id: 4,
+      //   title: "Admin",
+      //   link: "UserData",
+      //   image: "https://img.icons8.com/windows/64/000000/microsoft-admin.png",
+      // },
+      {
+        id: 5,
+        title: "Graph",
+        link: "Graph",
+        image: "https://img.icons8.com/material-rounded/64/000000/graph.png",
+      },
+      {
+        id: 6,
+        title: "Sit-Stand",
+        link: "SitStand",
+        image: "https://img.icons8.com/ios/50/000000/waiting-room.png",
+      },
+    ],
+  };
+
+
+  const clickEventListener = (item) => {
+    navigation.navigate(item.link, { name: item.link });
+  };
+  const clickEventListenerMeasurement = (item) => {
+    navigation.navigate(item, { name: item });
+  };
   const [forceUpdate, forceUpdateId] = useForceUpdate();
   const [forceUpdate1, forceUpdateId1] = useForceUpdate();
 
@@ -508,11 +861,14 @@ const UserData = ({ navigation, route }) => {
       forceUpdate1
     );
   };
-  const [date, setDate] = useState(new Date());
+  var dayBefore = new Date();
+  dayBefore.setDate(new Date().getDate() - 1);
+  const [date, setDate] = useState(dayBefore);
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
+    initDate[0] = currentDate;
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
     var last = new Date(currentDate.getTime() + (7 * 24 * 60 * 60 * 1000));
@@ -543,27 +899,43 @@ const UserData = ({ navigation, route }) => {
     }
   };
 
+  const submitUserDateAlert = () => {
+    if (nricCheck[0] != 1 || nameCheck[0] != 1 || initDate[0] == null) {
+      Alert.alert(
+        "Please complete all fields!",
+        "",
+        [
+          {
+            text: "OK",
+            onPress: () => console.log("OK"),
+          },
+        ]
+      );
+    } else {
+      Alert.alert(
+        "Are you sure you want to submit?",
+        "",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          {
+            text: "Yes", onPress: () => {
+              checker[0] = 1;
+            
+            navigation.navigate("Home", {
+              name: "Home",
+              flex: 1,
+            })
+          }
+          }
+        ]
+      );
+    }
+  }
 
-  // for (var i = 0; i < 12; i++) {
-  //   var nextWeek = new Date(currentDate.getTime() + ((i * 7) * 24 * 60 * 60 * 1000));
-  //   if (nextWeek.getMonth().toString().length == 1) {
-  //     mm = "0" + nextWeek.getMonth();
-  //   } else {
-  //     mm = nextWeek.getMonth();
-  //   }
-  //   if (nextWeek.getDate().toString().length == 1) {
-  //     dd = "0" + nextWeek.getDate();
-  //   } else {
-  //     dd = nextWeek.getDate();
-  //   }
-  //   yyyy = "20" + nextWeek.getYear().toString().substring(1, 3);
-  //   var x = yyyy + "-" + mm + "-" + dd;
-  //   weeks[i] = x;
-  //   // console.log(weeks[i]);
-  //   yyyy = null;
-  //   mm = null;
-  //   dd = null;
-  // }
 
   const showMode = (currentMode) => {
     setShow(true);
@@ -573,6 +945,145 @@ const UserData = ({ navigation, route }) => {
   const showDatepicker = () => {
     showMode('date');
   };
+
+
+  if (nricCheck[0] == null || nameCheck[0] == null || checker[0] == null || initDate[0] == null) {
+    return (
+      <View style={styles.container}>
+
+        <Text></Text>
+        <Text style={{ textAlign: "center", fontSize: 40 }}>Admin Setup</Text>
+        <Text></Text>
+        <View style={styles.pickerContainerGender}>
+          <Text style={{ textAlign: "center", fontSize: 40 }}>NRIC</Text>
+          <Text></Text>
+
+          <TextInput
+            placeholder="S0000000N"
+            style={inpttext.input}
+            onSubmitEditing={(nric) => {
+              nricCheck[0] = 1;
+              addNRIC(nric.nativeEvent.text);
+              onChangeText(nric.nativeEvent.text);
+              // console.log(nric.nativeEvent.text);
+            }}
+          // value={text}
+          />
+        </View>
+        <View style={styles.pickerContainer}>
+          {/* <Text style={{ textAlign: "center", fontSize: 40 }}>Week</Text> */}
+          <Text></Text>
+          <View>
+            {/* <View>
+              <Button onPress={showDatepicker} title="Set Week"/>
+            </View>
+  
+            {show && ( */}
+            <Text style={{ textAlign: "center", fontSize: 40 }}>Start Date</Text>
+            <Text></Text>
+            <View style={styles.pickerContainerDate}>
+              <DateTimePicker
+                style={{ marginRight: 40 }}
+                testID="dateTimePicker"
+                value={date}
+                mode={mode}
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+              />
+            </View>
+            {/* )} */}
+          </View>
+
+        </View>
+        <Text></Text>
+        <Text style={{ textAlign: "center", fontSize: 40 }}>Gender</Text>
+        <Text></Text>
+        <View style={styles.pickerContainerGender}>
+          <RNPickerSelect
+            // onValueChange={(itemValue) => setSelectedGenderValue(itemValue)}
+            onValueChange={(itemvalu) => {
+              nameCheck[0] = 1;
+              add3(itemvalu);
+              setSelectedGenderValue(itemvalu);
+              console.log(itemvalu);
+
+            }}
+            useNativeAndroidPickerStyle={false}
+            placeholder={{ label: "Select Gender", value: null }}
+            items={[
+              { label: "Male", value: "Male" },
+              { label: "Female", value: "Female" },
+            ]}
+            style={stylePicker}
+          />
+        </View>
+        <TouchableOpacity
+          onPress={
+
+            submitUserDateAlert}
+
+          style={styles.NavigateMeasurement}
+
+        >
+          <Text style={styles.TextStyleButtonHomePage}>Confirm</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  } else if (checker[0] == 1) {
+    console.log(nricCheck[0] + " " + nameCheck[0]);
+    return (
+      <View style={pp.container}>
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              clickEventListenerMeasurement("Goniometer");
+            }}
+            style={styles.NavigateMeasurement}
+          >
+            <Text style={styles.TextStyleButtonHomePage}>MEASUREMENT</Text>
+          </TouchableOpacity>
+        </View>
+
+        <FlatList
+          style={pp.list}
+          contentContainerStyle={pp.listContainer}
+          data={state.data}
+          horizontal={false}
+          numColumns={2}
+          keyExtractor={(item) => {
+            // console.log(item.id);
+            return item.id;
+          }}
+          renderItem={({ item }) => {
+            return (
+              <View>
+                <TouchableOpacity
+                  style={pp.card}
+                  onPress={() => {
+                    clickEventListener(item);
+                  }}
+                >
+                  <Image style={pp.cardImage} source={{ uri: item.image }} />
+                </TouchableOpacity>
+
+                <View style={pp.cardHeader}>
+                  <View
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <Text style={pp.title}>{item.title}</Text>
+                  </View>
+                </View>
+              </View>
+            );
+          }}
+        />
+      </View>
+    );
+  }
+};
+const UserData = ({ navigation, route }) => {
+
 
 
   return (
@@ -600,12 +1111,16 @@ const UserData = ({ navigation, route }) => {
         {/* <Text style={{ textAlign: "center", fontSize: 40 }}>Week</Text> */}
         <Text></Text>
         <View>
-          <View>
-            <Button onPress={showDatepicker} title="Set Week" />
+          {/* <View>
+            <Button onPress={showDatepicker} title="Set Week"/>
           </View>
 
-          {show && (
+          {show && ( */}
+          <Text style={{ textAlign: "center", fontSize: 40 }}>Start Date</Text>
+          <Text></Text>
+          <View style={styles.pickerContainerDate}>
             <DateTimePicker
+              style={{ marginRight: 40 }}
               testID="dateTimePicker"
               value={date}
               mode={mode}
@@ -613,7 +1128,8 @@ const UserData = ({ navigation, route }) => {
               display="default"
               onChange={onChange}
             />
-          )}
+          </View>
+          {/* )} */}
         </View>
         {/* <RNPickerSelect
 
@@ -660,124 +1176,29 @@ const UserData = ({ navigation, route }) => {
 };
 
 //////////////////////////////////////////////////////////
-//////////////////MAIN NAVIGATION PAGE////////////////////
-//////////////////////////////////////////////////////////
-const HomeScreen = ({ navigation, route }) => {
-  const state = {
-    data: [
-      {
-        id: 1,
-        title: "History",
-        link: "CalenderDataPage",
-        image: "https://img.icons8.com/dotty/80/000000/activity-history.png",
-      },
-
-      {
-        id: 2,
-        title: "Guide",
-        link: "GuidePage",
-        image: "https://img.icons8.com/ios/50/000000/city-guide.png",
-      },
-      {
-        id: 3,
-        title: "Contact Us",
-        link: "Contact",
-        image: "https://img.icons8.com/ios/50/000000/phone-disconnected.png",
-      },
-      {
-        id: 4,
-        title: "Admin",
-        link: "UserData",
-        image: "https://img.icons8.com/windows/64/000000/microsoft-admin.png",
-      },
-      {
-        id: 5,
-        title: "Graph",
-        link: "Graph",
-        image: "https://img.icons8.com/material-rounded/64/000000/graph.png",
-      },
-      {
-        id: 6,
-        title: "Sit-Stand",
-        link: "SitStand",
-        image: "https://img.icons8.com/material-rounded/64/000000/graph.png",
-      },
-    ],
-  };
-
-
-  const clickEventListener = (item) => {
-    navigation.navigate(item.link, { name: item.link });
-  };
-  const clickEventListenerMeasurement = (item) => {
-    navigation.navigate(item, { name: item });
-  };
-  return (
-    <View style={pp.container}>
-      <View>
-        <TouchableOpacity
-          onPress={() => {
-            clickEventListenerMeasurement("Goniometer");
-          }}
-          style={styles.NavigateMeasurement}
-        >
-          <Text style={styles.TextStyleButtonHomePage}>MEASUREMENT</Text>
-        </TouchableOpacity>
-      </View>
-
-      <FlatList
-        style={pp.list}
-        contentContainerStyle={pp.listContainer}
-        data={state.data}
-        horizontal={false}
-        numColumns={2}
-        keyExtractor={(item) => {
-          // console.log(item.id);
-          return item.id;
-        }}
-        renderItem={({ item }) => {
-          return (
-            <View>
-              <TouchableOpacity
-                style={pp.card}
-                onPress={() => {
-                  clickEventListener(item);
-                }}
-              >
-                <Image style={pp.cardImage} source={{ uri: item.image }} />
-              </TouchableOpacity>
-
-              <View style={pp.cardHeader}>
-                <View
-                  style={{ alignItems: "center", justifyContent: "center" }}
-                >
-                  <Text style={pp.title}>{item.title}</Text>
-                </View>
-              </View>
-            </View>
-          );
-        }}
-      />
-    </View>
-  );
-};
-
-//////////////////////////////////////////////////////////
 //////////////////////GRAPH PAGE//////////////////////////
 //////////////////////////////////////////////////////////
-async function flexionApril() {
+
+//Extension Measurement
+async function weekOneExtension() {
   var total = 0;
   var finals = 0;
+  var today = "'" + weeks[0] + "%'";
+  var tmr1 = "'" + weeks[1] + "%'";
+  var tmr2 = "'" + weeks[2] + "%'";
+  var tmr3 = "'" + weeks[3] + "%'";
+  var tmr4 = "'" + weeks[4] + "%'";
+  var tmr5 = "'" + weeks[5] + "%'";
+  var tmr6 = "'" + weeks[6] + "%'";
   return new Promise((resolve, reject) => {
-    var woo = weeks[3];
-    var boo = weeks[4];
     db.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value BETWEEN ` + woo + ` AND ` + boo + `?`,
+        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          console.log(len1 + "dwgefsege");
+          //this console log not printing
+          console.log(len1 + "successful retrival of extension");
           if (len1 > 0) {
             // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
             // count1 = count1 + 1;
@@ -801,51 +1222,31 @@ async function flexionApril() {
     });
   });
 }
-
-// async function flexionApril() {
-//   var total = 0;
-//   var finals = 0;
-//   return new Promise((resolve, reject) => {
-//     db.transaction((tx1) => {
-//       tx1.executeSql(
-//         `SELECT * FROM items WHERE value LIKE ?`,
-//         ["2021-04%"],
-//         (tx1, results1) => {
-//           var len1 = results1.rows.length;
-//           if (len1 > 0) {
-//             // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-//             // count1 = count1 + 1;
-//             // avr1 = total1/count1;
-//             // console.log(avr1);
-//             // console.log(total1);
-//             for (var x = 0; x < len1; x++) {
-//               var ans1 = results1.rows.item(x).value;
-//               var h = ans1.substr(-3);
-//               var num = parseInt(h);
-//               total = total + num;
-//             }
-//             finals = total / len1;
-//             total = finals;
-//             var data = [];
-//             data.push(total);
-//             resolve(data);
-//             return data;
-//           }
-//         });
-//     });
-//   });
-// }
-async function flexionMarch() {
+async function weekTwoExtension() {
   var total = 0;
   var finals = 0;
+  var today = "'" + weeks[7] + "%'";
+  var tmr1 = "'" + weeks[8] + "%'";
+  var tmr2 = "'" + weeks[9] + "%'";
+  var tmr3 = "'" + weeks[10] + "%'";
+  var tmr4 = "'" + weeks[11] + "%'";
+  var tmr5 = "'" + weeks[12] + "%'";
+  var tmr6 = "'" + weeks[13] + "%'";
   return new Promise((resolve, reject) => {
     db.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ?`,
-        ["2021-03%"],
+        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
+          //this console log not printing
+          console.log(len1 + "successful");
           if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -863,17 +1264,31 @@ async function flexionMarch() {
     });
   });
 }
-async function flexionMay() {
+async function weekThreeExtension() {
   var total = 0;
   var finals = 0;
+  var today = "'" + weeks[14] + "%'";
+  var tmr1 = "'" + weeks[15] + "%'";
+  var tmr2 = "'" + weeks[16] + "%'";
+  var tmr3 = "'" + weeks[17] + "%'";
+  var tmr4 = "'" + weeks[18] + "%'";
+  var tmr5 = "'" + weeks[19] + "%'";
+  var tmr6 = "'" + weeks[20] + "%'";
   return new Promise((resolve, reject) => {
     db.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ?`,
-        ["2021-05%"],
+        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
           if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -891,25 +1306,431 @@ async function flexionMay() {
     });
   });
 }
-async function flexionMarchCall() {
-  flexionMarch().then((val) => xxx = val);
+async function weekFourExtension() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[21] + "%'";
+  var tmr1 = "'" + weeks[22] + "%'";
+  var tmr2 = "'" + weeks[23] + "%'";
+  var tmr3 = "'" + weeks[24] + "%'";
+  var tmr4 = "'" + weeks[25] + "%'";
+  var tmr5 = "'" + weeks[26] + "%'";
+  var tmr6 = "'" + weeks[27] + "%'";
+  return new Promise((resolve, reject) => {
+    db.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
 }
-async function flexionAprilCall() {
-  flexionApril().then((val) => xx = val);
+async function weekFiveExtension() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[28] + "%'";
+  var tmr1 = "'" + weeks[29] + "%'";
+  var tmr2 = "'" + weeks[30] + "%'";
+  var tmr3 = "'" + weeks[31] + "%'";
+  var tmr4 = "'" + weeks[32] + "%'";
+  var tmr5 = "'" + weeks[33] + "%'";
+  var tmr6 = "'" + weeks[34] + "%'";
+  return new Promise((resolve, reject) => {
+    db.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
 }
-async function flexionMayCall() {
-  flexionMay().then((val) => xxxx = val);
+async function weekSixExtension() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[35] + "%'";
+  var tmr1 = "'" + weeks[36] + "%'";
+  var tmr2 = "'" + weeks[37] + "%'";
+  var tmr3 = "'" + weeks[38] + "%'";
+  var tmr4 = "'" + weeks[39] + "%'";
+  var tmr5 = "'" + weeks[40] + "%'";
+  var tmr6 = "'" + weeks[41] + "%'";
+  return new Promise((resolve, reject) => {
+    db.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
 }
-async function extensionApril() {
+async function weekSevenExtension() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[42] + "%'";
+  var tmr1 = "'" + weeks[43] + "%'";
+  var tmr2 = "'" + weeks[44] + "%'";
+  var tmr3 = "'" + weeks[45] + "%'";
+  var tmr4 = "'" + weeks[46] + "%'";
+  var tmr5 = "'" + weeks[47] + "%'";
+  var tmr6 = "'" + weeks[48] + "%'";
+  return new Promise((resolve, reject) => {
+    db.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function weekEightExtension() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[49] + "%'";
+  var tmr1 = "'" + weeks[50] + "%'";
+  var tmr2 = "'" + weeks[51] + "%'";
+  var tmr3 = "'" + weeks[52] + "%'";
+  var tmr4 = "'" + weeks[53] + "%'";
+  var tmr5 = "'" + weeks[54] + "%'";
+  var tmr6 = "'" + weeks[55] + "%'";
+  return new Promise((resolve, reject) => {
+    db.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function weekNineExtension() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[56] + "%'";
+  var tmr1 = "'" + weeks[57] + "%'";
+  var tmr2 = "'" + weeks[58] + "%'";
+  var tmr3 = "'" + weeks[59] + "%'";
+  var tmr4 = "'" + weeks[60] + "%'";
+  var tmr5 = "'" + weeks[61] + "%'";
+  var tmr6 = "'" + weeks[62] + "%'";
+  return new Promise((resolve, reject) => {
+    db.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function weekTenExtension() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[63] + "%'";
+  var tmr1 = "'" + weeks[64] + "%'";
+  var tmr2 = "'" + weeks[65] + "%'";
+  var tmr3 = "'" + weeks[66] + "%'";
+  var tmr4 = "'" + weeks[67] + "%'";
+  var tmr5 = "'" + weeks[68] + "%'";
+  var tmr6 = "'" + weeks[69] + "%'";
+  return new Promise((resolve, reject) => {
+    db.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function weekElevenExtension() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[70] + "%'";
+  var tmr1 = "'" + weeks[71] + "%'";
+  var tmr2 = "'" + weeks[72] + "%'";
+  var tmr3 = "'" + weeks[73] + "%'";
+  var tmr4 = "'" + weeks[74] + "%'";
+  var tmr5 = "'" + weeks[75] + "%'";
+  var tmr6 = "'" + weeks[76] + "%'";
+  return new Promise((resolve, reject) => {
+    db.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function weekTwelveExtension() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[77] + "%'";
+  var tmr1 = "'" + weeks[78] + "%'";
+  var tmr2 = "'" + weeks[79] + "%'";
+  var tmr3 = "'" + weeks[80] + "%'";
+  var tmr4 = "'" + weeks[81] + "%'";
+  var tmr5 = "'" + weeks[82] + "%'";
+  var tmr6 = "'" + weeks[83] + "%'";
+  return new Promise((resolve, reject) => {
+    db.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function weekOneExtensionCall() {
+  weekOneExtension().then((val) => weekOneExtensionList = val);
+}
+async function weekTwoExtensionCall() {
+  weekTwoExtension().then((val) => weekTwoExtensionList = val);
+}
+async function weekThreeExtensionCall() {
+  weekThreeExtension().then((val) => weekThreeExtensionList = val);
+}
+async function weekFourExtensionCall() {
+  weekFourExtension().then((val) => weekFourExtensionList = val);
+}
+async function weekFiveExtensionCall() {
+  weekFiveExtension().then((val) => weekFiveExtensionList = val);
+}
+async function weekSixExtensionCall() {
+  weekSixExtension().then((val) => weekSixExtensionList = val);
+}
+async function weekSevenExtensionCall() {
+  weekSevenExtension().then((val) => weekSevenExtensionList = val);
+}
+async function weekEightExtensionCall() {
+  weekEightExtension().then((val) => weekEightExtensionList = val);
+}
+async function weekNineExtensionCall() {
+  weekNineExtension().then((val) => weekNineExtensionList = val);
+}
+async function weekTenExtensionCall() {
+  weekTenExtension().then((val) => weekTenExtensionList = val);
+}
+async function weekElevenExtensionCall() {
+  weekElevenExtension().then((val) => weekElevenExtensionList = val);
+}
+async function weekTwelveExtensionCall() {
+  weekTwelveExtension().then((val) => weekTwelveExtensionList = val);
+}
+//Flexion Measurement
+async function weekOne() {
   var total = 0;
   var finals = 0;
   var today = "'" + weeks[0] + "%'";
   var tmr1 = "'" + weeks[1] + "%'";
-  var tmr2 = "'" +weeks[2]+ "%'";
-  var tmr3 = "'" +weeks[3]+ "%'";
-  var tmr4 = "'" +weeks[4]+ "%'";
-  var tmr5 = "'" +weeks[5]+ "%'";
-  var tmr6 = "'" +weeks[6]+ "%'";
+  var tmr2 = "'" + weeks[2] + "%'";
+  var tmr3 = "'" + weeks[3] + "%'";
+  var tmr4 = "'" + weeks[4] + "%'";
+  var tmr5 = "'" + weeks[5] + "%'";
+  var tmr6 = "'" + weeks[6] + "%'";
   return new Promise((resolve, reject) => {
     db1.transaction((tx1) => {
       tx1.executeSql(
@@ -942,17 +1763,31 @@ async function extensionApril() {
     });
   });
 }
-async function extensionMarch() {
+async function weekTwo() {
   var total = 0;
   var finals = 0;
+  var today = "'" + weeks[7] + "%'";
+  var tmr1 = "'" + weeks[8] + "%'";
+  var tmr2 = "'" + weeks[9] + "%'";
+  var tmr3 = "'" + weeks[10] + "%'";
+  var tmr4 = "'" + weeks[11] + "%'";
+  var tmr5 = "'" + weeks[12] + "%'";
+  var tmr6 = "'" + weeks[13] + "%'";
   return new Promise((resolve, reject) => {
     db1.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ?`,
-        ["2021-03%"],
+        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
+          //this console log not printing
+          console.log(len1 + "successful");
           if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -970,17 +1805,31 @@ async function extensionMarch() {
     });
   });
 }
-async function extensionMay() {
+async function weekThree() {
   var total = 0;
   var finals = 0;
+  var today = "'" + weeks[14] + "%'";
+  var tmr1 = "'" + weeks[15] + "%'";
+  var tmr2 = "'" + weeks[16] + "%'";
+  var tmr3 = "'" + weeks[17] + "%'";
+  var tmr4 = "'" + weeks[18] + "%'";
+  var tmr5 = "'" + weeks[19] + "%'";
+  var tmr6 = "'" + weeks[20] + "%'";
   return new Promise((resolve, reject) => {
     db1.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ?`,
-        ["2021-05%"],
+        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
           if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -998,15 +1847,421 @@ async function extensionMay() {
     });
   });
 }
-async function extensionMarchCall() {
-  extensionMarch().then((val) => mar = val);
+async function weekFour() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[21] + "%'";
+  var tmr1 = "'" + weeks[22] + "%'";
+  var tmr2 = "'" + weeks[23] + "%'";
+  var tmr3 = "'" + weeks[24] + "%'";
+  var tmr4 = "'" + weeks[25] + "%'";
+  var tmr5 = "'" + weeks[26] + "%'";
+  var tmr6 = "'" + weeks[27] + "%'";
+  return new Promise((resolve, reject) => {
+    db1.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
 }
-async function extensionAprilCall() {
-  extensionApril().then((val) => apr = val);
+async function weekFive() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[28] + "%'";
+  var tmr1 = "'" + weeks[29] + "%'";
+  var tmr2 = "'" + weeks[30] + "%'";
+  var tmr3 = "'" + weeks[31] + "%'";
+  var tmr4 = "'" + weeks[32] + "%'";
+  var tmr5 = "'" + weeks[33] + "%'";
+  var tmr6 = "'" + weeks[34] + "%'";
+  return new Promise((resolve, reject) => {
+    db1.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
 }
-async function extensionMayCall() {
-  extensionMay().then((val) => may = val);
+async function weekSix() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[35] + "%'";
+  var tmr1 = "'" + weeks[36] + "%'";
+  var tmr2 = "'" + weeks[37] + "%'";
+  var tmr3 = "'" + weeks[38] + "%'";
+  var tmr4 = "'" + weeks[39] + "%'";
+  var tmr5 = "'" + weeks[40] + "%'";
+  var tmr6 = "'" + weeks[41] + "%'";
+  return new Promise((resolve, reject) => {
+    db1.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
 }
+async function weekSeven() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[42] + "%'";
+  var tmr1 = "'" + weeks[43] + "%'";
+  var tmr2 = "'" + weeks[44] + "%'";
+  var tmr3 = "'" + weeks[45] + "%'";
+  var tmr4 = "'" + weeks[46] + "%'";
+  var tmr5 = "'" + weeks[47] + "%'";
+  var tmr6 = "'" + weeks[48] + "%'";
+  return new Promise((resolve, reject) => {
+    db1.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function weekEight() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[49] + "%'";
+  var tmr1 = "'" + weeks[50] + "%'";
+  var tmr2 = "'" + weeks[51] + "%'";
+  var tmr3 = "'" + weeks[52] + "%'";
+  var tmr4 = "'" + weeks[53] + "%'";
+  var tmr5 = "'" + weeks[54] + "%'";
+  var tmr6 = "'" + weeks[55] + "%'";
+  return new Promise((resolve, reject) => {
+    db1.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function weekNine() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[56] + "%'";
+  var tmr1 = "'" + weeks[57] + "%'";
+  var tmr2 = "'" + weeks[58] + "%'";
+  var tmr3 = "'" + weeks[59] + "%'";
+  var tmr4 = "'" + weeks[60] + "%'";
+  var tmr5 = "'" + weeks[61] + "%'";
+  var tmr6 = "'" + weeks[62] + "%'";
+  return new Promise((resolve, reject) => {
+    db1.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function weekTen() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[63] + "%'";
+  var tmr1 = "'" + weeks[64] + "%'";
+  var tmr2 = "'" + weeks[65] + "%'";
+  var tmr3 = "'" + weeks[66] + "%'";
+  var tmr4 = "'" + weeks[67] + "%'";
+  var tmr5 = "'" + weeks[68] + "%'";
+  var tmr6 = "'" + weeks[69] + "%'";
+  return new Promise((resolve, reject) => {
+    db1.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function weekEleven() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[70] + "%'";
+  var tmr1 = "'" + weeks[71] + "%'";
+  var tmr2 = "'" + weeks[72] + "%'";
+  var tmr3 = "'" + weeks[73] + "%'";
+  var tmr4 = "'" + weeks[74] + "%'";
+  var tmr5 = "'" + weeks[75] + "%'";
+  var tmr6 = "'" + weeks[76] + "%'";
+  return new Promise((resolve, reject) => {
+    db1.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function weekTwelve() {
+  var total = 0;
+  var finals = 0;
+  var today = "'" + weeks[77] + "%'";
+  var tmr1 = "'" + weeks[78] + "%'";
+  var tmr2 = "'" + weeks[79] + "%'";
+  var tmr3 = "'" + weeks[80] + "%'";
+  var tmr4 = "'" + weeks[81] + "%'";
+  var tmr5 = "'" + weeks[82] + "%'";
+  var tmr6 = "'" + weeks[83] + "%'";
+  return new Promise((resolve, reject) => {
+    db1.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        [],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          //this console log not printing
+          // console.log(len1 + "successful");
+          if (len1 > 0) {
+            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
+            // count1 = count1 + 1;
+            // avr1 = total1/count1;
+            // console.log(avr1);
+            // console.log(total1);
+            for (var x = 0; x < len1; x++) {
+              var ans1 = results1.rows.item(x).value;
+              var h = ans1.substr(-3);
+              var num = parseInt(h);
+              total = total + num;
+            }
+            finals = total / len1;
+            total = finals;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function weekOneCall() {
+  weekOne().then((val) => weekOneList = val);
+}
+async function weekTwoCall() {
+  weekTwo().then((val) => weekTwoList = val);
+}
+async function weekThreeCall() {
+  weekThree().then((val) => weekThreeList = val);
+}
+async function weekFourCall() {
+  weekFour().then((val) => weekFourList = val);
+}
+async function weekFiveCall() {
+  weekFive().then((val) => weekFiveList = val);
+}
+async function weekSixCall() {
+  weekSix().then((val) => weekSixList = val);
+}
+async function weekSevenCall() {
+  weekSeven().then((val) => weekSevenList = val);
+}
+async function weekEightCall() {
+  weekEight().then((val) => weekEightList = val);
+}
+async function weekNineCall() {
+  weekNine().then((val) => weekNineList = val);
+}
+async function weekTenCall() {
+  weekTen().then((val) => weekTenList = val);
+}
+async function weekElevenCall() {
+  weekEleven().then((val) => weekElevenList = val);
+}
+async function weekTwelveCall() {
+  weekTwelve().then((val) => weekTwelveList = val);
+}
+
 
 
 
@@ -1021,22 +2276,22 @@ function rr() {
       </Text>
       <LineChart
         data={{
-          labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+          labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11", "w12"],
           datasets: [
             {
               data: [
-                0,
-                0,
-                mar[0] ? mar[0] : 0,
-                apr[0] ? apr[0] : 0,
-                may[0] ? may[0] : 0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0],
+                weekOneExtensionList[0] ? weekOneExtensionList[0] : 0,
+                weekTwoExtensionList[0] ? weekTwoExtensionList[0] : 0,
+                weekThreeExtensionList[0] ? weekThreeExtensionList[0] : 0,
+                weekFourExtensionList[0] ? weekFourExtensionList[0] : 0,
+                weekFiveExtensionList[0] ? weekFiveExtensionList[0] : 0,
+                weekSixExtensionList[0] ? weekSixExtensionList[0] : 0,
+                weekSevenExtensionList[0] ? weekSevenExtensionList[0] : 0,
+                weekEightExtensionList[0] ? weekEightExtensionList[0] : 0,
+                weekNineExtensionList[0] ? weekNineExtensionList[0] : 0,
+                weekTenExtensionList[0] ? weekTenExtensionList[0] : 0,
+                weekElevenExtensionList[0] ? weekElevenExtensionList[0] : 0,
+                weekTwelveExtensionList[0] ? weekTwelveExtensionList[0] : 0],
             }
           ],
           // legend: ["Knee Extension"]
@@ -1084,7 +2339,19 @@ function rrr() {
           datasets: [
             {
               // data: [60, xx[0],0,0,0,0,0,0,0,0,0],
-              data: [105, 106, 107, 107.5, 108, 109, 109.5, 110, 110.2, 110.3, 110.5, 111],
+              data: [
+                weekOneList[0] ? weekOneList[0] : 0,
+                weekTwoList[0] ? weekTwoList[0] : 0,
+                weekThreeList[0] ? weekThreeList[0] : 0,
+                weekFourList[0] ? weekFourList[0] : 0,
+                weekFiveList[0] ? weekFiveList[0] : 0,
+                weekSixList[0] ? weekSixList[0] : 0,
+                weekSevenList[0] ? weekSevenList[0] : 0,
+                weekEightList[0] ? weekEightList[0] : 0,
+                weekNineList[0] ? weekNineList[0] : 0,
+                weekTenList[0] ? weekTenList[0] : 0,
+                weekElevenList[0] ? weekElevenList[0] : 0,
+                weekTwelveList[0] ? weekTwelveList[0] : 0],
               strokeWidth: 4,
 
             },
@@ -1299,14 +2566,34 @@ const Contact = ({ navigation, route }) => {
 };
 
 
+
 //FormSG Page
 const FormSG = ({ navigation, route }) => {
-  flexionAprilCall();
-  flexionMarchCall();
-  flexionMayCall();
-  extensionAprilCall();
-  extensionMarchCall();
-  extensionMayCall();
+
+  weekOneCall();
+  weekTwoCall();
+  weekThreeCall();
+  weekFourCall();
+  weekFiveCall();
+  weekSixCall();
+  weekSevenCall();
+  weekEightCall();
+  weekNineCall();
+  weekTenCall();
+  weekElevenCall();
+  weekTwelveCall();
+  weekOneExtensionCall();
+  weekTwoExtensionCall();
+  weekThreeExtensionCall();
+  weekFourExtensionCall();
+  weekFiveExtensionCall();
+  weekSixExtensionCall();
+  weekSevenExtensionCall();
+  weekEightExtensionCall();
+  weekNineExtensionCall();
+  weekTenExtensionCall();
+  weekElevenExtensionCall();
+  weekTwelveExtensionCall();
   nricAsyncCall();
 
   const { flexData } = (route.params);
@@ -1459,7 +2746,15 @@ const Goniometer = ({ navigation, route }) => {
   }, []);
 
   const { alpha, beta, gamma } = data;
-
+  var currDate = new Date();
+  var timeDiff;
+  if (initDate.length != 0) {
+    timeDiff = currDate.getTime() - initDate[0].getTime();
+  } else {
+    timeDiff = 0;
+  }
+  var dayDiff = Math.floor(timeDiff / (24 * 60 * 60 * 1000));
+  // console.log(dayDiff);
   ///////////////////////////////////////////////////////////////////////
   //Below portion is for the Conditional Rendering Based on the Angle/////
   //////////////////////////////////////////////////////////////////////
@@ -1474,25 +2769,25 @@ const Goniometer = ({ navigation, route }) => {
   function green(n) {
     if (selectedGenderValue === "Male") {
       if (
-        (n >= 112 && selectedValue === "2") ||
-        (n >= 115 && selectedValue === "4") ||
-        (n >= 117 && selectedValue === "6") ||
-        (n >= 120 && selectedValue === "8") ||
-        (n >= 121 && selectedValue === "10") ||
-        (n >= 123 && selectedValue === "12") ||
-        (n >= 124 && selectedValue === "14")
+        (n >= 112 && dayDiff <= 14) ||
+        (n >= 115 && dayDiff > 14 & dayDiff <= 28) ||
+        (n >= 117 && dayDiff > 28 & dayDiff <= 42) ||
+        (n >= 120 && dayDiff > 42 & dayDiff <= 56) ||
+        (n >= 121 && dayDiff > 56 & dayDiff <= 70) ||
+        (n >= 123 && dayDiff > 70 & dayDiff <= 84)
+        // (n >= 124 && selectedValue === "14")
       ) {
         return true;
       }
     } else if (selectedGenderValue === "Female") {
       if (
-        (n >= 105 && selectedValue === "2") ||
-        (n >= 110 && selectedValue === "4") ||
-        (n >= 115 && selectedValue === "6") ||
-        (n >= 117 && selectedValue === "8") ||
-        (n >= 118 && selectedValue === "10") ||
-        (n >= 120 && selectedValue === "12") ||
-        (n >= 120 && selectedValue === "14")
+        (n >= 105 && dayDiff <= 14) ||
+        (n >= 110 && dayDiff > 14 & dayDiff <= 28) ||
+        (n >= 115 && dayDiff > 28 & dayDiff <= 42) ||
+        (n >= 117 && dayDiff > 42 & dayDiff <= 56) ||
+        (n >= 118 && dayDiff > 56 & dayDiff <= 70) ||
+        (n >= 120 && dayDiff > 70 & dayDiff <= 84)
+        // (n >= 120 && selectedValue === "14")
       ) {
         return true;
       }
@@ -1505,25 +2800,25 @@ const Goniometer = ({ navigation, route }) => {
   function blue(n) {
     if (selectedGenderValue === "Male") {
       if (
-        (n < 112 && n >= 101 && selectedValue === "2") ||
-        (n < 115 && n >= 106 && selectedValue === "4") ||
-        (n < 117 && n >= 110 && selectedValue === "6") ||
-        (n < 120 && n >= 113 && selectedValue === "8") ||
-        (n < 121 && n >= 115 && selectedValue === "10") ||
-        (n < 123 && n >= 117 && selectedValue === "12") ||
-        (n < 124 && n >= 118 && selectedValue === "14")
+        (n < 112 && n >= 101 && dayDiff <= 14) ||
+        (n < 115 && n >= 106 && dayDiff > 14 & dayDiff <= 28) ||
+        (n < 117 && n >= 110 && dayDiff > 28 & dayDiff <= 42) ||
+        (n < 120 && n >= 113 && dayDiff > 42 & dayDiff <= 56) ||
+        (n < 121 && n >= 115 && dayDiff > 56 & dayDiff <= 70) ||
+        (n < 123 && n >= 117 && dayDiff > 70 & dayDiff <= 84)
+        // (n < 124 && n >= 118 && "14")
       ) {
         return true;
       }
     } else if (selectedGenderValue === "Female") {
       if (
-        (n < 105 && n >= 95 && selectedValue === "2") ||
-        (n < 110 && n >= 102 && selectedValue === "4") ||
-        (n < 115 && n >= 106 && selectedValue === "6") ||
-        (n < 117 && n >= 109 && selectedValue === "8") ||
-        (n < 118 && n >= 110 && selectedValue === "10") ||
-        (n < 120 && n >= 110 && selectedValue === "12") ||
-        (n < 120 && n >= 110 && selectedValue === "14")
+        (n < 105 && n >= 95 && dayDiff <= 14) ||
+        (n < 110 && n >= 102 && dayDiff > 14 & dayDiff <= 28) ||
+        (n < 115 && n >= 106 && dayDiff > 28 & dayDiff <= 42) ||
+        (n < 117 && n >= 109 && dayDiff > 42 & dayDiff <= 56) ||
+        (n < 118 && n >= 110 && dayDiff > 56 & dayDiff <= 70) ||
+        (n < 120 && n >= 110 && dayDiff > 70 & dayDiff <= 84)
+        // (n < 120 && n >= 110 && "14")
       ) {
         return true;
       }
@@ -1536,25 +2831,25 @@ const Goniometer = ({ navigation, route }) => {
   function red(n) {
     if (selectedGenderValue === "Male") {
       if (
-        (n > 90 && n < 101 && selectedValue === "2") ||
-        (n > 96 && n < 106 && selectedValue === "4") ||
-        (n > 102 && n < 110 && selectedValue === "6") ||
-        (n > 105 && n < 113 && selectedValue === "8") ||
-        (n > 106 && n < 115 && selectedValue === "10") ||
-        (n > 107 && n < 117 && selectedValue === "12") ||
-        (n > 108 && n < 118 && selectedValue === "14")
+        (n > 90 && n < 101 && dayDiff <= 14) ||
+        (n > 96 && n < 106 && dayDiff > 14 & dayDiff <= 28) ||
+        (n > 102 && n < 110 && dayDiff > 28 & dayDiff <= 42) ||
+        (n > 105 && n < 113 && dayDiff > 42 & dayDiff <= 56) ||
+        (n > 106 && n < 115 && dayDiff > 56 & dayDiff <= 70) ||
+        (n > 107 && n < 117 && dayDiff > 70 & dayDiff <= 84)
+        // (n > 108 && n < 118 && "14")
       ) {
         return true;
       }
     } else if (selectedGenderValue === "Female") {
       if (
-        (n > 88 && n < 95 && selectedValue === "2") ||
-        (n > 93 && n < 102 && selectedValue === "4") ||
-        (n > 96 && n < 106 && selectedValue === "6") ||
-        (n > 99 && n < 109 && selectedValue === "8") ||
-        (n > 101 && n < 110 && selectedValue === "10") ||
-        (n > 103 && n < 110 && selectedValue === "12") ||
-        (n > 104 && n < 110 && selectedValue === "14")
+        (n > 88 && n < 95 && dayDiff <= 14) ||
+        (n > 93 && n < 102 && dayDiff > 14 & dayDiff <= 28) ||
+        (n > 96 && n < 106 && dayDiff > 28 & dayDiff <= 42) ||
+        (n > 99 && n < 109 && dayDiff > 42 & dayDiff <= 56) ||
+        (n > 101 && n < 110 && dayDiff > 56 & dayDiff <= 70) ||
+        (n > 103 && n < 110 && dayDiff > 70 & dayDiff <= 84)
+        // (n > 104 && n < 110 && "14")
       ) {
         return true;
       }
@@ -1567,25 +2862,25 @@ const Goniometer = ({ navigation, route }) => {
   function belowRed(n) {
     if (selectedGenderValue === "Male") {
       if (
-        (n <= 90 && selectedValue === "2") ||
-        (n <= 96 && selectedValue === "4") ||
-        (n <= 102 && selectedValue === "6") ||
-        (n <= 105 && selectedValue === "8") ||
-        (n <= 106 && selectedValue === "10") ||
-        (n <= 107 && selectedValue === "12") ||
-        (n <= 108 && selectedValue === "14")
+        (n <= 90 && dayDiff <= 14) ||
+        (n <= 96 && dayDiff > 14 & dayDiff <= 28) ||
+        (n <= 102 && dayDiff > 28 & dayDiff <= 42) ||
+        (n <= 105 && dayDiff > 42 & dayDiff <= 56) ||
+        (n <= 106 && dayDiff > 56 & dayDiff <= 70) ||
+        (n <= 107 && dayDiff > 70 & dayDiff <= 84)
+        // (n <= 108 && "14")
       ) {
         return true;
       }
     } else if (selectedGenderValue === "Female") {
       if (
-        (n <= 88 && selectedValue === "2") ||
-        (n <= 93 && selectedValue === "4") ||
-        (n <= 96 && selectedValue === "6") ||
-        (n <= 99 && selectedValue === "8") ||
-        (n <= 101 && selectedValue === "10") ||
-        (n <= 103 && selectedValue === "12") ||
-        (n <= 104 && selectedValue === "14")
+        (n <= 88 && dayDiff <= 14) ||
+        (n <= 93 && dayDiff > 14 & dayDiff <= 28) ||
+        (n <= 96 && dayDiff > 28 & dayDiff <= 42) ||
+        (n <= 99 && dayDiff > 42 & dayDiff <= 56) ||
+        (n <= 101 && dayDiff > 56 & dayDiff <= 70) ||
+        (n <= 103 && dayDiff > 70 & dayDiff <= 84)
+        // (n <= 104 && "14")
       ) {
         return true;
       }
@@ -1638,143 +2933,194 @@ const Goniometer = ({ navigation, route }) => {
   const [val, setVal] = useState('AboutReact');
   const [vals, setVals] = useState('AboutReacts');
 
-  return (
+  const submitAlert = () => {
+    Alert.alert(
+      "Are you sure you want to submit?",
+      "",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "Yes", onPress: () => navigation.navigate("FormSG", {
+            flexData: val,
+            extenData: vals,
+            name: "FormSG",
+            flex: 1,
+          })
+        }
+      ]
+    );
+  }
+  const revertToAdminAlert = () => {
+    Alert.alert(
+      "Complete Admin Setup",
+      "",
+      [
 
-    <View style={styles.container}>
+        {
+          text: "OK", onPress: () => navigation.navigate("UserData", {
+            flexData: val,
+            extenData: vals,
+            name: "UserData",
+            flex: 1,
+          })
+        }
+      ]
+    );
+  }
+  if (initDate[0] == null) {
+    return (
       <View>
-        <Text style={{ textAlign: "center", fontSize: 60 }}>Knee Range: </Text>
-        {noGenderWeek(getDegrees(round(beta))) ? (
-          <Text style={stylePercentile.textPercentileBlack}>
-            {getDegrees(round(beta))}°
-          </Text>
-        ) : null}
-        {green(getDegrees(round(beta))) ? (
-          <Text style={stylePercentile.textPercentileGreen}>
-            {getDegrees(round(beta))}°
-          </Text>
-        ) : null}
-        {blue(getDegrees(round(beta))) ? (
-          <Text style={stylePercentile.textPercentileOrange}>
-            {getDegrees(round(beta))}°
-          </Text>
-        ) : null}
-        {red(getDegrees(round(beta))) ? (
-          <Text style={stylePercentile.textPercentileOrange}>
-            {getDegrees(round(beta))}°
-          </Text>
-        ) : null}
-        {belowRed(getDegrees(round(beta))) ? (
-          <Text style={stylePercentile.textPercentileRed}>
-            {getDegrees(round(beta))}°
-          </Text>
-        ) : null}
+        <Text></Text>
+        <Text style={{ textAlign: "center", fontSize: 60 }}>Please complete admin registration</Text>
+        <Text></Text>
+        <TouchableOpacity style={styles.SubmitButtonFormStyle}>
+          <Text style={styles.TextStyleButton}
+            onPress={() =>
+              navigation.navigate("UserData", {
+              })
+            }>Register</Text>
+        </TouchableOpacity>
       </View>
-      <View>
-        {useEffect(() => {
-          displayAngle();
-        }, [])}
-      </View>
-
-      <View style={{ marginTop: 20 }}>
-        <Text
-          style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
-        >
-          Previous Flexion: {flexionDegree}°
-        </Text>
-
-        <Text
-          style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
-        >
-          Previous Extension: {extensionDegree}°
-        </Text>
-      </View>
-      <ScrollView>
-        <View style={styles.MainRecordStartStopContainer}>
-          <TouchableOpacity
-            onPress={subscription ? _unsubscribe : _subscribe}
-            style={styles.SubmitButtonStyle}
-          >
-            <Text style={styles.TextStyleButton}>
-              {subscription ? "STOP" : "START"}
+    );
+  } else {
+    return (
+      <View style={styles.container}>
+        <View>
+          <Text style={{ textAlign: "center", fontSize: 60 }}>Knee Range: </Text>
+          {noGenderWeek(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileBlack}>
+              {getDegrees(round(beta))}°
             </Text>
-          </TouchableOpacity>
+          ) : null}
+          {green(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileGreen}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+          {blue(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileOrange}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+          {red(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileOrange}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+          {belowRed(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileRed}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+        </View>
+        <View>
+          {useEffect(() => {
+            displayAngle();
+          }, [])}
         </View>
 
-        <View style={styles.MainRecordContainer}>
-          <TouchableOpacity
-            onPress={() => {
-              var degr = getDegrees(round(beta));
-              add(degr);
-              setFlexionDegree(getDegrees(round(beta)));
-              // add(getDegrees(round(beta)));
-              setVal(degr);
-            }}
-            style={styles.SubmitButtonRecordStyle}
+        <View style={{ marginTop: 20 }}>
+          <Text
+            style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
           >
-            <Text style={styles.TextStyleButton}>Record Flexion</Text>
-          </TouchableOpacity>
-        </View>
+            Previous Flexion: {flexionDegree}°
+        </Text>
 
-        <View style={styles.MainRecordContainer}>
-          <TouchableOpacity
-            onPress={() => {
-              var a = getDegrees(round(beta));
-              add1(a);
-              // add1(getDegrees(round(beta)));
-              setExtensionDegree(getDegrees(round(beta)));
-              setVals(a);
-            }}
-            style={styles.SubmitButtonRecordStyle}
+          <Text
+            style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
           >
-            <Text style={styles.TextStyleButton}>Record Extension</Text>
-          </TouchableOpacity>
+            Previous Extension: {extensionDegree}°
+        </Text>
         </View>
-
-        <View style={styles.MainRecordContainer}>
-          {!(flexionDegree != 0 && extensionDegree != 0) ? (
-            <TouchableOpacity style={styles.SubmitButtonFormStyleDisabled}>
-              <Text style={styles.TextStyleButton}>Submit FormSG</Text>
-            </TouchableOpacity>
-          ) : null}
-
-          {flexionDegree != 0 && extensionDegree != 0 ? (
+        <ScrollView>
+          <View style={styles.MainRecordStartStopContainer}>
             <TouchableOpacity
-              onPress={() => navigation.navigate("FormSG", {
-                flexData: val,
-                extenData: vals,
-                name: "FormSG",
-                flex: 1,
-              })}
-              style={styles.SubmitButtonFormStyle}
+              onPress={subscription ? _unsubscribe : _subscribe}
+              style={styles.SubmitButtonStyle}
             >
-              <Text style={styles.TextStyleButton}>Submit FormSG</Text>
+              <Text style={styles.TextStyleButton}>
+                {subscription ? "STOP" : "START"}
+              </Text>
             </TouchableOpacity>
-          ) : null}
-        </View>
+          </View>
 
-        <View style={styles.MainRecordHistoryContainer}>
-          {!(flexionDegree != 0 && extensionDegree != 0) ? (
-            <TouchableOpacity style={styles.SubmitButtonHistoryStyleDisabled}>
-              <Text style={styles.TextStyleButton}>History</Text>
-            </TouchableOpacity>
-          ) : null}
-
-          {flexionDegree != 0 && extensionDegree != 0 ? (
+          <View style={styles.MainRecordContainer}>
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("CalenderDataPage", {
-                  name: "CalenderDataPage",
-                })
-              }
-              style={styles.SubmitButtonHistoryStyle}
+              onPress={() => {
+                var degr = getDegrees(round(beta));
+                add(degr);
+                setFlexionDegree(getDegrees(round(beta)));
+                // add(getDegrees(round(beta)));
+                setVal(degr);
+              }}
+              style={styles.SubmitButtonRecordStyle}
             >
-              <Text style={styles.TextStyleButton}>History</Text>
+              <Text style={styles.TextStyleButton}>Record Flexion</Text>
             </TouchableOpacity>
-          ) : null}
-        </View>
-      </ScrollView>
-    </View>
-  );
+          </View>
+
+          <View style={styles.MainRecordContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                var a = getDegrees(round(beta));
+                add1(a);
+                // add1(getDegrees(round(beta)));
+                setExtensionDegree(getDegrees(round(beta)));
+                setVals(a);
+              }}
+              style={styles.SubmitButtonRecordStyle}
+            >
+              <Text style={styles.TextStyleButton}>Record Extension</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.MainRecordContainer}>
+            {!(flexionDegree != 0 && extensionDegree != 0) ? (
+              <TouchableOpacity style={styles.SubmitButtonFormStyleDisabled}>
+                <Text style={styles.TextStyleButton}>Submit FormSG</Text>
+              </TouchableOpacity>
+            ) : null}
+
+            {flexionDegree != 0 && extensionDegree != 0 ? (
+              <TouchableOpacity style={styles.SubmitButtonFormStyle}
+                onPress={submitAlert}>
+                <Text style={styles.TextStyleButton}>Submit FormSG</Text>
+
+              </TouchableOpacity>
+              // <Button
+              //   onPress={submitAlert} />
+
+            ) : null}
+          </View>
+
+          <View style={styles.MainRecordHistoryContainer}>
+            {!(flexionDegree != 0 && extensionDegree != 0) ? (
+              <TouchableOpacity style={styles.SubmitButtonHistoryStyleDisabled}>
+                <Text style={styles.TextStyleButton}>History</Text>
+              </TouchableOpacity>
+            ) : null}
+
+            {flexionDegree != 0 && extensionDegree != 0 ? (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("CalenderDataPage", {
+                    name: "CalenderDataPage",
+                  })
+                }
+                style={styles.SubmitButtonHistoryStyle}
+              >
+                <Text style={styles.TextStyleButton}>History</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+        </ScrollView>
+      </View>
+    );
+  }
 };
 
 function useForceUpdate() {
@@ -1820,6 +3166,15 @@ const styles = StyleSheet.create({
     marginLeft: 40,
     marginRight: 40,
     paddingTop: 0,
+    textAlign: "center",
+  },
+  pickerContainerDate: {
+    // flex: 1,
+    // justifyContent: "flex-start",
+    // height: 1,
+    marginLeft: "33%",
+    // marginRight: 40,
+    // paddingTop: 0,
     textAlign: "center",
   },
   text: {
