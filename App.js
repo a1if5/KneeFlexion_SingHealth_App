@@ -229,11 +229,6 @@ const Goniometer_App = () => {
           component={Contact}
           options={{ title: "Contact Us" }}
         />
-        {/* <Stack.Screen
-          name="UserData"
-          component={UserData}
-          options={{ title: "ADMIN" }}
-        /> */}
         <Stack.Screen
           name="CalenderDataPage"
           component={CalenderDataPage}
@@ -463,261 +458,6 @@ const CalenderDataPage = ({ navigation, route }) => {
 };
 
 //////////////////////////////////////////////////////////
-//////////////////////ADMIN PAGE//////////////////////////
-//////////////////////////////////////////////////////////
-// const UserData = ({ navigation, route }) => {
-
-//   const [forceUpdate, forceUpdateId] = useForceUpdate();
-//   const [forceUpdate1, forceUpdateId1] = useForceUpdate();
-
-//   const [selectedValue, setSelectedValue] = useState("2");
-//   const [selectedGenderValue, setSelectedGenderValue] = useState("Male");
-//   const [text, onChangeText] = React.useState(null);
-//   //user week data
-//   React.useEffect(() => {
-//     userInfo.transaction((tx) => {
-//       tx.executeSql(
-//         "create table if not exists userInfo (id integer primary key not null, done int, value text);"
-//       );
-//     });
-//   }, []);
-//   //user gender data
-//   React.useEffect(() => {
-//     userGender.transaction((tx) => {
-//       tx.executeSql(
-//         "create table if not exists userGender (id integer primary key not null, done int, value text);"
-//       );
-//     });
-//   }, []);
-//   //User NRIC data
-//   React.useEffect(() => {
-//     userNRIC.transaction((tx) => {
-//       tx.executeSql(
-//         "create table if not exists userNRIC (id integer primary key not null, done int, value text);"
-//       );
-//     });
-//   }, []);
-
-//   const add2 = (text) => {
-//     var text = parseInt(text);
-//     if (text === null || text === "") {
-//       alert("Invalid Input!");
-//       return false;
-//     }
-
-//     userInfo.transaction(
-//       (tx) => {
-//         tx.executeSql("insert into userInfo (done, value) values (0, ?)", [
-//           text,
-//         ]);
-//         tx.executeSql("select * from userInfo", [], (_, { rows }) =>
-//           console.log(JSON.stringify(rows))
-//         );
-//       },
-//       null,
-//       forceUpdate
-//     );
-//   };
-//   const add3 = (text) => {
-//     var text = text;
-//     if (text === null || text === "") {
-//       alert("Invalid Input!");
-//       return false;
-//     }
-
-//     userGender.transaction(
-//       (tx) => {
-//         tx.executeSql("insert into userGender (done, value) values (0, ?)", [
-//           text,
-//         ]);
-//         tx.executeSql("select * from userGender", [], (_, { rows }) =>
-//           console.log(JSON.stringify(rows))
-//         );
-//       },
-//       null,
-//       forceUpdate1
-//     );
-//   };
-//   const addNRIC = (text) => {
-//     var text = text;
-//     if (text === null || text === "") {
-//       alert("Invalid Input!");
-//       return false;
-//     }
-
-//     userNRIC.transaction(
-//       (tx) => {
-//         tx.executeSql("insert into userNRIC (done, value) values (0, ?)", [
-//           text,
-//         ]);
-//         tx.executeSql("select * from userNRIC", [], (_, { rows }) =>
-//           console.log(JSON.stringify(rows))
-//         );
-//       },
-//       null,
-//       forceUpdate1
-//     );
-//   };
-//   var dayBefore = new Date();
-//   dayBefore.setDate(new Date().getDate() - 1);
-//   const [date, setDate] = useState(dayBefore);
-//   const [mode, setMode] = useState('date');
-//   const [show, setShow] = useState(false);
-//   const onChange = (event, selectedDate) => {
-//     const currentDate = selectedDate || date;
-//     initDate[0] = currentDate;
-//     setShow(Platform.OS === 'ios');
-//     setDate(currentDate);
-//     var last = new Date(currentDate.getTime() + (7 * 24 * 60 * 60 * 1000));
-//     // console.log(last);
-//     var yyyy;
-//     var mm;
-//     var dd;
-//     for (var i = 0; i < 84; i++) {
-//       var nextDay = new Date(currentDate.getTime() + ((i) * 24 * 60 * 60 * 1000));
-//       if (nextDay.getMonth().toString().length == 1) {
-//         var amend = nextDay.getMonth() + 1;
-//         mm = "0" + amend;
-//       } else {
-//         mm = amend;
-//       }
-//       if (nextDay.getDate().toString().length == 1) {
-//         dd = "0" + nextDay.getDate();
-//       } else {
-//         dd = nextDay.getDate();
-//       }
-//       yyyy = "20" + nextDay.getYear().toString().substring(1, 3);
-//       var x = yyyy + "-" + mm + "-" + dd;
-//       weeks[i] = x;
-//       console.log(weeks[i]);
-//       yyyy = null;
-//       mm = null;
-//       dd = null;
-//     }
-//   };
-
-
-//   // for (var i = 0; i < 12; i++) {
-//   //   var nextWeek = new Date(currentDate.getTime() + ((i * 7) * 24 * 60 * 60 * 1000));
-//   //   if (nextWeek.getMonth().toString().length == 1) {
-//   //     mm = "0" + nextWeek.getMonth();
-//   //   } else {
-//   //     mm = nextWeek.getMonth();
-//   //   }
-//   //   if (nextWeek.getDate().toString().length == 1) {
-//   //     dd = "0" + nextWeek.getDate();
-//   //   } else {
-//   //     dd = nextWeek.getDate();
-//   //   }
-//   //   yyyy = "20" + nextWeek.getYear().toString().substring(1, 3);
-//   //   var x = yyyy + "-" + mm + "-" + dd;
-//   //   weeks[i] = x;
-//   //   // console.log(weeks[i]);
-//   //   yyyy = null;
-//   //   mm = null;
-//   //   dd = null;
-//   // }
-
-//   const showMode = (currentMode) => {
-//     setShow(true);
-//     setMode(currentMode);
-//   };
-
-//   const showDatepicker = () => {
-//     showMode('date');
-//   };
-
-
-//   return (
-//     <View style={styles.container}>
-
-//       <Text></Text>
-//       <Text style={{ textAlign: "center", fontSize: 40 }}>Admin Setup</Text>
-//       <Text></Text>
-//       <View style={styles.pickerContainerGender}>
-//         <Text style={{ textAlign: "center", fontSize: 40 }}>NRIC</Text>
-//         <Text></Text>
-
-//         <TextInput
-//           placeholder="S0000000N"
-//           style={inpttext.input}
-//           onSubmitEditing={(nric) => {
-//             addNRIC(nric.nativeEvent.text);
-//             onChangeText(nric.nativeEvent.text);
-//             // console.log(nric.nativeEvent.text);
-//           }}
-//         // value={text}
-//         />
-//       </View>
-//       <View style={styles.pickerContainer}>
-//         {/* <Text style={{ textAlign: "center", fontSize: 40 }}>Week</Text> */}
-//         <Text></Text>
-//         <View>
-//           {/* <View>
-//             <Button onPress={showDatepicker} title="Set Week"/>
-//           </View>
-
-//           {show && ( */}
-//           <Text style={{ textAlign: "center", fontSize: 40 }}>Start Date</Text>
-//           <Text></Text>
-//           <View style={styles.pickerContainerDate}>
-//             <DateTimePicker
-//               style={{ marginRight: 40 }}
-//               testID="dateTimePicker"
-//               value={date}
-//               mode={mode}
-//               is24Hour={true}
-//               display="default"
-//               onChange={onChange}
-//             />
-//           </View>
-//           {/* )} */}
-//         </View>
-//         {/* <RNPickerSelect
-
-//           onValueChange={(itemValue) => {
-//             add2(itemValue);
-//             setSelectedValue(itemValue);
-//           }}
-//           useNativeAndroidPickerStyle={false}
-//           placeholder={{ label: "Select Week", value: null }}
-//           items={[
-//             { label: "Week 2", value: "2" },
-//             { label: "Week 4", value: "4" },
-//             { label: "Week 6", value: "6" },
-//             { label: "Week 8", value: "8" },
-//             { label: "Week 10", value: "10" },
-//             { label: "Week 12", value: "12" },
-//           ]}
-//           style={stylePicker}
-//         /> */}
-//       </View>
-//       <Text></Text>
-//       <Text style={{ textAlign: "center", fontSize: 40 }}>Gender</Text>
-//       <Text></Text>
-//       <View style={styles.pickerContainerGender}>
-//         <RNPickerSelect
-//           // onValueChange={(itemValue) => setSelectedGenderValue(itemValue)}
-//           onValueChange={(itemvalu) => {
-//             add3(itemvalu);
-//             setSelectedGenderValue(itemvalu);
-//             console.log(itemvalu);
-//           }}
-//           useNativeAndroidPickerStyle={false}
-//           placeholder={{ label: "Select Gender", value: null }}
-//           items={[
-//             { label: "Male", value: "Male" },
-//             { label: "Female", value: "Female" },
-//           ]}
-//           style={stylePicker}
-//         />
-//       </View>
-
-//     </View>
-//   );
-// };
-
-//////////////////////////////////////////////////////////
 //////////////////MAIN NAVIGATION PAGE////////////////////
 //////////////////////////////////////////////////////////
 const HomeScreen = ({ navigation, route }) => {
@@ -924,12 +664,12 @@ const HomeScreen = ({ navigation, route }) => {
           {
             text: "Yes", onPress: () => {
               checker[0] = 1;
-            
-            navigation.navigate("Home", {
-              name: "Home",
-              flex: 1,
-            })
-          }
+
+              navigation.navigate("Home", {
+                name: "Home",
+                flex: 1,
+              })
+            }
           }
         ]
       );
@@ -952,12 +692,11 @@ const HomeScreen = ({ navigation, route }) => {
       <View style={styles.container}>
 
         <Text></Text>
-        <Text style={{ textAlign: "center", fontSize: 40 }}>Admin Setup</Text>
+        {/* <Text style={{ textAlign: "center", fontSize: 40 }}>Admin Setup</Text> */}
         <Text></Text>
         <View style={styles.pickerContainerGender}>
           <Text style={{ textAlign: "center", fontSize: 40 }}>NRIC</Text>
           <Text></Text>
-
           <TextInput
             placeholder="S0000000N"
             style={inpttext.input}
@@ -965,20 +704,11 @@ const HomeScreen = ({ navigation, route }) => {
               nricCheck[0] = 1;
               addNRIC(nric.nativeEvent.text);
               onChangeText(nric.nativeEvent.text);
-              // console.log(nric.nativeEvent.text);
             }}
-          // value={text}
           />
-        </View>
-        <View style={styles.pickerContainer}>
-          {/* <Text style={{ textAlign: "center", fontSize: 40 }}>Week</Text> */}
+          <Text></Text>
           <Text></Text>
           <View>
-            {/* <View>
-              <Button onPress={showDatepicker} title="Set Week"/>
-            </View>
-  
-            {show && ( */}
             <Text style={{ textAlign: "center", fontSize: 40 }}>Start Date</Text>
             <Text></Text>
             <View style={styles.pickerContainerDate}>
@@ -992,22 +722,18 @@ const HomeScreen = ({ navigation, route }) => {
                 onChange={onChange}
               />
             </View>
-            {/* )} */}
           </View>
-
-        </View>
+          <Text></Text>
+          <Text></Text>
+          <Text style={{ textAlign: "center", fontSize: 40 }}>Gender</Text>
         <Text></Text>
-        <Text style={{ textAlign: "center", fontSize: 40 }}>Gender</Text>
-        <Text></Text>
-        <View style={styles.pickerContainerGender}>
+        <View>
           <RNPickerSelect
-            // onValueChange={(itemValue) => setSelectedGenderValue(itemValue)}
             onValueChange={(itemvalu) => {
               nameCheck[0] = 1;
               add3(itemvalu);
               setSelectedGenderValue(itemvalu);
               console.log(itemvalu);
-
             }}
             useNativeAndroidPickerStyle={false}
             placeholder={{ label: "Select Gender", value: null }}
@@ -1019,15 +745,12 @@ const HomeScreen = ({ navigation, route }) => {
           />
         </View>
         <TouchableOpacity
-          onPress={
-
-            submitUserDateAlert}
-
-          style={styles.NavigateMeasurement}
-
+          onPress={submitUserDateAlert}
+          style={styles.NavigateMeasurementAdmin}
         >
           <Text style={styles.TextStyleButtonHomePage}>Confirm</Text>
         </TouchableOpacity>
+        </View>
       </View>
     );
   } else if (checker[0] == 1) {
@@ -1081,98 +804,6 @@ const HomeScreen = ({ navigation, route }) => {
       </View>
     );
   }
-};
-const UserData = ({ navigation, route }) => {
-
-
-
-  return (
-    <View style={styles.container}>
-
-      <Text></Text>
-      <Text style={{ textAlign: "center", fontSize: 40 }}>Admin Setup</Text>
-      <Text></Text>
-      <View style={styles.pickerContainerGender}>
-        <Text style={{ textAlign: "center", fontSize: 40 }}>NRIC</Text>
-        <Text></Text>
-
-        <TextInput
-          placeholder="S0000000N"
-          style={inpttext.input}
-          onSubmitEditing={(nric) => {
-            addNRIC(nric.nativeEvent.text);
-            onChangeText(nric.nativeEvent.text);
-            // console.log(nric.nativeEvent.text);
-          }}
-        // value={text}
-        />
-      </View>
-      <View style={styles.pickerContainer}>
-        {/* <Text style={{ textAlign: "center", fontSize: 40 }}>Week</Text> */}
-        <Text></Text>
-        <View>
-          {/* <View>
-            <Button onPress={showDatepicker} title="Set Week"/>
-          </View>
-
-          {show && ( */}
-          <Text style={{ textAlign: "center", fontSize: 40 }}>Start Date</Text>
-          <Text></Text>
-          <View style={styles.pickerContainerDate}>
-            <DateTimePicker
-              style={{ marginRight: 40 }}
-              testID="dateTimePicker"
-              value={date}
-              mode={mode}
-              is24Hour={true}
-              display="default"
-              onChange={onChange}
-            />
-          </View>
-          {/* )} */}
-        </View>
-        {/* <RNPickerSelect
-
-          onValueChange={(itemValue) => {
-            add2(itemValue);
-            setSelectedValue(itemValue);
-          }}
-          useNativeAndroidPickerStyle={false}
-          placeholder={{ label: "Select Week", value: null }}
-          items={[
-            { label: "Week 2", value: "2" },
-            { label: "Week 4", value: "4" },
-            { label: "Week 6", value: "6" },
-            { label: "Week 8", value: "8" },
-            { label: "Week 10", value: "10" },
-            { label: "Week 12", value: "12" },
-          ]}
-          style={stylePicker}
-        /> */}
-      </View>
-      <Text></Text>
-      <Text style={{ textAlign: "center", fontSize: 40 }}>Gender</Text>
-      <Text></Text>
-      <View style={styles.pickerContainerGender}>
-        <RNPickerSelect
-          // onValueChange={(itemValue) => setSelectedGenderValue(itemValue)}
-          onValueChange={(itemvalu) => {
-            add3(itemvalu);
-            setSelectedGenderValue(itemvalu);
-            console.log(itemvalu);
-          }}
-          useNativeAndroidPickerStyle={false}
-          placeholder={{ label: "Select Gender", value: null }}
-          items={[
-            { label: "Male", value: "Male" },
-            { label: "Female", value: "Female" },
-          ]}
-          style={stylePicker}
-        />
-      </View>
-
-    </View>
-  );
 };
 
 //////////////////////////////////////////////////////////
@@ -3159,6 +2790,13 @@ const styles = StyleSheet.create({
     marginRight: 40,
     textAlign: "center",
   },
+  pickerContainerDt: {
+    flex: 1,
+    height: 1,
+    marginLeft: 40,
+    marginRight: 40,
+    textAlign: "center",
+  },
   pickerContainerGender: {
     flex: 1,
     justifyContent: "flex-start",
@@ -3221,6 +2859,17 @@ const styles = StyleSheet.create({
     height: 100,
     justifyContent: "center",
   },
+  NavigateMeasurementAdmin: {
+    marginTop: 40,
+    // marginLeft: 10,
+    // marginRight: 10,
+    backgroundColor: "#2B6D6A",
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "#fff",
+    height: 100,
+    justifyContent: "center",
+  },
   SubmitButtonRecordStyle: {
     backgroundColor: "#786B4A",
     borderRadius: 35,
@@ -3271,6 +2920,14 @@ const styles = StyleSheet.create({
   },
   TextStyleButtonHomePage: {
     color: "#fff",
+    textAlign: "center",
+    fontSize: 40,
+    fontStyle: "italic",
+  },
+  TextStyleButtonHomePageAdmin: {
+    color: "#fff",
+    paddingVertical: 12,
+    paddingHorizontal: 10,
     textAlign: "center",
     fontSize: 40,
     fontStyle: "italic",
