@@ -1,22 +1,7 @@
 import React, { useState, useEffect, Component, useCallback } from "react";
 import YoutubePlayer from "react-native-youtube-iframe";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  FlatList,
-  Image,
-  Alert,
-  // Button,
-  Platform,
-  TouchableHighlight,
-  SafeAreaView,
-} from "react-native";
-import { Button, ThemeProvider } from 'react-native-elements';
-import { Dimensions, Switch } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList, Image, Alert, Platform, TouchableHighlight, SafeAreaView, } from "react-native";
+import { Dimensions } from 'react-native';
 const screenWidth = Dimensions.get("window").width;
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
@@ -27,27 +12,12 @@ import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
 import moment from "moment";
 import RNPickerSelect, { defaultStyles } from "react-native-picker-select";
-import { Card, Avatar } from "react-native-paper";
-import {
-  Calendar,
-  CalendarList,
-  Agenda,
-  calendarTheme,
-} from "react-native-calendars";
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart
-} from "react-native-chart-kit";
-import { withOrientation } from "react-navigation";
-import { Picker } from '@react-native-picker/picker';
+import { Card } from "react-native-paper";
+import { Agenda } from "react-native-calendars";
+import { LineChart, } from "react-native-chart-kit";
 import ButtonToggleGroup from 'react-native-button-toggle-group';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import DateTimePicker from '@react-native-community/datetimepicker';
-//importing library to use Stopwatch and Timer
 import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
 
 
@@ -56,87 +26,48 @@ import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
 //To handle all the pages
 const Stack = createStackNavigator();
 //Database for knee flexion
-const db = SQLite.openDatabase("db.db");
+const kneeFlexionDataBase = SQLite.openDatabase("kneeFlexionDataBase.db");
 //Database for knee extension
-const db1 = SQLite.openDatabase("db1.db");
-//Database for week of recovery (Percentile)
-const userInfo = SQLite.openDatabase("userInfo.db");
+const kneeExtensionDataBase = SQLite.openDatabase("kneeExtensionDataBase.db");
 //Database for user gender (Percentile)
-const userGender = SQLite.openDatabase("userGender.db");
+const userGenderDataBase = SQLite.openDatabase("userGenderDataBase.db");
 //Database for NRIC
-const userNRIC = SQLite.openDatabase("userNRIC.db");
+const userNRICDataBase = SQLite.openDatabase("userNRICDataBase.db");
 
-var week1;
-var week2;
-var week3;
-var week4;
-var week5;
-var week6;
-var week7;
-var week8;
-var week9;
-var week10;
-var week11;
-var week12;
-
+var week1, week2, week3, week4, week5, week6, week7, week8, week9, week10, week11, week12;
 let weeks = [week1, week2, week3, week4, week5, week6, week7, week8, week9, week10, week11, week12];
-
 let initDate = [];
-
 let nricCheck = [];
 let nameCheck = [];
 let checker = [];
+var nricUser = [];
 
-// function restNRIC() {
-//   userNRIC.transaction((tx) => {
-//     tx.executeSql(`DROP TABLE userNRIC`)
-//   });
-// };
-// restNRIC();
-// function rest() {
-//   db.transaction((tx) => {
-//     tx.executeSql(`DROP TABLE items`)
-//   });
-// };
+function resetNRIC() {
+  userNRICDataBase.transaction((tx) => {
+    tx.executeSql(`DROP TABLE userNRICDataBase`)
+  });
+};
 
-// function rest1() {
-//   db1.transaction((tx1) => {
-//     tx1.executeSql(`DROP TABLE iitems`)
-//   });
-// };
+function resetFlexion() {
+  kneeFlexionDataBase.transaction((tx) => {
+    tx.executeSql(`DROP TABLE items`)
+  });
+};
 
-// rest();
-// rest1();
+function resetExtension() {
+  kneeExtensionDataBase.transaction((tx1) => {
+    tx1.executeSql(`DROP TABLE extension`)
+  });
+};
+
+resetFlexion();
+resetExtension();
+resetNRIC();
 
 //To store user NRIC
-var nricUser = [];
+
 nricAsyncCall();
-async function nricAsync() {
-  var total = "";
-  return new Promise((resolve, reject) => {
-    userNRIC.transaction((tx1) => {
-      tx1.executeSql(
-        `SELECT * FROM userNRIC ORDER BY id DESC LIMIT ?`,
-        ["1"],
-        (tx1, results1) => {
-          var len1 = results1.rows.length;
-          if (len1 > 0) {
-            total = results1.rows.item(0).value;
-            var data = [];
-            data.push(total);
-            resolve(data);
-            return data;
-          }
-        });
-    });
-  });
-}
-async function nricAsyncCall() {
-  nricAsync().then((val) => nricUser = val);
-}
-// var xx = [];
-// var xxx = [];
-// var xxxx = [];
+
 
 var weekOneList = [];
 var weekTwoList = [];
@@ -277,10 +208,8 @@ const GuidePage = ({ navigation, route }) => {
         {" "}
           Exercise Video
       </Text>
-
       <Text>
       </Text>
-
       <YoutubePlayer
         height={300}
         play={playing}
@@ -356,18 +285,15 @@ const CalenderDataPage = ({ navigation, route }) => {
     return date.toISOString().split("T")[0];
   };
   const [items, setItems] = useState({});
-
   const loadItems = (day) => {
     setTimeout(() => {
       for (let i = -15; i < 85; i++) {
         const time = day.timestamp + i * 24 * 60 * 60 * 1000;
         const strTime = timeToString(time);
-
         if (!items[strTime]) {
           items[strTime] = [];
-          db.transaction((tx) => {
+          kneeFlexionDataBase.transaction((tx) => {
             tx.executeSql(
-              // `select * from userInfo ORDER BY id DESC LIMIT ?`,
               `SELECT * FROM items WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
               [strTime + "%"],
               (tx, results) => {
@@ -376,9 +302,9 @@ const CalenderDataPage = ({ navigation, route }) => {
                   console.log(results.rows.item(0).value);
                   var ans = results.rows.item(0).value;
                   var g = ans.substr(-3);
-                  db1.transaction((tx1) => {
+                  kneeExtensionDataBase.transaction((tx1) => {
                     tx1.executeSql(
-                      `SELECT * FROM iitems WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
+                      `SELECT * FROM extension WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
                       [strTime + "%"],
                       (tx1, results1) => {
                         var len1 = results1.rows.length;
@@ -436,7 +362,6 @@ const CalenderDataPage = ({ navigation, route }) => {
                 {"\n"}
                 Extension: {x.name1}
               </Text>
-              {/* <Avatar.Text label="DONE" /> */}
             </View>
           </Card.Content>
         </Card>
@@ -481,12 +406,6 @@ const HomeScreen = ({ navigation, route }) => {
         link: "Contact",
         image: "https://img.icons8.com/ios/50/000000/phone-disconnected.png",
       },
-      // {
-      //   id: 4,
-      //   title: "Admin",
-      //   link: "UserData",
-      //   image: "https://img.icons8.com/windows/64/000000/microsoft-admin.png",
-      // },
       {
         id: 5,
         title: "Graph",
@@ -515,51 +434,25 @@ const HomeScreen = ({ navigation, route }) => {
   const [selectedValue, setSelectedValue] = useState("2");
   const [selectedGenderValue, setSelectedGenderValue] = useState("Male");
   const [text, onChangeText] = React.useState(null);
-  //user week data
-  React.useEffect(() => {
-    userInfo.transaction((tx) => {
-      tx.executeSql(
-        "create table if not exists userInfo (id integer primary key not null, done int, value text);"
-      );
-    });
-  }, []);
+
   //user gender data
   React.useEffect(() => {
-    userGender.transaction((tx) => {
+    userGenderDataBase.transaction((tx) => {
       tx.executeSql(
-        "create table if not exists userGender (id integer primary key not null, done int, value text);"
+        "create table if not exists userGenderDataBase (id integer primary key not null, done int, value text);"
       );
     });
   }, []);
   //User NRIC data
   React.useEffect(() => {
-    userNRIC.transaction((tx) => {
+    userNRICDataBase.transaction((tx) => {
       tx.executeSql(
-        "create table if not exists userNRIC (id integer primary key not null, done int, value text);"
+        "create table if not exists userNRICDataBase (id integer primary key not null, done int, value text);"
       );
     });
   }, []);
 
-  const add2 = (text) => {
-    var text = parseInt(text);
-    if (text === null || text === "") {
-      alert("Invalid Input!");
-      return false;
-    }
 
-    userInfo.transaction(
-      (tx) => {
-        tx.executeSql("insert into userInfo (done, value) values (0, ?)", [
-          text,
-        ]);
-        tx.executeSql("select * from userInfo", [], (_, { rows }) =>
-          console.log(JSON.stringify(rows))
-        );
-      },
-      null,
-      forceUpdate
-    );
-  };
   const add3 = (text) => {
     var text = text;
     if (text === null || text === "") {
@@ -567,12 +460,12 @@ const HomeScreen = ({ navigation, route }) => {
       return false;
     }
 
-    userGender.transaction(
+    userGenderDataBase.transaction(
       (tx) => {
-        tx.executeSql("insert into userGender (done, value) values (0, ?)", [
+        tx.executeSql("insert into userGenderDataBase (done, value) values (0, ?)", [
           text,
         ]);
-        tx.executeSql("select * from userGender", [], (_, { rows }) =>
+        tx.executeSql("select * from userGenderDataBase", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
         );
       },
@@ -587,12 +480,12 @@ const HomeScreen = ({ navigation, route }) => {
       return false;
     }
 
-    userNRIC.transaction(
+    userNRICDataBase.transaction(
       (tx) => {
-        tx.executeSql("insert into userNRIC (done, value) values (0, ?)", [
+        tx.executeSql("insert into userNRICDataBase (done, value) values (0, ?)", [
           text,
         ]);
-        tx.executeSql("select * from userNRIC", [], (_, { rows }) =>
+        tx.executeSql("select * from userNRICDataBase", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
         );
       },
@@ -725,30 +618,30 @@ const HomeScreen = ({ navigation, route }) => {
           <Text></Text>
           <Text></Text>
           <Text style={{ textAlign: "center", fontSize: 40 }}>Gender</Text>
-        <Text></Text>
-        <View>
-          <RNPickerSelect
-            onValueChange={(itemvalu) => {
-              nameCheck[0] = 1;
-              add3(itemvalu);
-              setSelectedGenderValue(itemvalu);
-              console.log(itemvalu);
-            }}
-            useNativeAndroidPickerStyle={false}
-            placeholder={{ label: "Select Gender", value: null }}
-            items={[
-              { label: "Male", value: "Male" },
-              { label: "Female", value: "Female" },
-            ]}
-            style={stylePicker}
-          />
-        </View>
-        <TouchableOpacity
-          onPress={submitUserDateAlert}
-          style={styles.NavigateMeasurementAdmin}
-        >
-          <Text style={styles.TextStyleButtonHomePage}>Confirm</Text>
-        </TouchableOpacity>
+          <Text></Text>
+          <View>
+            <RNPickerSelect
+              onValueChange={(itemvalu) => {
+                nameCheck[0] = 1;
+                add3(itemvalu);
+                setSelectedGenderValue(itemvalu);
+                console.log(itemvalu);
+              }}
+              useNativeAndroidPickerStyle={false}
+              placeholder={{ label: "Select Gender", value: null }}
+              items={[
+                { label: "Male", value: "Male" },
+                { label: "Female", value: "Female" },
+              ]}
+              style={stylePicker}
+            />
+          </View>
+          <TouchableOpacity
+            onPress={submitUserDateAlert}
+            style={styles.NavigateMeasurementAdmin}
+          >
+            <Text style={styles.TextStyleButtonHomePage}>Confirm</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -821,20 +714,14 @@ async function weekOneExtension() {
   var tmr5 = "'" + weeks[5] + "%'";
   var tmr6 = "'" + weeks[6] + "%'";
   return new Promise((resolve, reject) => {
-    db.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
         `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
           console.log(len1 + "successful retrival of extension");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -863,7 +750,7 @@ async function weekTwoExtension() {
   var tmr5 = "'" + weeks[12] + "%'";
   var tmr6 = "'" + weeks[13] + "%'";
   return new Promise((resolve, reject) => {
-    db.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
         `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
@@ -872,11 +759,6 @@ async function weekTwoExtension() {
           //this console log not printing
           console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -905,20 +787,13 @@ async function weekThreeExtension() {
   var tmr5 = "'" + weeks[19] + "%'";
   var tmr6 = "'" + weeks[20] + "%'";
   return new Promise((resolve, reject) => {
-    db.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
         `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -947,20 +822,13 @@ async function weekFourExtension() {
   var tmr5 = "'" + weeks[26] + "%'";
   var tmr6 = "'" + weeks[27] + "%'";
   return new Promise((resolve, reject) => {
-    db.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
         `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -989,20 +857,13 @@ async function weekFiveExtension() {
   var tmr5 = "'" + weeks[33] + "%'";
   var tmr6 = "'" + weeks[34] + "%'";
   return new Promise((resolve, reject) => {
-    db.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
         `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1031,20 +892,13 @@ async function weekSixExtension() {
   var tmr5 = "'" + weeks[40] + "%'";
   var tmr6 = "'" + weeks[41] + "%'";
   return new Promise((resolve, reject) => {
-    db.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
         `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1073,20 +927,13 @@ async function weekSevenExtension() {
   var tmr5 = "'" + weeks[47] + "%'";
   var tmr6 = "'" + weeks[48] + "%'";
   return new Promise((resolve, reject) => {
-    db.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
         `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1115,20 +962,13 @@ async function weekEightExtension() {
   var tmr5 = "'" + weeks[54] + "%'";
   var tmr6 = "'" + weeks[55] + "%'";
   return new Promise((resolve, reject) => {
-    db.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
         `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1157,20 +997,13 @@ async function weekNineExtension() {
   var tmr5 = "'" + weeks[61] + "%'";
   var tmr6 = "'" + weeks[62] + "%'";
   return new Promise((resolve, reject) => {
-    db.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
         `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1199,20 +1032,13 @@ async function weekTenExtension() {
   var tmr5 = "'" + weeks[68] + "%'";
   var tmr6 = "'" + weeks[69] + "%'";
   return new Promise((resolve, reject) => {
-    db.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
         `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1241,20 +1067,13 @@ async function weekElevenExtension() {
   var tmr5 = "'" + weeks[75] + "%'";
   var tmr6 = "'" + weeks[76] + "%'";
   return new Promise((resolve, reject) => {
-    db.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
         `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1283,20 +1102,13 @@ async function weekTwelveExtension() {
   var tmr5 = "'" + weeks[82] + "%'";
   var tmr6 = "'" + weeks[83] + "%'";
   return new Promise((resolve, reject) => {
-    db.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
         `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1350,6 +1162,29 @@ async function weekElevenExtensionCall() {
 async function weekTwelveExtensionCall() {
   weekTwelveExtension().then((val) => weekTwelveExtensionList = val);
 }
+async function nricAsync() {
+  var total = "";
+  return new Promise((resolve, reject) => {
+    userNRICDataBase.transaction((tx1) => {
+      tx1.executeSql(
+        `SELECT * FROM userNRICDataBase ORDER BY id DESC LIMIT ?`,
+        ["1"],
+        (tx1, results1) => {
+          var len1 = results1.rows.length;
+          if (len1 > 0) {
+            total = results1.rows.item(0).value;
+            var data = [];
+            data.push(total);
+            resolve(data);
+            return data;
+          }
+        });
+    });
+  });
+}
+async function nricAsyncCall() {
+  nricAsync().then((val) => nricUser = val);
+}
 //Flexion Measurement
 async function weekOne() {
   var total = 0;
@@ -1362,20 +1197,15 @@ async function weekOne() {
   var tmr5 = "'" + weeks[5] + "%'";
   var tmr6 = "'" + weeks[6] + "%'";
   return new Promise((resolve, reject) => {
-    db1.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
           //this console log not printing
           console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1404,20 +1234,15 @@ async function weekTwo() {
   var tmr5 = "'" + weeks[12] + "%'";
   var tmr6 = "'" + weeks[13] + "%'";
   return new Promise((resolve, reject) => {
-    db1.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
           //this console log not printing
           console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1446,20 +1271,13 @@ async function weekThree() {
   var tmr5 = "'" + weeks[19] + "%'";
   var tmr6 = "'" + weeks[20] + "%'";
   return new Promise((resolve, reject) => {
-    db1.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1488,20 +1306,13 @@ async function weekFour() {
   var tmr5 = "'" + weeks[26] + "%'";
   var tmr6 = "'" + weeks[27] + "%'";
   return new Promise((resolve, reject) => {
-    db1.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1530,20 +1341,13 @@ async function weekFive() {
   var tmr5 = "'" + weeks[33] + "%'";
   var tmr6 = "'" + weeks[34] + "%'";
   return new Promise((resolve, reject) => {
-    db1.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1572,20 +1376,13 @@ async function weekSix() {
   var tmr5 = "'" + weeks[40] + "%'";
   var tmr6 = "'" + weeks[41] + "%'";
   return new Promise((resolve, reject) => {
-    db1.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1614,20 +1411,13 @@ async function weekSeven() {
   var tmr5 = "'" + weeks[47] + "%'";
   var tmr6 = "'" + weeks[48] + "%'";
   return new Promise((resolve, reject) => {
-    db1.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1656,20 +1446,13 @@ async function weekEight() {
   var tmr5 = "'" + weeks[54] + "%'";
   var tmr6 = "'" + weeks[55] + "%'";
   return new Promise((resolve, reject) => {
-    db1.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1698,20 +1481,13 @@ async function weekNine() {
   var tmr5 = "'" + weeks[61] + "%'";
   var tmr6 = "'" + weeks[62] + "%'";
   return new Promise((resolve, reject) => {
-    db1.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1740,20 +1516,13 @@ async function weekTen() {
   var tmr5 = "'" + weeks[68] + "%'";
   var tmr6 = "'" + weeks[69] + "%'";
   return new Promise((resolve, reject) => {
-    db1.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1782,20 +1551,13 @@ async function weekEleven() {
   var tmr5 = "'" + weeks[75] + "%'";
   var tmr6 = "'" + weeks[76] + "%'";
   return new Promise((resolve, reject) => {
-    db1.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1824,20 +1586,13 @@ async function weekTwelve() {
   var tmr5 = "'" + weeks[82] + "%'";
   var tmr6 = "'" + weeks[83] + "%'";
   return new Promise((resolve, reject) => {
-    db1.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM iitems WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
-          // console.log(len1 + "successful");
           if (len1 > 0) {
-            // total1 = total1 + parseInt((results1.rows.item(0).value).substr(-3));
-            // count1 = count1 + 1;
-            // avr1 = total1/count1;
-            // console.log(avr1);
-            // console.log(total1);
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
               var h = ans1.substr(-3);
@@ -1895,8 +1650,7 @@ async function weekTwelveCall() {
 
 
 
-function rr() {
-  console.log(weeks[0]);
+function kneeExtensionGraph() {
   return (
     <View style={{ backgroundColor: "white" }}>
       <Text></Text>
@@ -1924,7 +1678,6 @@ function rr() {
                 weekTwelveExtensionList[0] ? weekTwelveExtensionList[0] : 0],
             }
           ],
-          // legend: ["Knee Extension"]
         }}
         width={Dimensions.get("window").width} // from react-native
         height={850}
@@ -1947,17 +1700,12 @@ function rr() {
             stroke: "#9cd9d7"
           }
         }}
-      // bezier
-      // style={{
-      //   marginVertical: 8,
-      //   borderRadius: 16
-      // }}
       />
     </View>
   )
 }
 
-function rrr() {
+function kneeFlexionGraph() {
   return (
     <View style={{ backgroundColor: "white" }}>
       <Text style={{ backgroundColor: "white", textAlign: "center", fontSize: 40 }}>Knee Flexion</Text>
@@ -1968,7 +1716,6 @@ function rrr() {
           labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11", "w12"],
           datasets: [
             {
-              // data: [60, xx[0],0,0,0,0,0,0,0,0,0],
               data: [
                 weekOneList[0] ? weekOneList[0] : 0,
                 weekTwoList[0] ? weekTwoList[0] : 0,
@@ -2008,50 +1755,21 @@ function rrr() {
             stroke: "#9cd9d7"
           }
         }}
-      // bezier
-      // style={{
-      //   marginVertical: 0,
-      //   borderRadius: 16
-      // }}
       />
     </View>
   )
 }
 
 const Graph = ({ navigation, route }) => {
-  // console.log(xx);
   const [selectedLanguage, setSelectedLanguage] = useState();
-
-  // console.log(yy);
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   return (
-
     <ScrollView>
-      {/* {selectedLanguage="extension"} */}
-
       <View style={{ backgroundColor: "white" }}>
         <Text>
-
         </Text>
-
-        {/*<TouchableOpacity 
-      style={styles.SubmitButtonStyle} 
-      onPress={()=>setSelectedLanguage("flexion")}> 
-      <Text style={styles.TextStyleButton}>Flexion</Text>
-      </TouchableOpacity>
-      
-      <Text>
-      </Text>
-
-      <TouchableOpacity 
-      style={styles.SubmitButtonStyle} 
-      onPress={()=>setSelectedLanguage("extension")}> 
-      <Text style={styles.TextStyleButton}>Extension</Text>
-      </TouchableOpacity>*/}
-
-
         <ButtonToggleGroup
           highlightBackgroundColor={'blue'}
           highlightTextColor={'white'}
@@ -2062,121 +1780,15 @@ const Graph = ({ navigation, route }) => {
           values={['Flexion', 'Extension']}
           onSelect={val => setSelectedLanguage(val.toLowerCase())}
         />
-
       </View>
-      {/* <View style={styles.container}>
-      <Switch
-        trackColor={{ false: "#767577", true: "#81b0ff" }}
-        thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
-        ios_backgroundColor="#3e3e3e"
-        onValueChange={toggleSwitch,
-          () =>
-          setSelectedLanguage("extension")}
-        value={isEnabled}
-      />
-    </View> */}
-      {/* <Picker
-        selectedValue={selectedLanguage}
-        onValueChange={(itemValue, itemIndex) =>
-          setSelectedLanguage(itemValue)
-        }>
-        <Picker.Item label="Knee Extension" value="extension" />
-        <Picker.Item label="Knee Flexion" value="flexion" />
-      </Picker> */}
       <View>
-        {selectedLanguage == 'extension' ? rr() : rrr()}
+        {selectedLanguage == 'extension' ? kneeExtensionGraph() : kneeFlexionGraph()}
       </View>
-      {/* <Text style={{ textAlign: "center", fontSize: 40 }}>Knee Extension</Text>
-      <LineChart
-        data={{
-          labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11"],
-          datasets: [
-            {
-              data: [50, xx[0], 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            }
-          ],
-          // legend: ["Knee Extension"]
-        }}
-        width={Dimensions.get("window").width} // from react-native
-        height={300}
-        yAxisLabel=""
-        yAxisSuffix="°"
-        yAxisInterval={1} // optional, defaults to 1
-        chartConfig={{
-          backgroundColor: "#e26a00",
-          backgroundGradientFrom: "#9cd9d7",
-          backgroundGradientTo: "#9cd9d7",
-          decimalPlaces: 1, // optional, defaults to 2dp
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(30, 30, 30, ${opacity})`,
-          style: {
-            borderRadius: 16
-          },
-          propsForDots: {
-            r: "6",
-            strokeWidth: "2",
-            stroke: "#67f5f0"
-          }
-        }}
-        bezier
-        style={{
-          marginVertical: 8,
-          borderRadius: 16
-        }}
-      />
-      <Text>
-
-      </Text>
-      <Text style={{ textAlign: "center", fontSize: 40 }}>Knee Flexion</Text>
-      <LineChart
-        data={{
-          labels: ["w1", "w2", "w3", "w4", "w5", "w6", "w7", "w8", "w9", "w10", "w11"],
-          datasets: [
-            {
-              // data: [60, xx[0],0,0,0,0,0,0,0,0,0],
-              data: [98, 99, 100, 103, 105, 110, 113, 115, 116, 117, 117],
-              strokeWidth: 4,
-
-            },
-            {
-              // data: [60, xx[0],0,0,0,0,0,0,0,0,0],
-              data: [100, 102, 104, 105, 105, 106, 104, 105, 105, 106, 106],
-              strokeWidth: 4,
-              color: (opacity = 1) => `rgba(255,0,0,${opacity})`
-
-            }
-          ],
-          legend: ['yolo', 'yolo'],
-        }}
-        width={Dimensions.get("window").width} // from react-native
-        height={300}
-        yAxisLabel=""
-        yAxisSuffix="°"
-        yAxisInterval={1} // optional, defaults to 1
-        chartConfig={{
-          backgroundColor: "#e26a00",
-          backgroundGradientFrom: "#1d807b",
-          backgroundGradientTo: "#1d807b",
-          decimalPlaces: 1, // optional, defaults to 2dp
-          color: () => `rgba(255, 255, 255)`,
-          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          style: {
-            borderRadius: 2,
-          },
-          propsForDots: {
-            r: "8",
-            strokeWidth: "4",
-            stroke: "#9cd9d7"
-          }
-        }}
-
-      /> */}
     </ScrollView>
   );
 };
 
 const Contact = ({ navigation, route }) => {
-
   return (
     <View style={styles.container}>
 
@@ -2189,7 +1801,6 @@ const Contact = ({ navigation, route }) => {
       <Text>
       </Text>
       <Text style={{ textAlign: "center", fontSize: 20 }}>Address: {"\n"}Outram Road Singapore 169608
-
 </Text>
     </View>
   );
@@ -2228,67 +1839,26 @@ const FormSG = ({ navigation, route }) => {
 
   const { flexData } = (route.params);
   const { extenData } = (route.params);
-  // console.log(flexData);
 
   const x = route.params.paramKey;
   const flexStr = "Flexion: " + x;
   const extenStr = "Extension: " + x;
-  const nricVal = String(nricUser[0]);
-  // console.log(nricVal);
-  const flexx = parseInt(flexData);
-  // console.log(flexx);
-  
-  const exxten=parseInt(extenData); 
-
-  // const runFirst = `setTimeout(function() {
-  //   document.getElementById('603c3ccc399059001247a1ee').value = '${nricVal}';
-  //   document.getElementById("603c3ccc399059001247a1ee").className = "input-custom input-large ng-not-empty ng-dirty ng-valid-parse ng-valid-required ng-touched ng-valid ng-valid-nric-validator";
-
-  //   document.getElementById('603c3d41526b9e00127a488f').value = '${flexx}';
-  //   document.getElementById("603c3d41526b9e00127a488f").className = "input-custom input-large ng-valid-pattern ng-valid-minlength ng-valid-maxlength ng-not-empty ng-dirty ng-valid-parse ng-valid ng-valid-required ng-touched";
-
-  //   document.getElementById('603c3d5a7d837800126d12f7').value = '${exxten}';
-  //   document.getElementById("603c3d5a7d837800126d12f7").className = "input-custom input-large ng-valid-pattern ng-valid-minlength ng-valid-maxlength ng-touched ng-not-empty ng-dirty ng-valid-parse ng-valid ng-valid-required";
-
-  // }, 200)`;
+  const nricSubmitData = String(nricUser[0]);
+  const flexionSubmitData = parseInt(flexData);
+  const extensionSubmitData = parseInt(extenData);
 
   const runFirst = `setTimeout(function() {
     document.getElementById("603c3ccc399059001247a1ee").className = "";
     document.getElementById("603c3d41526b9e00127a488f").className = "";
     document.getElementById("603c3d5a7d837800126d12f7").className = "";
-
-    document.getElementById('603c3ccc399059001247a1ee').value = '${nricVal}';
+    document.getElementById('603c3ccc399059001247a1ee').value = '${nricSubmitData}';
     document.getElementById('603c3ccc399059001247a1ee').dispatchEvent(new Event("input"));
-    
-
-    document.getElementById('603c3d41526b9e00127a488f').value = '${flexx}';
+    document.getElementById('603c3d41526b9e00127a488f').value = '${flexionSubmitData}';
     document.getElementById('603c3d41526b9e00127a488f').dispatchEvent(new Event("input"));
-
-    
-
-    document.getElementById('603c3d5a7d837800126d12f7').value = '${exxten}';
+    document.getElementById('603c3d5a7d837800126d12f7').value = '${extensionSubmitData}';
     document.getElementById('603c3d5a7d837800126d12f7').dispatchEvent(new Event("input"));
-
-
   }, 1000)`;
-
-  // const runFirst = `setTimeout(function() {
-  //   document.getElementById('603c3ccc399059001247a1ee').value = '${nricVal}';
-  //   document.getElementById("603c3ccc399059001247a1ee").className = "input-custom input-large ng-not-empty ng-dirty ng-valid-parse ng-valid-required ng-touched ng-valid ng-valid-nric-validator";
-  //   document.getElementById("603c3ccc399059001247a1ee").setAttribute("aria-invalid", "false");
-
-  //   +document.getElementById('603c3d41526b9e00127a488f').value = '23';
-  //   document.getElementById("603c3d41526b9e00127a488f").className = "input-custom input-large ng-valid-pattern ng-valid-minlength ng-valid-maxlength ng-not-empty ng-dirty ng-valid-parse ng-valid ng-valid-required ng-touched";
-  //   document.getElementById("603c3d41526b9e00127a488f").setAttribute("aria-invalid", "false");
-
-  //   +document.getElementById('603c3d5a7d837800126d12f7').value = '${exxten}';
-  //   document.getElementById("603c3d5a7d837800126d12f7").className = "input-custom input-large ng-valid-pattern ng-valid-minlength ng-valid-maxlength ng-touched ng-not-empty ng-dirty ng-valid-parse ng-valid ng-valid-required";
-  //   document.getElementById("603c3d5a7d837800126d12f7").setAttribute("aria-invalid", "false");
-
-  // }, 200)`;
-
   return (
-
     <WebView
       javaScriptEnabled={true}
       source={{ uri: "https://form.gov.sg/#!/603c3ca2b3f2b10012a03bc4" }}
@@ -2296,7 +1866,6 @@ const FormSG = ({ navigation, route }) => {
       injectedJavaScript={runFirst}
       style={{ flex: 1 }}
       javaScriptEnabled
-
     />
 
   );
@@ -2333,16 +1902,16 @@ const Goniometer = ({ navigation, route }) => {
   }
 
   React.useEffect(() => {
-    db.transaction((tx) => {
+    kneeFlexionDataBase.transaction((tx) => {
       tx.executeSql(
         "create table if not exists items (id integer primary key not null, done int, value text);"
       );
     });
   }, []);
   React.useEffect(() => {
-    db1.transaction((tx) => {
+    kneeExtensionDataBase.transaction((tx) => {
       tx.executeSql(
-        "create table if not exists iitems (id integer primary key not null, done int, value text);"
+        "create table if not exists extension (id integer primary key not null, done int, value text);"
       );
     });
   }, []);
@@ -2354,7 +1923,7 @@ const Goniometer = ({ navigation, route }) => {
       return false;
     }
 
-    db.transaction(
+    kneeFlexionDataBase.transaction(
       (tx) => {
         tx.executeSql("insert into items (done, value) values (0, ?)", [
           moment().utcOffset("+08:00").format("YYYY-MM-DD") +
@@ -2376,14 +1945,14 @@ const Goniometer = ({ navigation, route }) => {
       return false;
     }
 
-    db1.transaction(
+    kneeExtensionDataBase.transaction(
       (tx) => {
-        tx.executeSql("insert into iitems (done, value) values (0, ?)", [
+        tx.executeSql("insert into extension (done, value) values (0, ?)", [
           moment().utcOffset("+08:00").format("YYYY-MM-DD") +
           " Extension:    " +
           text,
         ]);
-        tx.executeSql("select * from iitems", [], (_, { rows }) =>
+        tx.executeSql("select * from extension", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
         );
       },
@@ -2446,7 +2015,6 @@ const Goniometer = ({ navigation, route }) => {
         (n >= 120 && dayDiff > 42 & dayDiff <= 56) ||
         (n >= 121 && dayDiff > 56 & dayDiff <= 70) ||
         (n >= 123 && dayDiff > 70 & dayDiff <= 84)
-        // (n >= 124 && selectedValue === "14")
       ) {
         return true;
       }
@@ -2458,7 +2026,6 @@ const Goniometer = ({ navigation, route }) => {
         (n >= 117 && dayDiff > 42 & dayDiff <= 56) ||
         (n >= 118 && dayDiff > 56 & dayDiff <= 70) ||
         (n >= 120 && dayDiff > 70 & dayDiff <= 84)
-        // (n >= 120 && selectedValue === "14")
       ) {
         return true;
       }
@@ -2477,7 +2044,6 @@ const Goniometer = ({ navigation, route }) => {
         (n < 120 && n >= 113 && dayDiff > 42 & dayDiff <= 56) ||
         (n < 121 && n >= 115 && dayDiff > 56 & dayDiff <= 70) ||
         (n < 123 && n >= 117 && dayDiff > 70 & dayDiff <= 84)
-        // (n < 124 && n >= 118 && "14")
       ) {
         return true;
       }
@@ -2489,7 +2055,6 @@ const Goniometer = ({ navigation, route }) => {
         (n < 117 && n >= 109 && dayDiff > 42 & dayDiff <= 56) ||
         (n < 118 && n >= 110 && dayDiff > 56 & dayDiff <= 70) ||
         (n < 120 && n >= 110 && dayDiff > 70 & dayDiff <= 84)
-        // (n < 120 && n >= 110 && "14")
       ) {
         return true;
       }
@@ -2508,7 +2073,6 @@ const Goniometer = ({ navigation, route }) => {
         (n > 105 && n < 113 && dayDiff > 42 & dayDiff <= 56) ||
         (n > 106 && n < 115 && dayDiff > 56 & dayDiff <= 70) ||
         (n > 107 && n < 117 && dayDiff > 70 & dayDiff <= 84)
-        // (n > 108 && n < 118 && "14")
       ) {
         return true;
       }
@@ -2520,7 +2084,6 @@ const Goniometer = ({ navigation, route }) => {
         (n > 99 && n < 109 && dayDiff > 42 & dayDiff <= 56) ||
         (n > 101 && n < 110 && dayDiff > 56 & dayDiff <= 70) ||
         (n > 103 && n < 110 && dayDiff > 70 & dayDiff <= 84)
-        // (n > 104 && n < 110 && "14")
       ) {
         return true;
       }
@@ -2539,7 +2102,6 @@ const Goniometer = ({ navigation, route }) => {
         (n <= 105 && dayDiff > 42 & dayDiff <= 56) ||
         (n <= 106 && dayDiff > 56 & dayDiff <= 70) ||
         (n <= 107 && dayDiff > 70 & dayDiff <= 84)
-        // (n <= 108 && "14")
       ) {
         return true;
       }
@@ -2551,12 +2113,10 @@ const Goniometer = ({ navigation, route }) => {
         (n <= 99 && dayDiff > 42 & dayDiff <= 56) ||
         (n <= 101 && dayDiff > 56 & dayDiff <= 70) ||
         (n <= 103 && dayDiff > 70 & dayDiff <= 84)
-        // (n <= 104 && "14")
       ) {
         return true;
       }
     }
-
     return false;
   }
 
@@ -2567,35 +2127,17 @@ const Goniometer = ({ navigation, route }) => {
   const [items, setItems] = useState({});
 
   function displayAngle() {
-    userInfo.transaction((tx) => {
+    userGenderDataBase.transaction((tx) => {
       tx.executeSql(
-        `select * from userInfo ORDER BY id DESC LIMIT ?`,
+        `select * from userGenderDataBase ORDER BY id DESC LIMIT ?`,
         [1],
-        (tx, results) => {
-          var len = results.rows.length;
+        (tx, result) => {
+          var len = result.rows.length;
           if (len > 0) {
-            userGender.transaction((tx) => {
-              tx.executeSql(
-                `select * from userGender ORDER BY id DESC LIMIT ?`,
-                [1],
-                (tx, r) => {
-                  var len = r.rows.length;
-                  if (len > 0) {
-                    //convert string
-                    var g = r.rows.item(0).value.toString();
-                    console.log("gender: " + g);
-                    setSelectedGenderValue(g);
-                  }
-                }
-              );
-            });
-            //convert to int
-            var x = parseInt(results.rows.item(0).value);
-            //convert to string
-            var y = x.toString();
-            console.log("week: " + y);
-            setSelectedValue(y);
-          } else {
+            //convert string
+            var gender = result.rows.item(0).value.toString();
+            console.log("gender: " + gender);
+            setSelectedGenderValue(gender);
           }
         }
       );
@@ -2625,174 +2167,136 @@ const Goniometer = ({ navigation, route }) => {
       ]
     );
   }
-  const revertToAdminAlert = () => {
-    Alert.alert(
-      "Complete Admin Setup",
-      "",
-      [
 
-        {
-          text: "OK", onPress: () => navigation.navigate("UserData", {
-            flexData: val,
-            extenData: vals,
-            name: "UserData",
-            flex: 1,
-          })
-        }
-      ]
-    );
-  }
-  if (initDate[0] == null) {
-    return (
+  return (
+    <View style={styles.container}>
       <View>
-        <Text></Text>
-        <Text style={{ textAlign: "center", fontSize: 60 }}>Please complete admin registration</Text>
-        <Text></Text>
-        <TouchableOpacity style={styles.SubmitButtonFormStyle}>
-          <Text style={styles.TextStyleButton}
-            onPress={() =>
-              navigation.navigate("UserData", {
-              })
-            }>Register</Text>
-        </TouchableOpacity>
+        <Text style={{ textAlign: "center", fontSize: 60 }}>Knee Range: </Text>
+        {noGenderWeek(getDegrees(round(beta))) ? (
+          <Text style={stylePercentile.textPercentileBlack}>
+            {getDegrees(round(beta))}°
+          </Text>
+        ) : null}
+        {green(getDegrees(round(beta))) ? (
+          <Text style={stylePercentile.textPercentileGreen}>
+            {getDegrees(round(beta))}°
+          </Text>
+        ) : null}
+        {blue(getDegrees(round(beta))) ? (
+          <Text style={stylePercentile.textPercentileOrange}>
+            {getDegrees(round(beta))}°
+          </Text>
+        ) : null}
+        {red(getDegrees(round(beta))) ? (
+          <Text style={stylePercentile.textPercentileOrange}>
+            {getDegrees(round(beta))}°
+          </Text>
+        ) : null}
+        {belowRed(getDegrees(round(beta))) ? (
+          <Text style={stylePercentile.textPercentileRed}>
+            {getDegrees(round(beta))}°
+          </Text>
+        ) : null}
       </View>
-    );
-  } else {
-    return (
-      <View style={styles.container}>
-        <View>
-          <Text style={{ textAlign: "center", fontSize: 60 }}>Knee Range: </Text>
-          {noGenderWeek(getDegrees(round(beta))) ? (
-            <Text style={stylePercentile.textPercentileBlack}>
-              {getDegrees(round(beta))}°
-            </Text>
-          ) : null}
-          {green(getDegrees(round(beta))) ? (
-            <Text style={stylePercentile.textPercentileGreen}>
-              {getDegrees(round(beta))}°
-            </Text>
-          ) : null}
-          {blue(getDegrees(round(beta))) ? (
-            <Text style={stylePercentile.textPercentileOrange}>
-              {getDegrees(round(beta))}°
-            </Text>
-          ) : null}
-          {red(getDegrees(round(beta))) ? (
-            <Text style={stylePercentile.textPercentileOrange}>
-              {getDegrees(round(beta))}°
-            </Text>
-          ) : null}
-          {belowRed(getDegrees(round(beta))) ? (
-            <Text style={stylePercentile.textPercentileRed}>
-              {getDegrees(round(beta))}°
-            </Text>
-          ) : null}
-        </View>
-        <View>
-          {useEffect(() => {
-            displayAngle();
-          }, [])}
-        </View>
+      <View>
+        {useEffect(() => {
+          displayAngle();
+        }, [])}
+      </View>
 
-        <View style={{ marginTop: 20 }}>
-          <Text
-            style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
-          >
-            Previous Flexion: {flexionDegree}°
+      <View style={{ marginTop: 20 }}>
+        <Text
+          style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
+        >
+          Previous Flexion: {flexionDegree}°
         </Text>
 
-          <Text
-            style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
-          >
-            Previous Extension: {extensionDegree}°
+        <Text
+          style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
+        >
+          Previous Extension: {extensionDegree}°
         </Text>
-        </View>
-        <ScrollView>
-          <View style={styles.MainRecordStartStopContainer}>
-            <TouchableOpacity
-              onPress={subscription ? _unsubscribe : _subscribe}
-              style={styles.SubmitButtonStyle}
-            >
-              <Text style={styles.TextStyleButton}>
-                {subscription ? "STOP" : "START"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.MainRecordContainer}>
-            <TouchableOpacity
-              onPress={() => {
-                var degr = getDegrees(round(beta));
-                add(degr);
-                setFlexionDegree(getDegrees(round(beta)));
-                // add(getDegrees(round(beta)));
-                setVal(degr);
-              }}
-              style={styles.SubmitButtonRecordStyle}
-            >
-              <Text style={styles.TextStyleButton}>Record Flexion</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.MainRecordContainer}>
-            <TouchableOpacity
-              onPress={() => {
-                var a = getDegrees(round(beta));
-                add1(a);
-                // add1(getDegrees(round(beta)));
-                setExtensionDegree(getDegrees(round(beta)));
-                setVals(a);
-              }}
-              style={styles.SubmitButtonRecordStyle}
-            >
-              <Text style={styles.TextStyleButton}>Record Extension</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.MainRecordContainer}>
-            {!(flexionDegree != 0 && extensionDegree != 0) ? (
-              <TouchableOpacity style={styles.SubmitButtonFormStyleDisabled}>
-                <Text style={styles.TextStyleButton}>Submit FormSG</Text>
-              </TouchableOpacity>
-            ) : null}
-
-            {flexionDegree != 0 && extensionDegree != 0 ? (
-              <TouchableOpacity style={styles.SubmitButtonFormStyle}
-                onPress={submitAlert}>
-                <Text style={styles.TextStyleButton}>Submit FormSG</Text>
-
-              </TouchableOpacity>
-              // <Button
-              //   onPress={submitAlert} />
-
-            ) : null}
-          </View>
-
-          <View style={styles.MainRecordHistoryContainer}>
-            {!(flexionDegree != 0 && extensionDegree != 0) ? (
-              <TouchableOpacity style={styles.SubmitButtonHistoryStyleDisabled}>
-                <Text style={styles.TextStyleButton}>History</Text>
-              </TouchableOpacity>
-            ) : null}
-
-            {flexionDegree != 0 && extensionDegree != 0 ? (
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("CalenderDataPage", {
-                    name: "CalenderDataPage",
-                  })
-                }
-                style={styles.SubmitButtonHistoryStyle}
-              >
-                <Text style={styles.TextStyleButton}>History</Text>
-              </TouchableOpacity>
-            ) : null}
-          </View>
-        </ScrollView>
       </View>
-    );
-  }
-};
+      <ScrollView>
+        <View style={styles.MainRecordStartStopContainer}>
+          <TouchableOpacity
+            onPress={subscription ? _unsubscribe : _subscribe}
+            style={styles.SubmitButtonStyle}
+          >
+            <Text style={styles.TextStyleButton}>
+              {subscription ? "STOP" : "START"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.MainRecordContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              var degr = getDegrees(round(beta));
+              add(degr);
+              setFlexionDegree(getDegrees(round(beta)));
+              setVal(degr);
+            }}
+            style={styles.SubmitButtonRecordStyle}
+          >
+            <Text style={styles.TextStyleButton}>Record Flexion</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.MainRecordContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              var a = getDegrees(round(beta));
+              add1(a);
+              setExtensionDegree(getDegrees(round(beta)));
+              setVals(a);
+            }}
+            style={styles.SubmitButtonRecordStyle}
+          >
+            <Text style={styles.TextStyleButton}>Record Extension</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.MainRecordContainer}>
+          {!(flexionDegree != 0 && extensionDegree != 0) ? (
+            <TouchableOpacity style={styles.SubmitButtonFormStyleDisabled}>
+              <Text style={styles.TextStyleButton}>Submit FormSG</Text>
+            </TouchableOpacity>
+          ) : null}
+
+          {flexionDegree != 0 && extensionDegree != 0 ? (
+            <TouchableOpacity style={styles.SubmitButtonFormStyle}
+              onPress={submitAlert}>
+              <Text style={styles.TextStyleButton}>Submit FormSG</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+
+        <View style={styles.MainRecordHistoryContainer}>
+          {!(flexionDegree != 0 && extensionDegree != 0) ? (
+            <TouchableOpacity style={styles.SubmitButtonHistoryStyleDisabled}>
+              <Text style={styles.TextStyleButton}>History</Text>
+            </TouchableOpacity>
+          ) : null}
+
+          {flexionDegree != 0 && extensionDegree != 0 ? (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("CalenderDataPage", {
+                  name: "CalenderDataPage",
+                })
+              }
+              style={styles.SubmitButtonHistoryStyle}
+            >
+              <Text style={styles.TextStyleButton}>History</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
 
 function useForceUpdate() {
   const [value, setValue] = useState(0);
