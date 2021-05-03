@@ -86,7 +86,6 @@ let initDate = [];
 let nricCheck = [];
 let nameCheck = [];
 let checker = [];
-// var week1ex, week2ex, week3ex, week4ex, week5ex, week6ex, week7ex, week8ex, week9ex, week10ex, week11ex, week12ex;
 
 // function restNRIC() {
 //   userNRIC.transaction((tx) => {
@@ -2238,14 +2237,55 @@ const FormSG = ({ navigation, route }) => {
   // console.log(nricVal);
   const flexx = parseInt(flexData);
   // console.log(flexx);
+  
+  const exxten=parseInt(extenData); 
 
+  // const runFirst = `setTimeout(function() {
+  //   document.getElementById('603c3ccc399059001247a1ee').value = '${nricVal}';
+  //   document.getElementById("603c3ccc399059001247a1ee").className = "input-custom input-large ng-not-empty ng-dirty ng-valid-parse ng-valid-required ng-touched ng-valid ng-valid-nric-validator";
+
+  //   document.getElementById('603c3d41526b9e00127a488f').value = '${flexx}';
+  //   document.getElementById("603c3d41526b9e00127a488f").className = "input-custom input-large ng-valid-pattern ng-valid-minlength ng-valid-maxlength ng-not-empty ng-dirty ng-valid-parse ng-valid ng-valid-required ng-touched";
+
+  //   document.getElementById('603c3d5a7d837800126d12f7').value = '${exxten}';
+  //   document.getElementById("603c3d5a7d837800126d12f7").className = "input-custom input-large ng-valid-pattern ng-valid-minlength ng-valid-maxlength ng-touched ng-not-empty ng-dirty ng-valid-parse ng-valid ng-valid-required";
+
+  // }, 200)`;
 
   const runFirst = `setTimeout(function() {
-    document.getElementById('603c3ccc399059001247a1ee').value = '${nricVal}';
-    document.getElementById('603c3d41526b9e00127a488f').value = '${flexx}';
-    document.getElementById('603c3d5a7d837800126d12f7').value = '${extenData}';
-  }, 200)`;
+    document.getElementById("603c3ccc399059001247a1ee").className = "";
+    document.getElementById("603c3d41526b9e00127a488f").className = "";
+    document.getElementById("603c3d5a7d837800126d12f7").className = "";
 
+    document.getElementById('603c3ccc399059001247a1ee').value = '${nricVal}';
+    document.getElementById('603c3ccc399059001247a1ee').dispatchEvent(new Event("input"));
+    
+
+    document.getElementById('603c3d41526b9e00127a488f').value = '${flexx}';
+    document.getElementById('603c3d41526b9e00127a488f').dispatchEvent(new Event("input"));
+
+    
+
+    document.getElementById('603c3d5a7d837800126d12f7').value = '${exxten}';
+    document.getElementById('603c3d5a7d837800126d12f7').dispatchEvent(new Event("input"));
+
+
+  }, 1000)`;
+
+  // const runFirst = `setTimeout(function() {
+  //   document.getElementById('603c3ccc399059001247a1ee').value = '${nricVal}';
+  //   document.getElementById("603c3ccc399059001247a1ee").className = "input-custom input-large ng-not-empty ng-dirty ng-valid-parse ng-valid-required ng-touched ng-valid ng-valid-nric-validator";
+  //   document.getElementById("603c3ccc399059001247a1ee").setAttribute("aria-invalid", "false");
+
+  //   +document.getElementById('603c3d41526b9e00127a488f').value = '23';
+  //   document.getElementById("603c3d41526b9e00127a488f").className = "input-custom input-large ng-valid-pattern ng-valid-minlength ng-valid-maxlength ng-not-empty ng-dirty ng-valid-parse ng-valid ng-valid-required ng-touched";
+  //   document.getElementById("603c3d41526b9e00127a488f").setAttribute("aria-invalid", "false");
+
+  //   +document.getElementById('603c3d5a7d837800126d12f7').value = '${exxten}';
+  //   document.getElementById("603c3d5a7d837800126d12f7").className = "input-custom input-large ng-valid-pattern ng-valid-minlength ng-valid-maxlength ng-touched ng-not-empty ng-dirty ng-valid-parse ng-valid ng-valid-required";
+  //   document.getElementById("603c3d5a7d837800126d12f7").setAttribute("aria-invalid", "false");
+
+  // }, 200)`;
 
   return (
 
@@ -2861,8 +2901,6 @@ const styles = StyleSheet.create({
   },
   NavigateMeasurementAdmin: {
     marginTop: 40,
-    // marginLeft: 10,
-    // marginRight: 10,
     backgroundColor: "#2B6D6A",
     borderRadius: 30,
     borderWidth: 1,
