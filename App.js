@@ -47,28 +47,27 @@ function resetNRIC() {
     tx.executeSql(`DROP TABLE userNRICDataBase`)
   });
 };
-
 function resetFlexion() {
   kneeFlexionDataBase.transaction((tx) => {
-    tx.executeSql(`DROP TABLE items`)
+    tx.executeSql(`DROP TABLE kneeFlexionDataBase`)
   });
 };
-
 function resetExtension() {
   kneeExtensionDataBase.transaction((tx1) => {
-    tx1.executeSql(`DROP TABLE extension`)
+    tx1.executeSql(`DROP TABLE kneeExtensionDataBase`)
+  });
+};
+function resetGender() {
+  userGenderDataBase.transaction((tx1) => {
+    tx1.executeSql(`DROP TABLE userGenderDataBase`)
   });
 };
 
 resetFlexion();
 resetExtension();
 resetNRIC();
-
-//To store user NRIC
-
+resetGender();
 nricAsyncCall();
-
-
 var weekOneList = [];
 var weekTwoList = [];
 var weekThreeList = [];
@@ -93,7 +92,6 @@ weekNineCall();
 weekTenCall();
 weekElevenCall();
 weekTwelveCall();
-
 var weekOneExtensionList = [];
 var weekTwoExtensionList = [];
 var weekThreeExtensionList = [];
@@ -385,6 +383,7 @@ const CalenderDataPage = ({ navigation, route }) => {
 //////////////////MAIN NAVIGATION PAGE////////////////////
 //////////////////////////////////////////////////////////
 const HomeScreen = ({ navigation, route }) => {
+  nricAsyncCall();
   const state = {
     data: [
       {
@@ -720,7 +719,6 @@ async function weekOneExtension() {
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          console.log(len1 + "successful retrival of extension");
           if (len1 > 0) {
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
@@ -757,7 +755,6 @@ async function weekTwoExtension() {
         (tx1, results1) => {
           var len1 = results1.rows.length;
           //this console log not printing
-          console.log(len1 + "successful");
           if (len1 > 0) {
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
@@ -1204,7 +1201,6 @@ async function weekOne() {
         (tx1, results1) => {
           var len1 = results1.rows.length;
           //this console log not printing
-          console.log(len1 + "successful");
           if (len1 > 0) {
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
@@ -1241,7 +1237,6 @@ async function weekTwo() {
         (tx1, results1) => {
           var len1 = results1.rows.length;
           //this console log not printing
-          console.log(len1 + "successful");
           if (len1 > 0) {
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
@@ -1876,6 +1871,7 @@ const FormSG = ({ navigation, route }) => {
 ////////////////////MEASUREMENT PAGE//////////////////////
 //////////////////////////////////////////////////////////
 const Goniometer = ({ navigation, route }) => {
+  nricAsyncCall();
   const [text, setText] = React.useState(null);
   const [forceUpdate, forceUpdateId] = useForceUpdate();
   function round(n) {
@@ -2153,7 +2149,7 @@ const Goniometer = ({ navigation, route }) => {
       [
         {
           text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
+          onPress: () => console.log("Cancel"),
           style: "cancel"
         },
         {
