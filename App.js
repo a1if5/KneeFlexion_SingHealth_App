@@ -599,23 +599,6 @@ const HomeScreen = ({ navigation, route }) => {
           />
           <Text></Text>
           <Text></Text>
-          <View>
-            <Text style={{ textAlign: "center", fontSize: 40 }}>Start Date</Text>
-            <Text></Text>
-            <View style={styles.pickerContainerDate}>
-              <DateTimePicker
-                style={{ marginRight: 40 }}
-                testID="dateTimePicker"
-                value={date}
-                mode={mode}
-                is24Hour={true}
-                display="default"
-                onChange={onChange}
-              />
-            </View>
-          </View>
-          <Text></Text>
-          <Text></Text>
           <Text style={{ textAlign: "center", fontSize: 40 }}>Gender</Text>
           <Text></Text>
           <View>
@@ -634,6 +617,23 @@ const HomeScreen = ({ navigation, route }) => {
               ]}
               style={stylePicker}
             />
+          </View>
+          <Text></Text>
+          <Text></Text>
+          <View>
+            <Text style={{ textAlign: "center", fontSize: 40 }}>Surgery Date</Text>
+            <Text></Text>
+            <View style={styles.pickerContainerDate}>
+              <DateTimePicker
+                style={{ fontSize: 100, marginRight: 40 }}
+                testID="dateTimePicker"
+                value={date}
+                mode={mode}
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+              />
+            </View>
           </View>
           <TouchableOpacity
             onPress={submitUserDateAlert}
@@ -2219,7 +2219,7 @@ const Goniometer = ({ navigation, route }) => {
             onPress={subscription ? _unsubscribe : _subscribe}
             style={styles.SubmitButtonStyle}
           >
-            <Text style={styles.TextStyleButton}>
+            <Text style={styles.TextStyleButtonS}>
               {subscription ? "STOP" : "START"}
             </Text>
           </TouchableOpacity>
@@ -2255,9 +2255,8 @@ const Goniometer = ({ navigation, route }) => {
 
         <View style={styles.MainRecordContainer}>
           {!(flexionDegree != 0 && extensionDegree != 0) ? (
-            <TouchableOpacity style={styles.SubmitButtonFormStyleDisabled}>
-              <Text style={styles.TextStyleButton}>Submit FormSG</Text>
-            </TouchableOpacity>
+            <Text>
+            </Text>
           ) : null}
 
           {flexionDegree != 0 && extensionDegree != 0 ? (
@@ -2270,9 +2269,7 @@ const Goniometer = ({ navigation, route }) => {
 
         <View style={styles.MainRecordHistoryContainer}>
           {!(flexionDegree != 0 && extensionDegree != 0) ? (
-            <TouchableOpacity style={styles.SubmitButtonHistoryStyleDisabled}>
-              <Text style={styles.TextStyleButton}>History</Text>
-            </TouchableOpacity>
+            <Text></Text>
           ) : null}
 
           {flexionDegree != 0 && extensionDegree != 0 ? (
@@ -2385,7 +2382,7 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     borderWidth: 1,
     borderColor: "#fff",
-    height: 80,
+    height: 120,
     justifyContent: "center",
   },
   NavigateMeasurement: {
@@ -2455,6 +2452,11 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
     fontSize: 40,
+  },
+  TextStyleButtonS: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 110,
   },
   TextStyleButtonHomePage: {
     color: "#fff",
