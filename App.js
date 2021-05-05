@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Component, useCallback } from "react";
 import YoutubePlayer from "react-native-youtube-iframe";
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList, Image, Alert, Platform, TouchableHighlight, SafeAreaView, } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList, Image, Alert, Platform, TouchableHighlight, SafeAreaView, Button } from "react-native";
 import { Dimensions } from 'react-native';
 const screenWidth = Dimensions.get("window").width;
 import "react-native-gesture-handler";
@@ -2115,7 +2115,7 @@ const Goniometer = ({ navigation, route }) => {
     }
     return false;
   }
-
+  const [shouldShow, setShouldShow] = useState(null);
   const [selectedValue, setSelectedValue] = useState(null);
   const [selectedGenderValue, setSelectedGenderValue] = useState(null);
   const [extensionDegree, setExtensionDegree] = useState("0");
@@ -2166,53 +2166,69 @@ const Goniometer = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <View>
-        <Text style={{ textAlign: "center", fontSize: 60 }}>Knee Range: </Text>
-        {noGenderWeek(getDegrees(round(beta))) ? (
-          <Text style={stylePercentile.textPercentileBlack}>
-            {getDegrees(round(beta))}°
-          </Text>
-        ) : null}
-        {green(getDegrees(round(beta))) ? (
-          <Text style={stylePercentile.textPercentileGreen}>
-            {getDegrees(round(beta))}°
-          </Text>
-        ) : null}
-        {blue(getDegrees(round(beta))) ? (
-          <Text style={stylePercentile.textPercentileOrange}>
-            {getDegrees(round(beta))}°
-          </Text>
-        ) : null}
-        {red(getDegrees(round(beta))) ? (
-          <Text style={stylePercentile.textPercentileOrange}>
-            {getDegrees(round(beta))}°
-          </Text>
-        ) : null}
-        {belowRed(getDegrees(round(beta))) ? (
-          <Text style={stylePercentile.textPercentileRed}>
-            {getDegrees(round(beta))}°
-          </Text>
-        ) : null}
-      </View>
-      <View>
-        {useEffect(() => {
-          displayAngle();
-        }, [])}
-      </View>
+          <Button
+            title="Hide/Show Angle Display"
+            onPress={() => setShouldShow(!shouldShow)}
+            style={{ textAlign: "center", marginTop: 20 }}
+          />
+          {/*Here we will return the view when state is true 
+          and will return false if state is false*/}
 
-      <View style={{ marginTop: 20 }}>
-        <Text
-          style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
-        >
-          Previous Flexion: {flexionDegree}°
-        </Text>
+      {shouldShow ? (
+        <View>
+          <Text style={{ textAlign: "center", fontSize: 60 }}>Knee Range </Text>
+          {noGenderWeek(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileBlack}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+          {green(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileGreen}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+          {blue(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileOrange}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+          {red(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileOrange}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+          {belowRed(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileRed}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+        </View>
+        ) : null}
 
-        <Text
-          style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
-        >
-          Previous Extension: {extensionDegree}°
-        </Text>
-      </View>
+      
+        <View>
+          {useEffect(() => {
+            displayAngle();
+          }, [])}
+        </View>
+      
+
+      {shouldShow ? (
+        <View style={{ marginTop: 20 }}>
+          <Text
+            style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
+          >
+            Previous Flexion: {flexionDegree}°
+          </Text>
+
+          <Text
+            style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
+          >
+            Previous Extension: {extensionDegree}°
+          </Text>
+        </View>
+      ) : null}
+
       <ScrollView>
         <View style={styles.MainRecordStartStopContainer}>
           <TouchableOpacity
