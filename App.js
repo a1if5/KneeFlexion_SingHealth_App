@@ -19,7 +19,9 @@ import ButtonToggleGroup from 'react-native-button-toggle-group';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
-
+import { LogBox } from 'react-native';
+//LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 
 
@@ -2121,6 +2123,8 @@ const Goniometer = ({ navigation, route }) => {
   const [extensionDegree, setExtensionDegree] = useState("0");
   const [flexionDegree, setFlexionDegree] = useState("0");
   const [items, setItems] = useState({});
+  const [extensionDegreeControl, setExtensionDegreeControl] = useState("Pending");
+  const [flexionDegreeControl, setFlexionDegreeControl] = useState("Pending");
 
   function displayAngle() {
     userGenderDataBase.transaction((tx) => {
@@ -2166,13 +2170,18 @@ const Goniometer = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-          <Button
-            title="Hide/Show Angle Display"
+        <View style = {{alignItems: "center",}}>
+          <TouchableOpacity
             onPress={() => setShouldShow(!shouldShow)}
-            style={{ textAlign: "center", marginTop: 20 }}
-          />
+            style={styles.ShowHideButtonStyle}
+          >
+            <Text style={styles.ShowHideTextButtonStyle}>
+              {shouldShow ? "Hide Display" : "Show Display"}
+            </Text>
+          </TouchableOpacity>
           {/*Here we will return the view when state is true 
           and will return false if state is false*/}
+        </View>
 
       {shouldShow ? (
         <View>
@@ -2228,6 +2237,22 @@ const Goniometer = ({ navigation, route }) => {
           </Text>
         </View>
       ) : null}
+      {!shouldShow ? (
+        <View style={{ marginTop: 20 }}>
+          <Text
+            style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
+          >
+            Flexion: {flexionDegreeControl}
+          </Text>
+
+          <Text
+            style={{ textAlign: "center", fontSize: 35, fontStyle: "italic" }}
+          >
+            Extension: {extensionDegreeControl}
+          </Text>
+        </View>
+      ) : null}
+
 
       <ScrollView>
         <View style={styles.MainRecordStartStopContainer}>
@@ -2247,6 +2272,7 @@ const Goniometer = ({ navigation, route }) => {
               var degr = getDegrees(round(beta));
               add(degr);
               setFlexionDegree(getDegrees(round(beta)));
+              setFlexionDegreeControl("Done");
               setVal(degr);
             }}
             style={styles.SubmitButtonRecordStyle}
@@ -2261,6 +2287,7 @@ const Goniometer = ({ navigation, route }) => {
               var a = getDegrees(round(beta));
               add1(a);
               setExtensionDegree(getDegrees(round(beta)));
+              setExtensionDegreeControl("Done");
               setVals(a);
             }}
             style={styles.SubmitButtonRecordStyle}
@@ -2487,6 +2514,24 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 40,
     fontStyle: "italic",
+  },
+  ShowHideTextButtonStyle: {
+    fontSize: 25,
+    color: "#fff",
+    textAlign: "center",
+    alignItems: "center",
+
+  },
+  ShowHideButtonStyle: {
+    marginTop: 20,
+    backgroundColor: "#2b2e6d",
+    borderRadius: 35,
+    borderWidth: 1,
+    borderColor: "#fff",
+    height: 50,
+    width: 220,
+    justifyContent: "center",
+    alignItems: "center",
   },
   button: {
     flex: 1,
