@@ -20,6 +20,9 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
 import { LogBox } from 'react-native';
+
+import * as Speech from 'expo-speech';
+
 //LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs();//Ignore all log notifications
 
@@ -35,6 +38,8 @@ const kneeExtensionDataBase = SQLite.openDatabase("kneeExtensionDataBase.db");
 const userGenderDataBase = SQLite.openDatabase("userGenderDataBase.db");
 //Database for NRIC
 const userNRICDataBase = SQLite.openDatabase("userNRICDataBase.db");
+//Database for stopwatch
+const stopWatchDataBase = SQLite.openDatabase("stopWatchDataBase.db");
 
 var week1, week2, week3, week4, week5, week6, week7, week8, week9, week10, week11, week12;
 let weeks = [week1, week2, week3, week4, week5, week6, week7, week8, week9, week10, week11, week12];
@@ -65,11 +70,19 @@ function resetGender() {
   });
 };
 
+function resetStopWatch() {
+  stopWatchDataBase.transaction((tx1) => {
+    tx1.executeSql(`DROP TABLE stopWatchDataBase`)
+  });
+};
+
 resetFlexion();
 resetExtension();
 resetNRIC();
 resetGender();
+resetStopWatch()
 nricAsyncCall();
+
 var weekOneList = [];
 var weekTwoList = [];
 var weekThreeList = [];
@@ -155,6 +168,11 @@ const Goniometer_App = () => {
           options={{ title: "FORMSG" }}
         />
         <Stack.Screen
+          name="SitStandFormSG"
+          component={SitStandFormSG}
+          options={{ title: "SITSTANDFORMSG" }}
+        />
+        <Stack.Screen
           name="Contact"
           component={Contact}
           options={{ title: "Contact Us" }}
@@ -222,7 +240,7 @@ const GuidePage = ({ navigation, route }) => {
 //////////////////////////////////////////////////////////
 /////////////////////STOP WATCH PAGE//////////////////////
 //////////////////////////////////////////////////////////
-
+var count = 0;
 const SitStand = ({ navigation, route }) => {
 
   const [isTimerStart, setIsTimerStart] = useState(false);
@@ -230,11 +248,73 @@ const SitStand = ({ navigation, route }) => {
   const [timerDuration, setTimerDuration] = useState(90000);
   const [resetTimer, setResetTimer] = useState(false);
   const [resetStopwatch, setResetStopwatch] = useState(false);
+  const [forceUpdate1, forceUpdateId1] = useForceUpdate();
+  const [timeVal, setVal] = useState('AboutReact');
+  var seconds = '';
+  var nowTime = 0;
+  const doStuff = () => {
+    setIsStopwatchStart(!isStopwatchStart);
+    setResetStopwatch(false);
+    var b = nowTime.split(':');
+    seconds = (+b[0]) * 60 * 60 + (+b[1]) * 60 + (+b[2]); 
+    setVal(seconds);
+    count = count + 1;
+    console.log(count);
+  }
+  const speak = () => {
+    var thingToSay
+    if (count == 0 || count % 2 == 0) {
+      console.log("speaking");
+      thingToSay = '3,2,1, Start';
+    } else {
+      thingToSay = "";
+    }
+    Speech.speak(thingToSay, {
+      onDone: doStuff
+    });
+  };
+  const submitAlertStopWatch = () => {
+    
+    var a = nowTime.split(':');
+    seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]); 
+    setVal(seconds);
+    Alert.alert(
+      "Are you sure you want to submit?",
+      "",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel"),
+          style: "cancel"
+        },
+        {
+          text: "Yes", onPress: () => {
+            stopWatchDataBase.transaction(
+              (tx) => {
+                tx.executeSql("insert into stopWatchDataBase (done, value) values (0, ?)", [
+                  seconds.toString(),
+                ]);
+                tx.executeSql("select * from stopWatchDataBase", [], (_, { rows }) =>
+                  console.log(JSON.stringify(rows))
+                );
+              },
+              null,
+              forceUpdate1
+            );
+            navigation.navigate("SitStandFormSG", {
+              timeData: timeVal,
+              name: "SitStandFormSG",
+              flex: 1,
+            })
+          }
+        }
+      ]
+    );
+  }
 
   return (
     <SafeAreaView style={stylesSitStand.container}>
       <View style={stylesSitStand.container}>
-
         <View style={stylesSitStand.sectionStyle}>
           <Stopwatch
             laps
@@ -247,25 +327,46 @@ const SitStand = ({ navigation, route }) => {
             options={options}
             //options for the styling
             getTime={(time) => {
-              //console.log(time);
+              nowTime = time;
+              
             }}
           />
+
+
           <TouchableHighlight
-            onPress={() => {
-              setIsStopwatchStart(!isStopwatchStart);
-              setResetStopwatch(false);
-            }}>
+            style={styles.NavigateMeasurementAdmin}
+            onPress={
+              speak
+            }>
             <Text style={stylesSitStand.buttonText}>
               {!isStopwatchStart ? 'START' : 'STOP'}
             </Text>
           </TouchableHighlight>
+
+
+
+
           <TouchableHighlight
             onPress={() => {
               setIsStopwatchStart(false);
               setResetStopwatch(true);
+              count = 0;
             }}>
             <Text style={stylesSitStand.buttonText}>RESET</Text>
           </TouchableHighlight>
+
+          {(count % 2 != 0 && count == 0) ? (
+            <Text>
+            </Text>
+          ) : null}
+
+          {count % 2 != 0 ? (
+            <TouchableOpacity style={styles.SubmitButtonStyleStopWatch}
+              onPress={submitAlertStopWatch}
+            >
+              <Text style={styles.TextStyleButton}>Submit FormSG</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
 
       </View>
@@ -449,6 +550,14 @@ const HomeScreen = ({ navigation, route }) => {
     userNRICDataBase.transaction((tx) => {
       tx.executeSql(
         "create table if not exists userNRICDataBase (id integer primary key not null, done int, value text);"
+      );
+    });
+  }, []);
+  //User stopwatch data
+  React.useEffect(() => {
+    stopWatchDataBase.transaction((tx) => {
+      tx.executeSql(
+        "create table if not exists stopWatchDataBase (id integer primary key not null, done int, value text);"
       );
     });
   }, []);
@@ -1802,7 +1911,65 @@ const Contact = ({ navigation, route }) => {
     </View>
   );
 };
+//FormSG Page
+const SitStandFormSG = ({ navigation, route }) => {
 
+  // weekOneCall();
+  // weekTwoCall();
+  // weekThreeCall();
+  // weekFourCall();
+  // weekFiveCall();
+  // weekSixCall();
+  // weekSevenCall();
+  // weekEightCall();
+  // weekNineCall();
+  // weekTenCall();
+  // weekElevenCall();
+  // weekTwelveCall();
+  // weekOneExtensionCall();
+  // weekTwoExtensionCall();
+  // weekThreeExtensionCall();
+  // weekFourExtensionCall();
+  // weekFiveExtensionCall();
+  // weekSixExtensionCall();
+  // weekSevenExtensionCall();
+  // weekEightExtensionCall();
+  // weekNineExtensionCall();
+  // weekTenExtensionCall();
+  // weekElevenExtensionCall();
+  // weekTwelveExtensionCall();
+  nricAsyncCall();
+
+  const { timeData } = (route.params);
+
+
+  const x = route.params.paramKey;
+  const timeValStr = "Timing: " + x;
+  console.log(timeValStr);
+  const nricSubmitData = String(nricUser[0]);
+  const timingSubmitData = (timeData);
+
+
+  const runFirst = `setTimeout(function() {
+    document.getElementById("603c3ccc399059001247a1ee").className = "";
+    document.getElementById("603c3d41526b9e00127a488f").className = "";
+    document.getElementById('603c3ccc399059001247a1ee').value = '${nricSubmitData}';
+    document.getElementById('603c3ccc399059001247a1ee').dispatchEvent(new Event("input"));
+    document.getElementById('603c3d41526b9e00127a488f').value = '${timingSubmitData}';
+    document.getElementById('603c3d41526b9e00127a488f').dispatchEvent(new Event("input"));
+  }, 1000)`;
+  return (
+    <WebView
+      javaScriptEnabled={true}
+      source={{ uri: "https://form.gov.sg/#!/6092586dbee1190011689234" }}
+      onMessage={(event) => { }}
+      injectedJavaScript={runFirst}
+      style={{ flex: 1 }}
+      javaScriptEnabled
+    />
+
+  );
+};
 
 
 //FormSG Page
@@ -2170,18 +2337,18 @@ const Goniometer = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-        <View style = {{alignItems: "center",}}>
-          <TouchableOpacity
-            onPress={() => setShouldShow(!shouldShow)}
-            style={styles.ShowHideButtonStyle}
-          >
-            <Text style={styles.ShowHideTextButtonStyle}>
-              {shouldShow ? "Hide Display" : "Show Display"}
-            </Text>
-          </TouchableOpacity>
-          {/*Here we will return the view when state is true 
+      <View style={{ alignItems: "center", }}>
+        <TouchableOpacity
+          onPress={() => setShouldShow(!shouldShow)}
+          style={styles.ShowHideButtonStyle}
+        >
+          <Text style={styles.ShowHideTextButtonStyle}>
+            {shouldShow ? "Hide Display" : "Show Display"}
+          </Text>
+        </TouchableOpacity>
+        {/*Here we will return the view when state is true 
           and will return false if state is false*/}
-        </View>
+      </View>
 
       {shouldShow ? (
         <View>
@@ -2212,15 +2379,15 @@ const Goniometer = ({ navigation, route }) => {
             </Text>
           ) : null}
         </View>
-        ) : null}
+      ) : null}
 
-      
-        <View>
-          {useEffect(() => {
-            displayAngle();
-          }, [])}
-        </View>
-      
+
+      <View>
+        {useEffect(() => {
+          displayAngle();
+        }, [])}
+      </View>
+
 
       {shouldShow ? (
         <View style={{ marginTop: 20 }}>
@@ -2427,6 +2594,17 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
     height: 120,
     justifyContent: "center",
+  },
+  SubmitButtonStyleStopWatch: {
+    // marginLeft: 0,
+    // marginRight: 0,
+    backgroundColor: "#2B6D6A",
+    borderRadius: 10,
+    borderWidth: 10,
+    width: "100%",
+    borderColor: "#fff",
+    height: 100,
+    // justifyContent: "center",
   },
   NavigateMeasurement: {
     marginTop: 20,
