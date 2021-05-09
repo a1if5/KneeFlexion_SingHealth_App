@@ -30,3 +30,6 @@ Set Up Toggle Group
 
 Set Up of StopWatch
 1) npm i react-native-stopwatch-timer
+
+Set Up Text to Speech Audio
+1) expo install expo-speech

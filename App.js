@@ -170,7 +170,7 @@ const Goniometer_App = () => {
         <Stack.Screen
           name="SitStandFormSG"
           component={SitStandFormSG}
-          options={{ title: "SITSTANDFORMSG" }}
+          options={{ title: "FORM SG" }}
         />
         <Stack.Screen
           name="Contact"
@@ -265,12 +265,13 @@ const SitStand = ({ navigation, route }) => {
     var thingToSay
     if (count == 0 || count % 2 == 0) {
       console.log("speaking");
-      thingToSay = '3,2,1, Start';
+      thingToSay = '3.......... 2......... 1......... Start';
     } else {
       thingToSay = "";
     }
     Speech.speak(thingToSay, {
-      onDone: doStuff
+      onDone: doStuff,
+      rate : 0.7
     });
   };
   const submitAlertStopWatch = () => {
@@ -319,7 +320,7 @@ const SitStand = ({ navigation, route }) => {
           <Stopwatch
             laps
             hrs={false}
-            msecs={false}
+            msecs={true}
             start={isStopwatchStart}
             //To start
             reset={resetStopwatch}
@@ -332,41 +333,47 @@ const SitStand = ({ navigation, route }) => {
             }}
           />
 
-
-          <TouchableHighlight
-            style={styles.NavigateMeasurementAdmin}
-            onPress={
-              speak
-            }>
-            <Text style={stylesSitStand.buttonText}>
-              {!isStopwatchStart ? 'START' : 'STOP'}
-            </Text>
-          </TouchableHighlight>
-
-
-
-
-          <TouchableHighlight
-            onPress={() => {
-              setIsStopwatchStart(false);
-              setResetStopwatch(true);
-              count = 0;
-            }}>
-            <Text style={stylesSitStand.buttonText}>RESET</Text>
-          </TouchableHighlight>
+          {count % 2 == 0 ? (
+            <TouchableHighlight
+              style={stylesSitStand.buttonStartStopSitToStand}
+              onPress={
+                speak
+              }>
+              <Text style={stylesSitStand.buttonText}>
+                {!isStopwatchStart ? 'START' : 'STOP'}
+              </Text>
+            </TouchableHighlight>
+          ) : null}
 
           {(count % 2 != 0 && count == 0) ? (
             <Text>
             </Text>
           ) : null}
 
-          {count % 2 != 0 ? (
-            <TouchableOpacity style={styles.SubmitButtonStyleStopWatch}
-              onPress={submitAlertStopWatch}
-            >
-              <Text style={styles.TextStyleButton}>Submit FormSG</Text>
-            </TouchableOpacity>
-          ) : null}
+          
+          <View style={stylesSitStand.MainRecordContainer}>
+            {count % 2 != 0 ? (
+              <TouchableOpacity style={stylesSitStand.SubmitButtonStyleStopWatch}
+                onPress={submitAlertStopWatch}
+              >
+                <Text style={stylesSitStand.TextStyleButton}>Submit FormSG</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+
+          <View style={stylesSitStand.MainRecordContainer}>
+            {count % 2 != 0 ? (
+              <TouchableOpacity
+                style={stylesSitStand.buttonStartStopSitToStandReset}
+                onPress={() => {
+                  setIsStopwatchStart(false);
+                  setResetStopwatch(true);
+                  count = 0;
+                }}>
+                <Text style={stylesSitStand.TextStyleButton}>Reset</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
         </View>
 
       </View>
@@ -2595,17 +2602,6 @@ const styles = StyleSheet.create({
     height: 120,
     justifyContent: "center",
   },
-  SubmitButtonStyleStopWatch: {
-    // marginLeft: 0,
-    // marginRight: 0,
-    backgroundColor: "#2B6D6A",
-    borderRadius: 10,
-    borderWidth: 10,
-    width: "100%",
-    borderColor: "#fff",
-    height: 100,
-    // justifyContent: "center",
-  },
   NavigateMeasurement: {
     marginTop: 20,
     marginLeft: 20,
@@ -2960,6 +2956,11 @@ const stylesSitStand = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  MainRecordContainer: {
+    justifyContent: "flex-start",
+    backgroundColor: "#FFF",
+    paddingTop: 8,
+  },
   title: {
     textAlign: 'center',
     fontSize: 20,
@@ -2977,6 +2978,41 @@ const stylesSitStand = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
     textAlign: 'center',
+    color: '#FFF',
+  },
+  buttonStartStopSitToStand:{
+    marginTop: 25,
+    backgroundColor: "#2b2e6d",
+    borderRadius: 250,
+    borderWidth: 1,
+    borderColor: "#fff",
+    height: 300,
+    width: 300,
+    justifyContent: "center",
+  },
+  buttonStartStopSitToStandReset:{
+    backgroundColor: "#786B4A",
+    borderRadius: 35,
+    borderWidth: 1,
+    borderColor: "#fff",
+    height: 80,
+    width: 320,
+    justifyContent: "center",
+  },
+  SubmitButtonStyleStopWatch: {
+    marginTop: 10,
+    backgroundColor: "#786B4A",
+    borderRadius: 35,
+    borderWidth: 1,
+    borderColor: "#fff",
+    height: 80,
+    width: 320,
+    justifyContent: "center",
+  },
+  TextStyleButton: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 40,
   },
 });
 
