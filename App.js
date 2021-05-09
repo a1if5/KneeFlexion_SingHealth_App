@@ -257,9 +257,11 @@ const SitStand = ({ navigation, route }) => {
     setResetStopwatch(false);
     var b = nowTime.split(':');
     seconds = (+b[0]) * 60 * 60 + (+b[1]) * 60 + (+b[2]); 
+    // seconds = seconds + "." + b[3];
+    seconds = seconds + b[3];
     setVal(seconds);
     count = count + 1;
-    console.log(count);
+    // console.log(count);
   }
   const speak = () => {
     var thingToSay
@@ -275,9 +277,11 @@ const SitStand = ({ navigation, route }) => {
     });
   };
   const submitAlertStopWatch = () => {
-    
     var a = nowTime.split(':');
-    seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]); 
+    seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
+    // seconds = seconds + "." + a[3];
+    seconds = seconds + a[3];
+    console.log(seconds); 
     setVal(seconds);
     Alert.alert(
       "Are you sure you want to submit?",
@@ -328,6 +332,7 @@ const SitStand = ({ navigation, route }) => {
             options={options}
             //options for the styling
             getTime={(time) => {
+              console.log(time);
               nowTime = time;
               
             }}
