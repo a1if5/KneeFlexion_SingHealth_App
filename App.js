@@ -332,7 +332,7 @@ const SitStand = ({ navigation, route }) => {
             options={options}
             //options for the styling
             getTime={(time) => {
-              console.log(time);
+              //console.log(time);
               nowTime = time;
 
             }}
@@ -1964,13 +1964,13 @@ const SitStandFormSG = ({ navigation, route }) => {
 
   const runFirst = `setTimeout(function() {
     document.getElementById("603c3ccc399059001247a1ee").readOnly = true;
-    document.getElementById("603c3d41526b9e00127a488f").readOnly = true;
+    document.getElementById("6098d0a38a5d310012f967d3").readOnly = true;
     document.getElementById("603c3ccc399059001247a1ee").className = "";
-    document.getElementById("603c3d41526b9e00127a488f").className = "";
+    document.getElementById("6098d0a38a5d310012f967d3").className = "";
     document.getElementById('603c3ccc399059001247a1ee').value = '${nricSubmitData}';
     document.getElementById('603c3ccc399059001247a1ee').dispatchEvent(new Event("input"));
-    document.getElementById('603c3d41526b9e00127a488f').value = '${timingSubmitData}';
-    document.getElementById('603c3d41526b9e00127a488f').dispatchEvent(new Event("input"));
+    document.getElementById('6098d0a38a5d310012f967d3').value = '${timingSubmitData}';
+    document.getElementById('6098d0a38a5d310012f967d3').dispatchEvent(new Event("input"));
   }, 1000)`;
   return (
     <WebView
@@ -3050,6 +3050,7 @@ const stylesSitStand = StyleSheet.create({
     padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: "#FFF",
   },
   MainRecordContainer: {
     justifyContent: "flex-start",
