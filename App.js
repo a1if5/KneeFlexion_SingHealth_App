@@ -20,7 +20,6 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
 import { LogBox } from 'react-native';
-
 import * as Speech from 'expo-speech';
 
 //LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
@@ -258,7 +257,7 @@ const SitStand = ({ navigation, route }) => {
     var b = nowTime.split(':');
     seconds = (+b[0]) * 60 * 60 + (+b[1]) * 60 + (+b[2]);
     // seconds = seconds + "." + b[3];
-    seconds = seconds + b[3];
+    seconds = seconds + "." + b[3];
     setVal(seconds);
     count = count + 1;
     // console.log(count);
@@ -266,7 +265,7 @@ const SitStand = ({ navigation, route }) => {
   const speak = () => {
     var thingToSay
     if (count == 0 || count % 2 == 0) {
-      console.log("speaking");
+      // console.log("speaking");
       thingToSay = '3.......... 2......... 1......... Start';
     } else {
       thingToSay = "";
@@ -280,8 +279,8 @@ const SitStand = ({ navigation, route }) => {
     var a = nowTime.split(':');
     seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
     // seconds = seconds + "." + a[3];
-    seconds = seconds + a[3];
-    console.log(seconds);
+    seconds = seconds + "." + a[3];
+    // console.log(seconds);
     setVal(seconds);
     Alert.alert(
       "Are you sure you want to submit?",
@@ -289,7 +288,7 @@ const SitStand = ({ navigation, route }) => {
       [
         {
           text: "Cancel",
-          onPress: () => console.log("Cancel"),
+          // onPress: () => console.log("Cancel"),
           style: "cancel"
         },
         {
@@ -300,7 +299,9 @@ const SitStand = ({ navigation, route }) => {
                   seconds.toString(),
                 ]);
                 tx.executeSql("select * from stopWatchDataBase", [], (_, { rows }) =>
-                  console.log(JSON.stringify(rows))
+                  console.log(""
+                    // JSON.stringify(rows)
+                    )
                 );
               },
               null,
@@ -407,22 +408,22 @@ const CalenderDataPage = ({ navigation, route }) => {
           items[strTime] = [];
           kneeFlexionDataBase.transaction((tx) => {
             tx.executeSql(
-              `SELECT * FROM items WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
+              `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
               [strTime + "%"],
               (tx, results) => {
                 var len = results.rows.length;
                 if (len > 0) {
-                  console.log(results.rows.item(0).value);
+                  // console.log(results.rows.item(0).value);
                   var ans = results.rows.item(0).value;
                   var g = ans.substr(-3);
                   kneeExtensionDataBase.transaction((tx1) => {
                     tx1.executeSql(
-                      `SELECT * FROM extension WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
+                      `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
                       [strTime + "%"],
                       (tx1, results1) => {
                         var len1 = results1.rows.length;
                         if (len1 > 0) {
-                          console.log(results1.rows.item(0).value);
+                          // console.log(results1.rows.item(0).value);
                           var ans1 = results1.rows.item(0).value;
                           var h = ans1.substr(-3);
                           items[strTime].push({
@@ -588,7 +589,9 @@ const HomeScreen = ({ navigation, route }) => {
           text,
         ]);
         tx.executeSql("select * from userGenderDataBase", [], (_, { rows }) =>
-          console.log(JSON.stringify(rows))
+          console.log(""
+            // JSON.stringify(rows)
+          )
         );
       },
       null,
@@ -608,7 +611,9 @@ const HomeScreen = ({ navigation, route }) => {
           text,
         ]);
         tx.executeSql("select * from userNRICDataBase", [], (_, { rows }) =>
-          console.log(JSON.stringify(rows))
+          console.log(""
+            // JSON.stringify(rows)
+          )
         );
       },
       null,
@@ -646,7 +651,7 @@ const HomeScreen = ({ navigation, route }) => {
       yyyy = "20" + nextDay.getYear().toString().substring(1, 3);
       var x = yyyy + "-" + mm + "-" + dd;
       weeks[i] = x;
-      console.log(weeks[i]);
+      // console.log(weeks[i]);
       yyyy = null;
       mm = null;
       dd = null;
@@ -661,7 +666,7 @@ const HomeScreen = ({ navigation, route }) => {
         [
           {
             text: "OK",
-            onPress: () => console.log("OK"),
+            // onPress: () => console.log("OK"),
           },
         ]
       );
@@ -672,7 +677,7 @@ const HomeScreen = ({ navigation, route }) => {
         [
           {
             text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
+            // onPress: () => console.log("Cancel Pressed"),
             style: "cancel"
           },
           {
@@ -730,7 +735,7 @@ const HomeScreen = ({ navigation, route }) => {
                 nameCheck[0] = 1;
                 add3(itemvalu);
                 setSelectedGenderValue(itemvalu);
-                console.log(itemvalu);
+                // console.log(itemvalu);
               }}
               useNativeAndroidPickerStyle={false}
               placeholder={{ label: "Select Gender", value: null }}
@@ -768,7 +773,7 @@ const HomeScreen = ({ navigation, route }) => {
       </View>
     );
   } else if (checker[0] == 1) {
-    console.log(nricCheck[0] + " " + nameCheck[0]);
+    // console.log(nricCheck[0] + " " + nameCheck[0]);
     return (
       <View style={pp.container}>
         <View>
@@ -838,7 +843,7 @@ async function weekOneExtension() {
   return new Promise((resolve, reject) => {
     kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -873,7 +878,7 @@ async function weekTwoExtension() {
   return new Promise((resolve, reject) => {
     kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -909,7 +914,7 @@ async function weekThreeExtension() {
   return new Promise((resolve, reject) => {
     kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -944,7 +949,7 @@ async function weekFourExtension() {
   return new Promise((resolve, reject) => {
     kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -979,7 +984,7 @@ async function weekFiveExtension() {
   return new Promise((resolve, reject) => {
     kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1014,7 +1019,7 @@ async function weekSixExtension() {
   return new Promise((resolve, reject) => {
     kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1049,7 +1054,7 @@ async function weekSevenExtension() {
   return new Promise((resolve, reject) => {
     kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1084,7 +1089,7 @@ async function weekEightExtension() {
   return new Promise((resolve, reject) => {
     kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1119,7 +1124,7 @@ async function weekNineExtension() {
   return new Promise((resolve, reject) => {
     kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1154,7 +1159,7 @@ async function weekTenExtension() {
   return new Promise((resolve, reject) => {
     kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1189,7 +1194,7 @@ async function weekElevenExtension() {
   return new Promise((resolve, reject) => {
     kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1224,7 +1229,7 @@ async function weekTwelveExtension() {
   return new Promise((resolve, reject) => {
     kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM items WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1319,7 +1324,7 @@ async function weekOne() {
   return new Promise((resolve, reject) => {
     kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `S WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1355,7 +1360,7 @@ async function weekTwo() {
   return new Promise((resolve, reject) => {
     kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `S WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1391,7 +1396,7 @@ async function weekThree() {
   return new Promise((resolve, reject) => {
     kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `S WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1426,7 +1431,7 @@ async function weekFour() {
   return new Promise((resolve, reject) => {
     kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `S WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1461,7 +1466,7 @@ async function weekFive() {
   return new Promise((resolve, reject) => {
     kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `S WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1496,7 +1501,7 @@ async function weekSix() {
   return new Promise((resolve, reject) => {
     kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `S WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1531,7 +1536,7 @@ async function weekSeven() {
   return new Promise((resolve, reject) => {
     kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `S WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1566,7 +1571,7 @@ async function weekEight() {
   return new Promise((resolve, reject) => {
     kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `S WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1601,7 +1606,7 @@ async function weekNine() {
   return new Promise((resolve, reject) => {
     kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `S WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1636,7 +1641,7 @@ async function weekTen() {
   return new Promise((resolve, reject) => {
     kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `S WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1671,7 +1676,7 @@ async function weekEleven() {
   return new Promise((resolve, reject) => {
     kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `S WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1706,7 +1711,7 @@ async function weekTwelve() {
   return new Promise((resolve, reject) => {
     kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM extension WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
+        `S WHERE value LIKE ` + tmr1 + ` or value LIKE ` + tmr2 + ` or value LIKE ` + tmr3 + ` or value LIKE ` + tmr4 + ` or value LIKE ` + tmr5 + ` or value LIKE ` + today + ` or value LIKE ` + tmr6,
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
@@ -1957,7 +1962,7 @@ const SitStandFormSG = ({ navigation, route }) => {
 
   const x = route.params.paramKey;
   const timeValStr = "Timing: " + x;
-  console.log(timeValStr);
+  // console.log(timeValStr);
   const nricSubmitData = String(nricUser[0]);
   const timingSubmitData = (timeData);
 
@@ -2086,14 +2091,14 @@ const Goniometer = ({ navigation, route }) => {
   React.useEffect(() => {
     kneeFlexionDataBase.transaction((tx) => {
       tx.executeSql(
-        "create table if not exists items (id integer primary key not null, done int, value text);"
+        "create table if not exists kneeFlexionDataBase (id integer primary key not null, done int, value text);"
       );
     });
   }, []);
   React.useEffect(() => {
     kneeExtensionDataBase.transaction((tx) => {
       tx.executeSql(
-        "create table if not exists extension (id integer primary key not null, done int, value text);"
+        "create table if not exists kneeExtensionDataBase (id integer primary key not null, done int, value text);"
       );
     });
   }, []);
@@ -2107,13 +2112,15 @@ const Goniometer = ({ navigation, route }) => {
 
     kneeFlexionDataBase.transaction(
       (tx) => {
-        tx.executeSql("insert into items (done, value) values (0, ?)", [
+        tx.executeSql("insert into kneeFlexionDataBase (done, value) values (0, ?)", [
           moment().utcOffset("+08:00").format("YYYY-MM-DD") +
           " Flexion:    " +
           text,
         ]);
-        tx.executeSql("select * from items", [], (_, { rows }) =>
-          console.log(JSON.stringify(rows))
+        tx.executeSql("SELECT * FROM kneeFlexionDataBase", [], (_, { rows }) =>
+          console.log(
+            JSON.stringify(rows)
+          )
         );
       },
       null,
@@ -2129,12 +2136,12 @@ const Goniometer = ({ navigation, route }) => {
 
     kneeExtensionDataBase.transaction(
       (tx) => {
-        tx.executeSql("insert into extension (done, value) values (0, ?)", [
+        tx.executeSql("insert into kneeExtensionDataBase (done, value) values (0, ?)", [
           moment().utcOffset("+08:00").format("YYYY-MM-DD") +
           " Extension:    " +
           text,
         ]);
-        tx.executeSql("select * from extension", [], (_, { rows }) =>
+        tx.executeSql("SELECT * FROM kneeExtensionDataBase", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
         );
       },
