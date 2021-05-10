@@ -256,7 +256,7 @@ const SitStand = ({ navigation, route }) => {
     setIsStopwatchStart(!isStopwatchStart);
     setResetStopwatch(false);
     var b = nowTime.split(':');
-    seconds = (+b[0]) * 60 * 60 + (+b[1]) * 60 + (+b[2]); 
+    seconds = (+b[0]) * 60 * 60 + (+b[1]) * 60 + (+b[2]);
     // seconds = seconds + "." + b[3];
     seconds = seconds + b[3];
     setVal(seconds);
@@ -273,7 +273,7 @@ const SitStand = ({ navigation, route }) => {
     }
     Speech.speak(thingToSay, {
       onDone: doStuff,
-      rate : 0.7
+      rate: 0.7
     });
   };
   const submitAlertStopWatch = () => {
@@ -281,7 +281,7 @@ const SitStand = ({ navigation, route }) => {
     seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
     // seconds = seconds + "." + a[3];
     seconds = seconds + a[3];
-    console.log(seconds); 
+    console.log(seconds);
     setVal(seconds);
     Alert.alert(
       "Are you sure you want to submit?",
@@ -334,7 +334,7 @@ const SitStand = ({ navigation, route }) => {
             getTime={(time) => {
               console.log(time);
               nowTime = time;
-              
+
             }}
           />
 
@@ -355,7 +355,7 @@ const SitStand = ({ navigation, route }) => {
             </Text>
           ) : null}
 
-          
+
           <View style={stylesSitStand.MainRecordContainer}>
             {count % 2 != 0 ? (
               <TouchableOpacity style={stylesSitStand.SubmitButtonStyleStopWatch}
@@ -578,7 +578,7 @@ const HomeScreen = ({ navigation, route }) => {
   const add3 = (text) => {
     var text = text;
     if (text === null || text === "") {
-      alert("Invalid Input!");
+      alert("Please select a gender!");
       return false;
     }
 
@@ -598,7 +598,7 @@ const HomeScreen = ({ navigation, route }) => {
   const addNRIC = (text) => {
     var text = text;
     if (text === null || text === "") {
-      alert("Invalid Input!");
+      alert("Please input NRIC!");
       return false;
     }
 
@@ -748,7 +748,7 @@ const HomeScreen = ({ navigation, route }) => {
             <Text></Text>
             <View style={styles.pickerContainerDate}>
               <DateTimePicker
-                style={{ fontSize: 100, marginRight: 40 }}
+                //ANDROID DOES NOT SUPPORT STYLING
                 testID="dateTimePicker"
                 value={date}
                 mode={mode}
@@ -762,7 +762,7 @@ const HomeScreen = ({ navigation, route }) => {
             onPress={submitUserDateAlert}
             style={styles.NavigateMeasurementAdmin}
           >
-            <Text style={styles.TextStyleButtonHomePage}>Confirm</Text>
+            <Text style={styles.TextStyleButtonHomePageAdmin}>Confirm</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -1963,6 +1963,8 @@ const SitStandFormSG = ({ navigation, route }) => {
 
 
   const runFirst = `setTimeout(function() {
+    document.getElementById("603c3ccc399059001247a1ee").readOnly = true;
+    document.getElementById("603c3d41526b9e00127a488f").readOnly = true;
     document.getElementById("603c3ccc399059001247a1ee").className = "";
     document.getElementById("603c3d41526b9e00127a488f").className = "";
     document.getElementById('603c3ccc399059001247a1ee').value = '${nricSubmitData}';
@@ -2024,6 +2026,9 @@ const FormSG = ({ navigation, route }) => {
   const extensionSubmitData = parseInt(extenData);
 
   const runFirst = `setTimeout(function() {
+    document.getElementById("603c3ccc399059001247a1ee").readOnly = true;
+    document.getElementById("603c3d41526b9e00127a488f").readOnly = true;
+    document.getElementById("603c3d5a7d837800126d12f7").readOnly = true;
     document.getElementById("603c3ccc399059001247a1ee").className = "";
     document.getElementById("603c3d41526b9e00127a488f").className = "";
     document.getElementById("603c3d5a7d837800126d12f7").className = "";
@@ -2347,6 +2352,23 @@ const Goniometer = ({ navigation, route }) => {
     );
   }
 
+  const state = {
+    data: [
+      {
+        id: 1,
+        title: "Record Extension",
+        link: "ke",
+        image: "https://i.imgur.com/8JOdzj4.png",
+      },
+      {
+        id: 2,
+        title: "Record Flexion",
+        link: "kf",
+        image: "https://i.imgur.com/rcy7V5j.png",
+      },
+    ],
+  }
+
   return (
     <View style={styles.container}>
       <View style={{ alignItems: "center", }}>
@@ -2445,35 +2467,52 @@ const Goniometer = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.MainRecordContainer}>
-          <TouchableOpacity
-            onPress={() => {
-              var degr = getDegrees(round(beta));
-              add(degr);
-              setFlexionDegree(getDegrees(round(beta)));
-              setFlexionDegreeControl("Done");
-              setVal(degr);
-            }}
-            style={styles.SubmitButtonRecordStyle}
-          >
-            <Text style={styles.TextStyleButton}>Record Flexion</Text>
-          </TouchableOpacity>
-        </View>
+        <FlatList
+          style={ppp.list}
+          contentContainerStyle={ppp.listContainer}
+          data={state.data}
+          horizontal={false}
+          numColumns={2}
+          keyExtractor={(item) => {
+            return item.id;
+          }}
+          renderItem={({ item }) => {
+            return (
+              <View>
+                <TouchableOpacity
+                  style={ppp.card}
+                  onPress={() => {
+                    if (item.link == "kf") {
+                      var degr = getDegrees(round(beta));
+                      add(degr);
+                      setFlexionDegree(getDegrees(round(beta)));
+                      setFlexionDegreeControl("Done");
+                      setVal(degr);
+                    } else {
+                      var a = getDegrees(round(beta));
+                      add1(a);
+                      setExtensionDegree(getDegrees(round(beta)));
+                      setExtensionDegreeControl("Done");
+                      setVals(a);
+                    }
+                  }}
+                >
+                  <Image style={ppp.cardImage} source={{ uri: item.image }} />
 
-        <View style={styles.MainRecordContainer}>
-          <TouchableOpacity
-            onPress={() => {
-              var a = getDegrees(round(beta));
-              add1(a);
-              setExtensionDegree(getDegrees(round(beta)));
-              setExtensionDegreeControl("Done");
-              setVals(a);
-            }}
-            style={styles.SubmitButtonRecordStyle}
-          >
-            <Text style={styles.TextStyleButton}>Record Extension</Text>
-          </TouchableOpacity>
-        </View>
+                </TouchableOpacity>
+
+                <View style={ppp.cardHeader}>
+                  <View
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <Text style={ppp.title}>{item.title}</Text>
+                  </View>
+                </View>
+              </View>
+            );
+          }}
+        />
+
 
         <View style={styles.MainRecordContainer}>
           {!(flexionDegree != 0 && extensionDegree != 0) ? (
@@ -2488,31 +2527,10 @@ const Goniometer = ({ navigation, route }) => {
             </TouchableOpacity>
           ) : null}
         </View>
-
-        <View style={styles.MainRecordHistoryContainer}>
-          {!(flexionDegree != 0 && extensionDegree != 0) ? (
-            <Text></Text>
-          ) : null}
-
-          {flexionDegree != 0 && extensionDegree != 0 ? (
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("CalenderDataPage", {
-                  name: "CalenderDataPage",
-                })
-              }
-              style={styles.SubmitButtonHistoryStyle}
-            >
-              <Text style={styles.TextStyleButton}>History</Text>
-            </TouchableOpacity>
-          ) : null}
-        </View>
       </ScrollView>
     </View>
   );
 }
-
-
 function useForceUpdate() {
   const [value, setValue] = useState(0);
   return [() => setValue(value + 1), value];
@@ -2635,6 +2653,10 @@ const styles = StyleSheet.create({
     height: 80,
     justifyContent: "center",
   },
+  imgStyle: {
+    paddingLeft: 50,
+    justifyContent: "center",
+  },
   SubmitButtonHistoryStyle: {
     backgroundColor: "#2B6D6A",
     borderRadius: 35,
@@ -2688,11 +2710,10 @@ const styles = StyleSheet.create({
   },
   TextStyleButtonHomePageAdmin: {
     color: "#fff",
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 10,
     textAlign: "center",
-    fontSize: 40,
-    fontStyle: "italic",
+    fontSize: 60,
   },
   ShowHideTextButtonStyle: {
     fontSize: 25,
@@ -2933,6 +2954,75 @@ const pp = StyleSheet.create({
     color: "#696969",
   },
 });
+
+const ppp = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f6f6f6",
+  },
+  list: {
+    paddingHorizontal: 5,
+    // backgroundColor: "#f6f6f6",
+  },
+  listContainer: {
+    alignItems: "center",
+  },
+  /******** card **************/
+  card: {
+    shadowColor: "#474747",
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+
+    elevation: 12,
+    marginVertical: 20,
+    marginHorizontal: 30,
+    backgroundColor: "#ABDDDC",
+    //flexBasis: '42%',
+    width: 150,
+    height: 120,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cardHeader: {
+    paddingVertical: 3,
+    paddingHorizontal: 16,
+    borderTopLeftRadius: 1,
+    borderTopRightRadius: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cardContent: {
+    paddingVertical: 12.5,
+    paddingHorizontal: 16,
+  },
+  cardFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingTop: 12.5,
+    paddingBottom: 25,
+    paddingHorizontal: 16,
+    borderBottomLeftRadius: 1,
+    borderBottomRightRadius: 1,
+  },
+  cardImage: {
+    height: 140,
+    width: 140,
+    alignSelf: "center",
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    flex: 1,
+    alignSelf: "center",
+    color: "#696969",
+  },
+});
 const styless = StyleSheet.create({
   container: {
     flex: 1,
@@ -2985,7 +3075,7 @@ const stylesSitStand = StyleSheet.create({
     textAlign: 'center',
     color: '#FFF',
   },
-  buttonStartStopSitToStand:{
+  buttonStartStopSitToStand: {
     marginTop: 25,
     backgroundColor: "#2b2e6d",
     borderRadius: 250,
@@ -2995,7 +3085,7 @@ const stylesSitStand = StyleSheet.create({
     width: 300,
     justifyContent: "center",
   },
-  buttonStartStopSitToStandReset:{
+  buttonStartStopSitToStandReset: {
     backgroundColor: "#786B4A",
     borderRadius: 35,
     borderWidth: 1,
@@ -3035,5 +3125,17 @@ const options = {
     marginLeft: 7,
   },
 };
+
+const sideButton = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonContainer: {
+    flex: 1,
+  }
+});
 
 export default Goniometer_App;
