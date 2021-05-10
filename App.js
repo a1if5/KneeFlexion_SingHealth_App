@@ -2954,7 +2954,7 @@ const pp = StyleSheet.create({
     alignSelf: "center",
   },
   title: {
-    fontSize: 35,
+    fontSize: 20,
     fontWeight: "bold",
     flex: 1,
     alignSelf: "center",
