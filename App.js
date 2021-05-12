@@ -168,35 +168,31 @@ weekElevenExtensionCall();
 weekTwelveExtensionCall();
 
 var nricX;
-   async function countNRIC() {
-    return new Promise((resolve, reject) => {
-      userNRICDataBase.transaction((tx1) => {
-        tx1.executeSql(
-          "SELECT * FROM userNRICDataBase",
-          [],
-          (tx1, results1) => {
-            if (results1.rows.length == null) {
-              // console.log("und");
-            } else {
-              // console.log(results1.rows.length);
-            }
-            // console.log(results1.rows.length + "len");
-            nricX = results1.rows.length;
-            return results1.rows.length;
-          }
-        );
+async function countNRIC() {
+  return new Promise((resolve, reject) => {
+    userNRICDataBase.transaction((tx1) => {
+      tx1.executeSql("SELECT * FROM userNRICDataBase", [], (tx1, results1) => {
+        if (results1.rows.length == null) {
+          // console.log("und");
+        } else {
+          // console.log(results1.rows.length);
+        }
+        // console.log(results1.rows.length + "len");
+        nricX = results1.rows.length;
+        return results1.rows.length;
       });
     });
-  }
-  
-  async function countNRICCall() {
-    countNRIC().then((val) => (console.log(val)));
-  }
-  countNRIC();
-  countNRICCall();
-  var xx = countNRIC();
-  // console.log(xx + " function check");
-  // console.log(nricX + " check");
+  });
+}
+
+async function countNRICCall() {
+  countNRIC().then((val) => console.log(val));
+}
+countNRIC();
+countNRICCall();
+var xx = countNRIC();
+// console.log(xx + " function check");
+// console.log(nricX + " check");
 
 //////////////////////////////////////////////////////////
 ////////////MAIN CONTROLLER & NAVIGATION//////////////////
@@ -274,20 +270,31 @@ const Goniometer_App = () => {
 
 const HomeScreen = ({ navigation, route }) => {
   countNRICCall();
+  function delay() {
+    setTimeout(function () {navigation.navigate("Welcome")}, 3000);
+  }
   const press = () => {
     navigation.navigate("Welcome");
-  }
+  };
+  delay()
   return (
-    <View>
-      
-      <TouchableOpacity onPress={
-        press}>
-      <Text>Hello</Text>
+    <View style={styles.container}>
+      <TouchableOpacity onPress={press}>
+        <Text>Hello</Text>
       </TouchableOpacity>
-        
+      <Image source={require("./sgh-logo.png")} />
+      <Text></Text>
+      <Text></Text>
+      <Text style={{ textAlign: "center", fontSize: 20 }}>
+        General Enquiries: {"\n"}+65 6222 3322
+      </Text>
+      <Text></Text>
+      <Text style={{ textAlign: "center", fontSize: 20 }}>
+        Address: {"\n"}Outram Road Singapore 169608
+      </Text>
     </View>
-  )
-}
+  );
+};
 
 //////////////////////////////////////////////////////////
 /////////////////////GUIDE PAGE///////////////////////////
@@ -782,12 +789,10 @@ const Welcome = ({ navigation, route }) => {
     showMode("date");
   };
 
-  
+  console.log(nricX);
 
-console.log(nricX)
-  
   if (
-    nricX == null &&
+    (nricX == null || nricX == 0 ) &&
     (nricCheck[0] == null ||
       nameCheck[0] == null ||
       checker[0] == null ||
@@ -860,7 +865,7 @@ console.log(nricX)
         </View>
       </View>
     );
-  } else if (checker[0] == 1 || nricX == 1 ) {
+  } else if (checker[0] == 1 || nricX == 1) {
     return (
       <View style={pp.container}>
         {/* <View>
