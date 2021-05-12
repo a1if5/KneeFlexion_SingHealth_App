@@ -279,18 +279,24 @@ const HomeScreen = ({ navigation, route }) => {
   delay()
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={press}>
+      {/* <TouchableOpacity onPress={press}>
         <Text>Hello</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <Image source={require("./sgh-logo.png")} />
       <Text></Text>
       <Text></Text>
-      <Text style={{ textAlign: "center", fontSize: 20 }}>
-        General Enquiries: {"\n"}+65 6222 3322
+      <Text style={{ textAlign: "center", fontSize: 20, fontWeight:"bold"}}>
+        Goniometer Application
       </Text>
       <Text></Text>
+      {/* <View style={{width: 300, height:300 }} >
+      <Image style= {{width: undefined, height: undefined}}    
+       source={require("./NUS_logo.png")}
+        />
+    </View> */}
       <Text style={{ textAlign: "center", fontSize: 20 }}>
-        Address: {"\n"}Outram Road Singapore 169608
+      Created by {"\n"} Alif and Ismahfaris {"\n"}
+      (National University of Singapore)
       </Text>
     </View>
   );
@@ -3597,6 +3603,13 @@ const sideButton = StyleSheet.create({
   buttonContainer: {
     flex: 1,
   },
+});
+
+const stt = StyleSheet.create({
+  width: 100,
+  height: undefined,
+  aspectRatio: 1,
+  // resizeMode: "contain",
 });
 
 export default Goniometer_App;
