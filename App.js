@@ -740,6 +740,19 @@ const CalenderDataPage = ({ navigation, route }) => {
 async function setDateForList() {
   var g = 1;
   var h = 1;
+  var k;
+  dateDataBase.transaction((tx) => {
+    tx.executeSql(
+      `select * from dateDataBase LIMIT ?`,
+      [1],
+      (tx, result) => {
+        if (result.rows.length > 0) {
+          weeks[0] = result.rows.item(0).value;
+        }
+      })
+    })
+
+
   for (var x = 1; x < 84; x++) {
     // console.log("woo" + x)
     // return new Promise((resolve, reject) => {
@@ -750,16 +763,17 @@ async function setDateForList() {
           (tx, result) => {
             if (result.rows.length > 0) {
             // console.log(h);
-            h++;
+            
             // console.log("date: " + result.rows.item(0).value);
             var len = result.rows.length;
-            weeks[h-1] = result.rows.item(0).value;
+            weeks[h] = result.rows.item(0).value;
+            h++;
             var data = [];
             data.push(result.rows.item(0).value);
             // console.log(result.rows.item(0).value + " wow")
             // console.log(data);
             // resolve(data);
-            
+
             return data;
             } else {
               return 0;
@@ -1153,10 +1167,10 @@ const Welcome = ({ navigation, route }) => {
 
 //Extension Measurement
 async function weekOneExtension() {
-  console.log(weeks[1] + " called")
+  console.log(weeks[0] + " called")
   var total = 0;
   var finals = 0;
-  // var today = "'" + weeks[1] + "%'";
+  var today = "'" + weeks[0] + "%'";
   var tmr1 = "'" + weeks[1] + "%'";
   var tmr2 = "'" + weeks[2] + "%'";
   var tmr3 = "'" + weeks[3] + "%'";
@@ -1176,8 +1190,8 @@ async function weekOneExtension() {
           tmr4 +
           ` or value LIKE ` +
           tmr5 +
-          // ` or value LIKE ` +
-          // today +
+          ` or value LIKE ` +
+          today +
           ` or value LIKE ` +
           tmr6,
         [],
