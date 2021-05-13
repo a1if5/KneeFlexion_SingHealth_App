@@ -35,6 +35,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 import { LogBox } from "react-native";
 import * as Speech from "expo-speech";
+import { cos } from "react-native-reanimated";
 
 //LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -51,7 +52,10 @@ const userGenderDataBase = SQLite.openDatabase("userGenderDataBase.db");
 const userNRICDataBase = SQLite.openDatabase("userNRICDataBase.db");
 //Database for stopwatch
 const stopWatchDataBase = SQLite.openDatabase("stopWatchDataBase.db");
+//Database for date
+const dateDataBase = SQLite.openDatabase("dateDataBase.db");
 
+var initCount = 0;
 var week1,
   week2,
   week3,
@@ -64,20 +68,22 @@ var week1,
   week10,
   week11,
   week12;
-let weeks = [
-  week1,
-  week2,
-  week3,
-  week4,
-  week5,
-  week6,
-  week7,
-  week8,
-  week9,
-  week10,
-  week11,
-  week12,
-];
+var weeks = [];
+// weeks[0] = 100;
+// let weeks = [
+//   week1,
+//   week2,
+//   week3,
+//   week4,
+//   week5,
+//   week6,
+//   week7,
+//   week8,
+//   week9,
+//   week10,
+//   week11,
+//   week12,
+// ];
 let initDate = [];
 let nricCheck = [];
 let nameCheck = [];
@@ -111,11 +117,18 @@ function resetStopWatch() {
   });
 }
 
+function resetDate() {
+  dateDataBase.transaction((tx1) => {
+    tx1.executeSql(`DROP TABLE dateDataBase`);
+  });
+}
+
 // resetFlexion();
 // resetExtension();
 // resetNRIC();
 // resetGender();
 // resetStopWatch();
+// resetDate();
 nricAsyncCall();
 
 var weekOneList = [];
@@ -154,7 +167,10 @@ var weekNineExtensionList = [];
 var weekTenExtensionList = [];
 var weekTwelveExtensionList = [];
 var weekElevenExtensionList = [];
-weekOneExtensionCall();
+if(initCount == 0) {
+initCount++;
+} else {weekOneExtensionCall()}
+// weekOneExtensionCall();
 weekTwoExtensionCall();
 weekThreeExtensionCall();
 weekFourExtensionCall();
@@ -242,6 +258,11 @@ const Goniometer_App = () => {
           options={{ title: "HOME" }}
         />
         <Stack.Screen
+          name="Data"
+          component={Data}
+          options={{ title: "DATA" }}
+        />
+        <Stack.Screen
           name="Welcome"
           component={Welcome}
           options={{ title: "WELCOME" }}
@@ -269,7 +290,7 @@ const Goniometer_App = () => {
         <Stack.Screen
           name="CalenderDataPage"
           component={CalenderDataPage}
-          options={{ title: "HISTORY" }}
+          options={{ title: "HISTORY CALENDAR" }}
         />
         <Stack.Screen
           name="GuidePage"
@@ -290,6 +311,42 @@ const Goniometer_App = () => {
     </NavigationContainer>
   );
 };
+
+
+
+const Data = ({ navigation, route }) => {
+  weekOneExtensionCall();
+  weekTwoExtensionCall();
+  weekThreeExtensionCall();
+  weekFourExtensionCall();
+  weekFiveExtensionCall();
+  weekSixExtensionCall();
+  weekSevenExtensionCall();
+  weekEightExtensionCall();
+  weekNineExtensionCall();
+  weekTenExtensionCall();
+  weekElevenExtensionCall();
+  weekTwelveExtensionCall();
+  const directGraph = () => {
+    navigation.navigate("Graph", {  });
+  };
+  const directCalendar = () => {
+    navigation.navigate("CalenderDataPage", {  });
+  };
+  return (
+    <View>
+      <TouchableOpacity onPress={directGraph}
+      style={styles.NavigateMeasurementAdmin}>
+        <Text>Graph</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={directCalendar}
+      style={styles.NavigateMeasurementAdmin}>
+        <Text>Calendar</Text>
+      </TouchableOpacity>
+    </View>
+  )
+
+}
 
 const HomeScreen = ({ navigation, route }) => {
   countNRICCall();
@@ -562,9 +619,9 @@ const CalenderDataPage = ({ navigation, route }) => {
                           var ans1 = results1.rows.item(0).value;
                           var h = ans1.substr(-3);
                           var k = "Not Recorded";
-                          console.log(stCheck + "wa");
+                          // console.log(stCheck + "wa");
                           if (stCheck == null || stCheck == 0) {
-                            console.log("ya");
+                            // console.log("ya");
                             items[strTime].push({
                               dat: strTime + " ",
                               name: g + "°",
@@ -590,7 +647,7 @@ const CalenderDataPage = ({ navigation, route }) => {
                                     var ans2 = results1.rows.item(0).value;
 
                                     k = ans2.substr(-6);
-                                    
+
                                     items[strTime].push({
                                       dat: strTime + " ",
                                       name: g + "°",
@@ -668,11 +725,57 @@ const CalenderDataPage = ({ navigation, route }) => {
   );
 };
 
+async function setDateForList() {
+  var g = 1;
+  var h = 1;
+  for (var x = 1; x < 84; x++) {
+    // console.log("woo" + x)
+    // return new Promise((resolve, reject) => {
+      dateDataBase.transaction((tx) => {
+        tx.executeSql(
+          `select * from dateDataBase ORDER BY id ASC LIMIT ${h},${g}`,
+          [],
+          (tx, result) => {
+            if (result.rows.length > 0) {
+            // console.log(h);
+            h++;
+            // console.log("date: " + result.rows.item(0).value);
+            var len = result.rows.length;
+            weeks[h-1] = result.rows.item(0).value;
+            var data = [];
+            data.push(result.rows.item(0).value);
+            // console.log(result.rows.item(0).value + " wow")
+            // console.log(data);
+            // resolve(data);
+            return data;
+            } else {
+              return 0;
+            }
+            // console.log(weeks[x]);
+
+            // console.log(result.rows.item(0).value);
+          }
+        );
+      });
+    // });
+  }
+
+}
+async function setDateForListCall() {
+  setDateForList().then((val) => (
+    console.log(val + "gg")
+    
+  ));
+}
+
 //////////////////////////////////////////////////////////
 //////////////////MAIN NAVIGATION PAGE////////////////////
 //////////////////////////////////////////////////////////
 const Welcome = ({ navigation, route }) => {
-  console.log(weekOneExtensionList);
+  setDateForList();
+  weekOneExtensionCall();
+  weekOneExtensionCall();
+  // setDateForListCall();
   nricAsyncCall();
   const state = {
     data: [
@@ -690,8 +793,8 @@ const Welcome = ({ navigation, route }) => {
       },
       {
         id: 3,
-        title: "History",
-        link: "CalenderDataPage",
+        title: "Data",
+        link: "Data",
         image: "https://img.icons8.com/dotty/80/000000/activity-history.png",
       },
       {
@@ -752,6 +855,14 @@ const Welcome = ({ navigation, route }) => {
       );
     });
   }, []);
+  //User date data
+  React.useEffect(() => {
+    dateDataBase.transaction((tx) => {
+      tx.executeSql(
+        "create table if not exists dateDataBase (id integer primary key not null, done int, value text);"
+      );
+    });
+  }, []);
 
   const add3 = (text) => {
     var text = text;
@@ -798,6 +909,22 @@ const Welcome = ({ navigation, route }) => {
       forceUpdate1
     );
   };
+
+  const addDate = (text) => {
+    var text = text;
+    dateDataBase.transaction(
+      (tx) => {
+        tx.executeSql("insert into dateDataBase (done, value) values (0, ?)", [
+          text,
+        ]);
+        tx.executeSql("select * from dateDataBase", [], (_, { rows }) =>
+          console.log(JSON.stringify(rows))
+        );
+      },
+      null,
+      forceUpdate1
+    );
+  };
   var dayBefore = new Date();
   dayBefore.setDate(new Date().getDate() - 1);
   const [date, setDate] = useState(dayBefore);
@@ -828,7 +955,8 @@ const Welcome = ({ navigation, route }) => {
       }
       yyyy = "20" + nextDay.getYear().toString().substring(1, 3);
       var x = yyyy + "-" + mm + "-" + dd;
-      weeks[i] = x;
+      // weeks[i] = x;
+      addDate(x);
       // console.log(weeks[i]);
       yyyy = null;
       mm = null;
@@ -875,8 +1003,8 @@ const Welcome = ({ navigation, route }) => {
     showMode("date");
   };
 
-  console.log(nricX);
-
+  // console.log(nricX);
+  setDateForList();
   if (
     (nricX == null || nricX == 0) &&
     (nricCheck[0] == null ||
@@ -1012,10 +1140,10 @@ const Welcome = ({ navigation, route }) => {
 
 //Extension Measurement
 async function weekOneExtension() {
-  console.log(weeks[0] + "week");
+  console.log(weeks[1] + " called")
   var total = 0;
   var finals = 0;
-  var today = "'" + weeks[0] + "%'";
+  // var today = "'" + weeks[1] + "%'";
   var tmr1 = "'" + weeks[1] + "%'";
   var tmr2 = "'" + weeks[2] + "%'";
   var tmr3 = "'" + weeks[3] + "%'";
@@ -1035,14 +1163,17 @@ async function weekOneExtension() {
           tmr4 +
           ` or value LIKE ` +
           tmr5 +
-          ` or value LIKE ` +
-          today +
+          // ` or value LIKE ` +
+          // today +
           ` or value LIKE ` +
           tmr6,
         [],
         (tx1, results1) => {
-          console.log(results1.rows.length + "boo");
+          
           var len1 = results1.rows.length;
+          console.log(len1);
+          console.log(weeks[1] + " success");
+          // console.log(weeks[2] + " success");
           if (len1 > 0) {
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
@@ -2437,7 +2568,7 @@ const Graph = ({ navigation, route }) => {
   const [selectedLanguage, setSelectedLanguage] = useState();
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
-
+  console.log(weeks[2]);
   return (
     <ScrollView>
       <View style={{ backgroundColor: "white" }}>
@@ -2463,6 +2594,7 @@ const Graph = ({ navigation, route }) => {
 };
 
 const Contact = ({ navigation, route }) => {
+  weekOneExtensionCall()
   return (
     <View style={styles.container}>
       <Image source={require("./sgh-logo.png")} />
@@ -2506,7 +2638,6 @@ const SitStandFormSG = ({ navigation, route }) => {
   weekElevenExtensionCall();
   weekTwelveExtensionCall();
   nricAsyncCall();
-  
 
   const { timeData } = route.params;
 
