@@ -308,12 +308,12 @@ const Data = ({ navigation, route }) => {
   return (
     <View>
       <TouchableOpacity onPress={directGraph}
-      style={styles.NavigateMeasurementAdmin}>
-        <Text>Graph</Text>
+      style={styles.NavigateMeasurementData}>
+        <Text style = {styles.TextStyleButton}>Chart</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={directCalendar}
-      style={styles.NavigateMeasurementAdmin}>
-        <Text>Calendar</Text>
+      style={styles.NavigateMeasurementData}>
+        <Text style = {styles.TextStyleButton}>Calendar</Text>
       </TouchableOpacity>
     </View>
   )
@@ -3124,6 +3124,15 @@ const styles = StyleSheet.create({
   },
   NavigateMeasurementAdmin: {
     marginTop: 40,
+    backgroundColor: "#2b2e6d",
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "#fff",
+    height: 100,
+    justifyContent: "center",
+  },
+  NavigateMeasurementData: {
+    marginTop: 20,
     backgroundColor: "#2b2e6d",
     borderRadius: 30,
     borderWidth: 1,
