@@ -56,34 +56,7 @@ const stopWatchDataBase = SQLite.openDatabase("stopWatchDataBase.db");
 const dateDataBase = SQLite.openDatabase("dateDataBase.db");
 
 var initCount = 0;
-var week1,
-  week2,
-  week3,
-  week4,
-  week5,
-  week6,
-  week7,
-  week8,
-  week9,
-  week10,
-  week11,
-  week12;
 var weeks = [];
-// weeks[0] = 100;
-// let weeks = [
-//   week1,
-//   week2,
-//   week3,
-//   week4,
-//   week5,
-//   week6,
-//   week7,
-//   week8,
-//   week9,
-//   week10,
-//   week11,
-//   week12,
-// ];
 let initDate = [];
 let nricCheck = [];
 let nameCheck = [];
@@ -110,19 +83,17 @@ function resetGender() {
     tx1.executeSql(`DROP TABLE userGenderDataBase`);
   });
 }
-
 function resetStopWatch() {
   stopWatchDataBase.transaction((tx1) => {
     tx1.executeSql(`DROP TABLE stopWatchDataBase`);
   });
 }
-
 function resetDate() {
   dateDataBase.transaction((tx1) => {
     tx1.executeSql(`DROP TABLE dateDataBase`);
   });
 }
-
+// use this to reset application data
 // resetFlexion();
 // resetExtension();
 // resetNRIC();
@@ -130,7 +101,6 @@ function resetDate() {
 // resetStopWatch();
 // resetDate();
 nricAsyncCall();
-
 var weekOneList = [];
 var weekTwoList = [];
 var weekThreeList = [];
@@ -190,11 +160,8 @@ async function countNRIC() {
     userNRICDataBase.transaction((tx1) => {
       tx1.executeSql("SELECT * FROM userNRICDataBase", [], (tx1, results1) => {
         if (results1.rows.length == null) {
-          // console.log("und");
         } else {
-          // console.log(results1.rows.length);
         }
-        // console.log(results1.rows.length + "len");
         nricX = results1.rows.length;
         return results1.rows.length;
       });
@@ -203,7 +170,7 @@ async function countNRIC() {
 }
 
 async function countNRICCall() {
-  countNRIC().then((val) => console.log(val));
+  countNRIC().then((val) => console.log());
 }
 
 async function countSt() {
@@ -211,11 +178,8 @@ async function countSt() {
     stopWatchDataBase.transaction((tx1) => {
       tx1.executeSql("SELECT * FROM stopWatchDataBase", [], (tx1, results1) => {
         if (results1.rows.length == null) {
-          // console.log("und");
         } else {
-          // console.log(results1.rows.length);
         }
-        // console.log(results1.rows.length + "len");
         stCheck = results1.rows.length;
         return results1.rows.length;
       });
@@ -224,15 +188,11 @@ async function countSt() {
 }
 
 async function countStCall() {
-  countSt().then((val) => console.log(val));
+  countSt().then((val) => console.log());
 }
 
 countNRIC();
 countNRICCall();
-var xx = countNRIC();
-// console.log(xx + " function check");
-// console.log(nricX + " check");
-
 //////////////////////////////////////////////////////////
 ////////////MAIN CONTROLLER & NAVIGATION//////////////////
 //////////////////////////////////////////////////////////
@@ -368,27 +328,9 @@ const HomeScreen = ({ navigation, route }) => {
       navigation.navigate("Welcome");
     }, 3000);
   }
-  const press = () => {
-    navigation.navigate("Welcome");
-  };
   delay();
-  weekOneExtensionCall();
-  weekTwoExtensionCall();
-  weekThreeExtensionCall();
-  weekFourExtensionCall();
-  weekFiveExtensionCall();
-  weekSixExtensionCall();
-  weekSevenExtensionCall();
-  weekEightExtensionCall();
-  weekNineExtensionCall();
-  weekTenExtensionCall();
-  weekElevenExtensionCall();
-  weekTwelveExtensionCall();
   return (
     <View style={styles.container}>
-      {/* <TouchableOpacity onPress={press}>
-        <Text>Hello</Text>
-      </TouchableOpacity> */}
       <Image source={require("./sgh-logo.png")} />
       <Text></Text>
       <Text></Text>
@@ -396,11 +338,6 @@ const HomeScreen = ({ navigation, route }) => {
         Goniometer Application
       </Text>
       <Text></Text>
-      {/* <View style={{width: 300, height:300 }} >
-      <Image style= {{width: undefined, height: undefined}}    
-       source={require("./NUS_logo.png")}
-        />
-    </View> */}
       <Text style={{ textAlign: "center", fontSize: 20 }}>
         Created by {"\n"} Alif and Ismahfaris {"\n"}
         (National University of Singapore)
@@ -458,16 +395,13 @@ const SitStand = ({ navigation, route }) => {
     setResetStopwatch(false);
     var b = nowTime.split(":");
     seconds = +b[0] * 60 * 60 + +b[1] * 60 + +b[2];
-    // seconds = seconds + "." + b[3];
     seconds = seconds + "." + b[3];
     setVal(seconds);
     count = count + 1;
-    // console.log(count);
   };
   const speak = () => {
     var thingToSay;
     if (count == 0 || count % 2 == 0) {
-      // console.log("speaking");
       thingToSay = "3.......... 2......... 1......... Start";
     } else {
       thingToSay = "";
@@ -480,14 +414,11 @@ const SitStand = ({ navigation, route }) => {
   const submitAlertStopWatch = () => {
     var a = nowTime.split(":");
     seconds = +a[0] * 60 * 60 + +a[1] * 60 + +a[2];
-    // seconds = seconds + "." + a[3];
     seconds = seconds + "." + a[3];
-    // console.log(seconds);
     setVal(seconds);
     Alert.alert("Are you sure you want to submit?", "", [
       {
         text: "Cancel",
-        // onPress: () => console.log("Cancel"),
         style: "cancel",
       },
       {
@@ -502,12 +433,13 @@ const SitStand = ({ navigation, route }) => {
                     " Timing:    " +
                     seconds.toString(),
                 ]
-                // [seconds.toString()]
               );
               tx.executeSql(
                 "select * from stopWatchDataBase",
                 [],
-                (_, { rows }) => console.log(JSON.stringify(rows))
+                (_, { rows }) => console.log(
+                  // JSON.stringify(rows)
+                  )
               );
             },
             null,
@@ -539,7 +471,6 @@ const SitStand = ({ navigation, route }) => {
             options={options}
             //options for the styling
             getTime={(time) => {
-              //console.log(time);
               nowTime = time;
             }}
           />
@@ -593,7 +524,6 @@ const SitStand = ({ navigation, route }) => {
 //////////////////////////////////////////////////////////
 ////////////////////HISTORY PAGE//////////////////////////
 //////////////////////////////////////////////////////////
-
 const CalenderDataPage = ({ navigation, route }) => {
   const [a, b] = useState({});
   const [x, y] = useState({});
@@ -616,7 +546,6 @@ const CalenderDataPage = ({ navigation, route }) => {
               (tx, results) => {
                 var len = results.rows.length;
                 if (len > 0) {
-                  // console.log(results.rows.item(0).value);
                   var ans = results.rows.item(0).value;
                   var g = ans.substr(-3);
 
@@ -627,13 +556,10 @@ const CalenderDataPage = ({ navigation, route }) => {
                       (tx1, results1) => {
                         var len1 = results1.rows.length;
                         if (len1 > 0) {
-                          // console.log(results1.rows.item(0).value);
                           var ans1 = results1.rows.item(0).value;
                           var h = ans1.substr(-3);
                           var k = "Not Recorded";
-                          // console.log(stCheck + "wa");
                           if (stCheck == null || stCheck == 0) {
-                            // console.log("ya");
                             items[strTime].push({
                               dat: strTime + " ",
                               name: g + "°",
@@ -652,14 +578,10 @@ const CalenderDataPage = ({ navigation, route }) => {
                                 `SELECT * FROM stopWatchDataBase WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
                                 [strTime + "%"],
                                 (tx2, results1) => {
-                                  console.log(results1.rows.length);
                                   var len1 = results1.rows.length;
                                   if (len1 > 0) {
-                                    // console.log(results1.rows.item(0).value);
                                     var ans2 = results1.rows.item(0).value;
-
                                     k = ans2.substr(-6);
-
                                     items[strTime].push({
                                       dat: strTime + " ",
                                       name: g + "°",
@@ -695,7 +617,6 @@ const CalenderDataPage = ({ navigation, route }) => {
     }, 1000);
   };
   const [forceUpdate, forceUpdateId] = useForceUpdate();
-
   const renderItem = (x) => {
     return (
       <TouchableOpacity style={{ marginRight: 10, marginTop: 17 }}>
@@ -751,48 +672,26 @@ async function setDateForList() {
         }
       })
     })
-
-
   for (var x = 1; x < 84; x++) {
-    // console.log("woo" + x)
-    // return new Promise((resolve, reject) => {
       dateDataBase.transaction((tx) => {
         tx.executeSql(
           `select * from dateDataBase ORDER BY id ASC LIMIT ${h},${g}`,
           [],
           (tx, result) => {
             if (result.rows.length > 0) {
-            // console.log(h);
-            
-            // console.log("date: " + result.rows.item(0).value);
             var len = result.rows.length;
             weeks[h] = result.rows.item(0).value;
             h++;
             var data = [];
             data.push(result.rows.item(0).value);
-            // console.log(result.rows.item(0).value + " wow")
-            // console.log(data);
-            // resolve(data);
-
             return data;
             } else {
               return 0;
             }
-            // console.log(weeks[x]);
-
-            // console.log(result.rows.item(0).value);
           }
         );
       });
-    // });
   }
-
-}
-async function setDateForListCall() {
-  setDateForList().then((val) => (
-    console.log(val + "gg")
-    
-  ));
 }
 
 //////////////////////////////////////////////////////////
@@ -802,7 +701,6 @@ const Welcome = ({ navigation, route }) => {
   setDateForList();
   weekOneExtensionCall();
   weekOneExtensionCall();
-  // setDateForListCall();
   nricAsyncCall();
   const state = {
     data: [
@@ -929,7 +827,9 @@ const Welcome = ({ navigation, route }) => {
           [text]
         );
         tx.executeSql("select * from userNRICDataBase", [], (_, { rows }) =>
-          console.log(JSON.stringify(rows))
+          console.log(
+            // JSON.stringify(rows)
+            )
         );
       },
       null,
@@ -945,7 +845,9 @@ const Welcome = ({ navigation, route }) => {
           text,
         ]);
         tx.executeSql("select * from dateDataBase", [], (_, { rows }) =>
-          console.log(JSON.stringify(rows))
+          console.log(
+            // JSON.stringify(rows)
+            )
         );
       },
       null,
@@ -963,7 +865,6 @@ const Welcome = ({ navigation, route }) => {
     setShow(Platform.OS === "ios");
     setDate(currentDate);
     var last = new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-    // console.log(last);
     var yyyy;
     var mm;
     var dd;
@@ -982,9 +883,7 @@ const Welcome = ({ navigation, route }) => {
       }
       yyyy = "20" + nextDay.getYear().toString().substring(1, 3);
       var x = yyyy + "-" + mm + "-" + dd;
-      // weeks[i] = x;
       addDate(x);
-      // console.log(weeks[i]);
       yyyy = null;
       mm = null;
       dd = null;
@@ -996,14 +895,12 @@ const Welcome = ({ navigation, route }) => {
       Alert.alert("Please complete all fields!", "", [
         {
           text: "OK",
-          // onPress: () => console.log("OK"),
         },
       ]);
     } else {
       Alert.alert("Are you sure you want to submit?", "", [
         {
           text: "Cancel",
-          // onPress: () => console.log("Cancel Pressed"),
           style: "cancel",
         },
         {
@@ -1030,7 +927,6 @@ const Welcome = ({ navigation, route }) => {
     showMode("date");
   };
 
-  // console.log(nricX);
   setDateForList();
   if (
     (nricX == null || nricX == 0) &&
@@ -1043,7 +939,6 @@ const Welcome = ({ navigation, route }) => {
     return (
       <View style={styles.container}>
         <Text></Text>
-        {/* <Text style={{ textAlign: "center", fontSize: 40 }}>Admin Setup</Text> */}
         <Text></Text>
         <View style={styles.pickerContainerGender}>
           <Text style={{ textAlign: "center", fontSize: 40 }}>NRIC</Text>
@@ -1067,7 +962,6 @@ const Welcome = ({ navigation, route }) => {
                 nameCheck[0] = 1;
                 add3(itemvalu);
                 setSelectedGenderValue(itemvalu);
-                // console.log(itemvalu);
               }}
               useNativeAndroidPickerStyle={false}
               placeholder={{ label: "Select Gender", value: null }}
@@ -1087,7 +981,6 @@ const Welcome = ({ navigation, route }) => {
             <Text></Text>
             <View style={styles.pickerContainerDate}>
               <DateTimePicker
-                //ANDROID DOES NOT SUPPORT STYLING
                 testID="dateTimePicker"
                 value={date}
                 mode={mode}
@@ -1109,17 +1002,6 @@ const Welcome = ({ navigation, route }) => {
   } else if (checker[0] == 1 || nricX == 1) {
     return (
       <View style={pp.container}>
-        {/* <View>
-          <TouchableOpacity
-            onPress={() => {
-              clickEventListenerMeasurement("Goniometer");
-            }}
-            style={styles.NavigateMeasurement}
-          >
-            <Text style={styles.TextStyleButtonHomePage}>MEASUREMENT</Text>
-          </TouchableOpacity>
-        </View> */}
-
         <FlatList
           style={pp.list}
           contentContainerStyle={pp.listContainer}
@@ -1127,7 +1009,6 @@ const Welcome = ({ navigation, route }) => {
           horizontal={false}
           numColumns={2}
           keyExtractor={(item) => {
-            // console.log(item.id);
             return item.id;
           }}
           renderItem={({ item }) => {
@@ -1164,10 +1045,7 @@ const Welcome = ({ navigation, route }) => {
 //////////////////////////////////////////////////////////
 //////////////////////GRAPH PAGE//////////////////////////
 //////////////////////////////////////////////////////////
-
-//Extension Measurement
 async function weekOneExtension() {
-  console.log(weeks[0] + " called")
   var total = 0;
   var finals = 0;
   var today = "'" + weeks[0] + "%'";
@@ -1198,9 +1076,6 @@ async function weekOneExtension() {
         (tx1, results1) => {
           
           var len1 = results1.rows.length;
-          console.log(len1);
-          console.log(weeks[1] + " success");
-          // console.log(weeks[2] + " success");
           if (len1 > 0) {
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
@@ -1821,8 +1696,6 @@ async function nricAsyncCall() {
 }
 //Flexion Measurement
 async function weekOne() {
-  console.log(weeks[0] + "AWW MAN")
-  console.log(weeks[1] + "AWW wMAN")
   var total = 0;
   var finals = 0;
   var today = "'" + weeks[0] + "%'";
@@ -2450,7 +2323,6 @@ async function weekTwelveCall() {
 }
 
 function kneeExtensionGraph() {
-  console.log(weekOneExtensionList);
   return (
     <View style={{ backgroundColor: "white" }}>
       <Text></Text>
@@ -2596,7 +2468,6 @@ const Graph = ({ navigation, route }) => {
   const [selectedLanguage, setSelectedLanguage] = useState();
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
-  console.log(weeks[2]);
   return (
     <ScrollView>
       <View style={{ backgroundColor: "white" }}>
@@ -2641,40 +2512,12 @@ const Contact = ({ navigation, route }) => {
 //FormSG Page
 const SitStandFormSG = ({ navigation, route }) => {
   countStCall();
-  weekOneCall();
-  weekTwoCall();
-  weekThreeCall();
-  weekFourCall();
-  weekFiveCall();
-  weekSixCall();
-  weekSevenCall();
-  weekEightCall();
-  weekNineCall();
-  weekTenCall();
-  weekElevenCall();
-  weekTwelveCall();
-  weekOneExtensionCall();
-  weekTwoExtensionCall();
-  weekThreeExtensionCall();
-  weekFourExtensionCall();
-  weekFiveExtensionCall();
-  weekSixExtensionCall();
-  weekSevenExtensionCall();
-  weekEightExtensionCall();
-  weekNineExtensionCall();
-  weekTenExtensionCall();
-  weekElevenExtensionCall();
-  weekTwelveExtensionCall();
   nricAsyncCall();
-
   const { timeData } = route.params;
-
   const x = route.params.paramKey;
   const timeValStr = "Timing: " + x;
-  // console.log(timeValStr);
   const nricSubmitData = String(nricUser[0]);
   const timingSubmitData = timeData;
-
   const runFirst = `setTimeout(function() {
     document.getElementById("603c3ccc399059001247a1ee").readOnly = true;
     document.getElementById("6098d0a38a5d310012f967d3").readOnly = true;
@@ -2699,42 +2542,15 @@ const SitStandFormSG = ({ navigation, route }) => {
 
 //FormSG Page
 const FormSG = ({ navigation, route }) => {
-  weekOneCall();
-  weekTwoCall();
-  weekThreeCall();
-  weekFourCall();
-  weekFiveCall();
-  weekSixCall();
-  weekSevenCall();
-  weekEightCall();
-  weekNineCall();
-  weekTenCall();
-  weekElevenCall();
-  weekTwelveCall();
-  weekOneExtensionCall();
-  weekTwoExtensionCall();
-  weekThreeExtensionCall();
-  weekFourExtensionCall();
-  weekFiveExtensionCall();
-  weekSixExtensionCall();
-  weekSevenExtensionCall();
-  weekEightExtensionCall();
-  weekNineExtensionCall();
-  weekTenExtensionCall();
-  weekElevenExtensionCall();
-  weekTwelveExtensionCall();
   nricAsyncCall();
-
   const { flexData } = route.params;
   const { extenData } = route.params;
-
   const x = route.params.paramKey;
   const flexStr = "Flexion: " + x;
   const extenStr = "Extension: " + x;
   const nricSubmitData = String(nricUser[0]);
   const flexionSubmitData = parseInt(flexData);
   const extensionSubmitData = parseInt(extenData);
-
   const runFirst = `setTimeout(function() {
     document.getElementById("603c3ccc399059001247a1ee").readOnly = true;
     document.getElementById("603c3d41526b9e00127a488f").readOnly = true;
@@ -2774,7 +2590,6 @@ const Goniometer = ({ navigation, route }) => {
     }
     return Math.floor(n * 100) / 100;
   }
-
   function getDegrees(n) {
     if (!n) {
       return 0;
@@ -2782,15 +2597,12 @@ const Goniometer = ({ navigation, route }) => {
     var pitchraw2 = Math.abs(radians_to_degrees(n));
     var pitchtrig = Math.acos(Math.sin(n) / 1.2);
     var pitch = Math.round(90 + pitchraw2 - radians_to_degrees(pitchtrig));
-
     return pitch;
   }
-
   function radians_to_degrees(radians) {
     var pi = Math.PI;
     return radians * (180 / pi);
   }
-
   React.useEffect(() => {
     kneeFlexionDataBase.transaction((tx) => {
       tx.executeSql(
@@ -2805,14 +2617,12 @@ const Goniometer = ({ navigation, route }) => {
       );
     });
   }, []);
-
   const add = (text) => {
     var text = parseInt(text);
     if (text === null || text === "") {
       alert("Invalid Input!");
       return false;
     }
-
     kneeFlexionDataBase.transaction(
       (tx) => {
         tx.executeSql(
@@ -2824,7 +2634,9 @@ const Goniometer = ({ navigation, route }) => {
           ]
         );
         tx.executeSql("SELECT * FROM kneeFlexionDataBase", [], (_, { rows }) =>
-          console.log(JSON.stringify(rows))
+          console.log(
+            // JSON.stringify(rows)
+            )
         );
       },
       null,
@@ -2851,7 +2663,9 @@ const Goniometer = ({ navigation, route }) => {
         tx.executeSql(
           "SELECT * FROM kneeExtensionDataBase",
           [],
-          (_, { rows }) => console.log(JSON.stringify(rows))
+          (_, { rows }) => console.log(
+            // JSON.stringify(rows)
+            )
         );
       },
       null,
@@ -2892,7 +2706,6 @@ const Goniometer = ({ navigation, route }) => {
     timeDiff = 0;
   }
   var dayDiff = Math.floor(timeDiff / (24 * 60 * 60 * 1000));
-  // console.log(dayDiff);
   ///////////////////////////////////////////////////////////////////////
   //Below portion is for the Conditional Rendering Based on the Angle/////
   //////////////////////////////////////////////////////////////////////
@@ -3037,7 +2850,6 @@ const Goniometer = ({ navigation, route }) => {
           if (len > 0) {
             //convert string
             var gender = result.rows.item(0).value.toString();
-            console.log("gender: " + gender);
             setSelectedGenderValue(gender);
           }
         }
@@ -3051,7 +2863,7 @@ const Goniometer = ({ navigation, route }) => {
     Alert.alert("Are you sure you want to submit?", "", [
       {
         text: "Cancel",
-        onPress: () => console.log("Cancel"),
+        onPress: () => console.log(),
         style: "cancel",
       },
       {
@@ -3169,20 +2981,7 @@ const Goniometer = ({ navigation, route }) => {
       ) : null}
 
       <ScrollView>
-        {/* <View style={styles.MainRecordStartStopContainer}> */}
-        {/* <TouchableOpacity
-            onPress={subscription ? _unsubscribe : _subscribe}
-            style={styles.SubmitButtonStyle}
-          >
-            <Text style={styles.TextStyleButtonS}>
-              {subscription ? "STOP" : "START"}
-            </Text>
-          </TouchableOpacity> */}
-        {/* </View> */}
-
         <FlatList
-          // style={ppp.list}
-          // contentContainerStyle={ppp.listContainer}
           data={state.data}
           horizontal={false}
           numColumns={1}
@@ -3214,14 +3013,6 @@ const Goniometer = ({ navigation, route }) => {
                   <Text></Text>
                   <Image style={ppp.cardImage} source={{ uri: item.image }} />
                 </TouchableOpacity>
-
-                {/* <View style={ppp.cardHeader}>
-                  <View
-                    style={{ alignItems: "center", justifyContent: "center" }}
-                  >
-                    <Text style={ppp.title}>{item.title}</Text>
-                  </View>
-                </View> */}
               </View>
             );
           }}
@@ -3296,12 +3087,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   pickerContainerDate: {
-    // flex: 1,
-    // justifyContent: "flex-start",
-    // height: 1,
     marginLeft: "33%",
-    // marginRight: 40,
-    // paddingTop: 0,
     textAlign: "center",
   },
   text: {
@@ -3328,8 +3114,6 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   SubmitButtonStyle: {
-    // marginLeft: 20,
-    // marginRight: 20,
     backgroundColor: "#2b2e6d",
     borderRadius: 35,
     borderWidth: 1,
@@ -3540,7 +3324,6 @@ const stylePicker = StyleSheet.create({
 
 const stylePercentile = StyleSheet.create({
   textPercentileBlack: {
-    // paddingTop: 20,
     color: "black",
     textAlign: "center",
     fontSize: 90,
@@ -3548,21 +3331,18 @@ const stylePercentile = StyleSheet.create({
   },
   textPercentileGreen: {
     color: "green",
-    // paddingTop: 20,
     textAlign: "center",
     fontSize: 90,
     paddingLeft: 20,
   },
   textPercentileOrange: {
     textAlign: "center",
-    // paddingTop: 20,
     color: "#FFA537",
     fontSize: 90,
     paddingLeft: 20,
   },
   textPercentileRed: {
     color: "#FF8C00",
-    // paddingTop: 20,
     textAlign: "center",
     fontSize: 90,
     paddingLeft: 20,
@@ -3677,7 +3457,6 @@ const ppp = StyleSheet.create({
   },
   list: {
     paddingHorizontal: 5,
-    // backgroundColor: "#f6f6f6",
   },
   listContainer: {
     alignItems: "center",
@@ -3694,10 +3473,7 @@ const ppp = StyleSheet.create({
 
     elevation: 12,
     marginVertical: 20,
-    // marginHorizontal: 20,
     backgroundColor: "rgba(161,221,239,0.4)",
-    //flexBasis: '42%',
-    // width: 100,
     height: 160,
     borderRadius: 30,
     alignItems: "center",
@@ -3733,7 +3509,6 @@ const ppp = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: "bold",
-    // flex: 1,
     alignSelf: "center",
     color: "#000000",
   },
@@ -3859,7 +3634,6 @@ const stt = StyleSheet.create({
   width: 100,
   height: undefined,
   aspectRatio: 1,
-  // resizeMode: "contain",
 });
 
 export default Goniometer_App;
