@@ -168,6 +168,7 @@ weekElevenExtensionCall();
 weekTwelveExtensionCall();
 
 var nricX;
+var stCheck;
 async function countNRIC() {
   return new Promise((resolve, reject) => {
     userNRICDataBase.transaction((tx1) => {
@@ -188,6 +189,28 @@ async function countNRIC() {
 async function countNRICCall() {
   countNRIC().then((val) => console.log(val));
 }
+
+async function countSt() {
+  return new Promise((resolve, reject) => {
+    stopWatchDataBase.transaction((tx1) => {
+      tx1.executeSql("SELECT * FROM stopWatchDataBase", [], (tx1, results1) => {
+        if (results1.rows.length == null) {
+          // console.log("und");
+        } else {
+          // console.log(results1.rows.length);
+        }
+        // console.log(results1.rows.length + "len");
+        stCheck = results1.rows.length;
+        return results1.rows.length;
+      });
+    });
+  });
+}
+
+async function countStCall() {
+  countSt().then((val) => console.log(val));
+}
+
 countNRIC();
 countNRICCall();
 var xx = countNRIC();
@@ -270,13 +293,28 @@ const Goniometer_App = () => {
 
 const HomeScreen = ({ navigation, route }) => {
   countNRICCall();
+  countStCall();
   function delay() {
-    setTimeout(function () {navigation.navigate("Welcome")}, 3000);
+    setTimeout(function () {
+      navigation.navigate("Welcome");
+    }, 3000);
   }
   const press = () => {
     navigation.navigate("Welcome");
   };
-  delay()
+  delay();
+  weekOneExtensionCall();
+  weekTwoExtensionCall();
+  weekThreeExtensionCall();
+  weekFourExtensionCall();
+  weekFiveExtensionCall();
+  weekSixExtensionCall();
+  weekSevenExtensionCall();
+  weekEightExtensionCall();
+  weekNineExtensionCall();
+  weekTenExtensionCall();
+  weekElevenExtensionCall();
+  weekTwelveExtensionCall();
   return (
     <View style={styles.container}>
       {/* <TouchableOpacity onPress={press}>
@@ -285,7 +323,7 @@ const HomeScreen = ({ navigation, route }) => {
       <Image source={require("./sgh-logo.png")} />
       <Text></Text>
       <Text></Text>
-      <Text style={{ textAlign: "center", fontSize: 20, fontWeight:"bold"}}>
+      <Text style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}>
         Goniometer Application
       </Text>
       <Text></Text>
@@ -295,8 +333,8 @@ const HomeScreen = ({ navigation, route }) => {
         />
     </View> */}
       <Text style={{ textAlign: "center", fontSize: 20 }}>
-      Created by {"\n"} Alif and Ismahfaris {"\n"}
-      (National University of Singapore)
+        Created by {"\n"} Alif and Ismahfaris {"\n"}
+        (National University of Singapore)
       </Text>
     </View>
   );
@@ -390,16 +428,17 @@ const SitStand = ({ navigation, route }) => {
             (tx) => {
               tx.executeSql(
                 "insert into stopWatchDataBase (done, value) values (0, ?)",
-                [seconds.toString()]
+                [
+                  moment().utcOffset("+08:00").format("YYYY-MM-DD") +
+                    " Timing:    " +
+                    seconds.toString(),
+                ]
+                // [seconds.toString()]
               );
               tx.executeSql(
                 "select * from stopWatchDataBase",
                 [],
-                (_, { rows }) =>
-                  console.log(
-                    ""
-                    // JSON.stringify(rows)
-                  )
+                (_, { rows }) => console.log(JSON.stringify(rows))
               );
             },
             null,
@@ -410,6 +449,7 @@ const SitStand = ({ navigation, route }) => {
             name: "SitStandFormSG",
             flex: 1,
           });
+          setResetStopwatch(true);
         },
       },
     ]);
@@ -510,6 +550,7 @@ const CalenderDataPage = ({ navigation, route }) => {
                   // console.log(results.rows.item(0).value);
                   var ans = results.rows.item(0).value;
                   var g = ans.substr(-3);
+
                   kneeExtensionDataBase.transaction((tx1) => {
                     tx1.executeSql(
                       `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
@@ -520,17 +561,53 @@ const CalenderDataPage = ({ navigation, route }) => {
                           // console.log(results1.rows.item(0).value);
                           var ans1 = results1.rows.item(0).value;
                           var h = ans1.substr(-3);
-                          items[strTime].push({
-                            dat: strTime + " ",
-                            name: g + "°",
-                            name1: +h + "°",
-                            height: Math.max(
-                              50,
-                              Math.floor(Math.random() * 150)
-                            ),
-                          });
-                          b(results.rows.item(0));
-                          y(results1.rows.item(0));
+                          var k = "Not Recorded";
+                          console.log(stCheck + "wa");
+                          if (stCheck == null || stCheck == 0) {
+                            console.log("ya");
+                            items[strTime].push({
+                              dat: strTime + " ",
+                              name: g + "°",
+                              name1: +h + "°",
+                              name2: k,
+                              height: Math.max(
+                                50,
+                                Math.floor(Math.random() * 150)
+                              ),
+                            });
+                            b(results.rows.item(0));
+                            y(results1.rows.item(0));
+                          } else {
+                            stopWatchDataBase.transaction((tx2) => {
+                              tx2.executeSql(
+                                `SELECT * FROM stopWatchDataBase WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
+                                [strTime + "%"],
+                                (tx2, results1) => {
+                                  console.log(results1.rows.length);
+                                  var len1 = results1.rows.length;
+                                  if (len1 > 0) {
+                                    // console.log(results1.rows.item(0).value);
+                                    var ans2 = results1.rows.item(0).value;
+
+                                    k = ans2.substr(-6);
+                                    
+                                    items[strTime].push({
+                                      dat: strTime + " ",
+                                      name: g + "°",
+                                      name1: +h + "°",
+                                      name2: k + " seconds",
+                                      height: Math.max(
+                                        50,
+                                        Math.floor(Math.random() * 150)
+                                      ),
+                                    });
+                                    b(results.rows.item(0));
+                                    y(results1.rows.item(0));
+                                  }
+                                }
+                              );
+                            });
+                          }
                         }
                       }
                     );
@@ -568,7 +645,9 @@ const CalenderDataPage = ({ navigation, route }) => {
                 {"\n"}
                 Flexion: {x.name} {"\n"}
                 {"\n"}
-                Extension: {x.name1}
+                Extension: {x.name1} {"\n"}
+                {"\n"}
+                Time: {x.name2}
               </Text>
             </View>
           </Card.Content>
@@ -593,6 +672,7 @@ const CalenderDataPage = ({ navigation, route }) => {
 //////////////////MAIN NAVIGATION PAGE////////////////////
 //////////////////////////////////////////////////////////
 const Welcome = ({ navigation, route }) => {
+  console.log(weekOneExtensionList);
   nricAsyncCall();
   const state = {
     data: [
@@ -600,7 +680,7 @@ const Welcome = ({ navigation, route }) => {
         id: 1,
         title: "Goniometer",
         link: "Goniometer",
-        image: "https://img.icons8.com/ios/50/000000/waiting-room.png",
+        image: "https://img.icons8.com/ios/50/000000/knee-joint.png",
       },
       {
         id: 2,
@@ -798,7 +878,7 @@ const Welcome = ({ navigation, route }) => {
   console.log(nricX);
 
   if (
-    (nricX == null || nricX == 0 ) &&
+    (nricX == null || nricX == 0) &&
     (nricCheck[0] == null ||
       nameCheck[0] == null ||
       checker[0] == null ||
@@ -932,6 +1012,7 @@ const Welcome = ({ navigation, route }) => {
 
 //Extension Measurement
 async function weekOneExtension() {
+  console.log(weeks[0] + "week");
   var total = 0;
   var finals = 0;
   var today = "'" + weeks[0] + "%'";
@@ -942,9 +1023,9 @@ async function weekOneExtension() {
   var tmr5 = "'" + weeks[5] + "%'";
   var tmr6 = "'" + weeks[6] + "%'";
   return new Promise((resolve, reject) => {
-    kneeFlexionDataBase.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
+        `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -960,6 +1041,7 @@ async function weekOneExtension() {
           tmr6,
         [],
         (tx1, results1) => {
+          console.log(results1.rows.length + "boo");
           var len1 = results1.rows.length;
           if (len1 > 0) {
             for (var x = 0; x < len1; x++) {
@@ -991,9 +1073,9 @@ async function weekTwoExtension() {
   var tmr5 = "'" + weeks[12] + "%'";
   var tmr6 = "'" + weeks[13] + "%'";
   return new Promise((resolve, reject) => {
-    kneeFlexionDataBase.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
+        `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -1041,9 +1123,9 @@ async function weekThreeExtension() {
   var tmr5 = "'" + weeks[19] + "%'";
   var tmr6 = "'" + weeks[20] + "%'";
   return new Promise((resolve, reject) => {
-    kneeFlexionDataBase.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
+        `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -1090,9 +1172,9 @@ async function weekFourExtension() {
   var tmr5 = "'" + weeks[26] + "%'";
   var tmr6 = "'" + weeks[27] + "%'";
   return new Promise((resolve, reject) => {
-    kneeFlexionDataBase.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
+        `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -1139,9 +1221,9 @@ async function weekFiveExtension() {
   var tmr5 = "'" + weeks[33] + "%'";
   var tmr6 = "'" + weeks[34] + "%'";
   return new Promise((resolve, reject) => {
-    kneeFlexionDataBase.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
+        `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -1188,9 +1270,9 @@ async function weekSixExtension() {
   var tmr5 = "'" + weeks[40] + "%'";
   var tmr6 = "'" + weeks[41] + "%'";
   return new Promise((resolve, reject) => {
-    kneeFlexionDataBase.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
+        `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -1237,9 +1319,9 @@ async function weekSevenExtension() {
   var tmr5 = "'" + weeks[47] + "%'";
   var tmr6 = "'" + weeks[48] + "%'";
   return new Promise((resolve, reject) => {
-    kneeFlexionDataBase.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
+        `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -1286,9 +1368,9 @@ async function weekEightExtension() {
   var tmr5 = "'" + weeks[54] + "%'";
   var tmr6 = "'" + weeks[55] + "%'";
   return new Promise((resolve, reject) => {
-    kneeFlexionDataBase.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
+        `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -1335,9 +1417,9 @@ async function weekNineExtension() {
   var tmr5 = "'" + weeks[61] + "%'";
   var tmr6 = "'" + weeks[62] + "%'";
   return new Promise((resolve, reject) => {
-    kneeFlexionDataBase.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
+        `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -1384,9 +1466,9 @@ async function weekTenExtension() {
   var tmr5 = "'" + weeks[68] + "%'";
   var tmr6 = "'" + weeks[69] + "%'";
   return new Promise((resolve, reject) => {
-    kneeFlexionDataBase.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
+        `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -1433,9 +1515,9 @@ async function weekElevenExtension() {
   var tmr5 = "'" + weeks[75] + "%'";
   var tmr6 = "'" + weeks[76] + "%'";
   return new Promise((resolve, reject) => {
-    kneeFlexionDataBase.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
+        `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -1482,9 +1564,9 @@ async function weekTwelveExtension() {
   var tmr5 = "'" + weeks[82] + "%'";
   var tmr6 = "'" + weeks[83] + "%'";
   return new Promise((resolve, reject) => {
-    kneeFlexionDataBase.transaction((tx1) => {
+    kneeExtensionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
+        `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -2209,6 +2291,7 @@ async function weekTwelveCall() {
 }
 
 function kneeExtensionGraph() {
+  console.log(weekOneExtensionList);
   return (
     <View style={{ backgroundColor: "white" }}>
       <Text></Text>
@@ -2397,31 +2480,33 @@ const Contact = ({ navigation, route }) => {
 };
 //FormSG Page
 const SitStandFormSG = ({ navigation, route }) => {
-  // weekOneCall();
-  // weekTwoCall();
-  // weekThreeCall();
-  // weekFourCall();
-  // weekFiveCall();
-  // weekSixCall();
-  // weekSevenCall();
-  // weekEightCall();
-  // weekNineCall();
-  // weekTenCall();
-  // weekElevenCall();
-  // weekTwelveCall();
-  // weekOneExtensionCall();
-  // weekTwoExtensionCall();
-  // weekThreeExtensionCall();
-  // weekFourExtensionCall();
-  // weekFiveExtensionCall();
-  // weekSixExtensionCall();
-  // weekSevenExtensionCall();
-  // weekEightExtensionCall();
-  // weekNineExtensionCall();
-  // weekTenExtensionCall();
-  // weekElevenExtensionCall();
-  // weekTwelveExtensionCall();
+  countStCall();
+  weekOneCall();
+  weekTwoCall();
+  weekThreeCall();
+  weekFourCall();
+  weekFiveCall();
+  weekSixCall();
+  weekSevenCall();
+  weekEightCall();
+  weekNineCall();
+  weekTenCall();
+  weekElevenCall();
+  weekTwelveCall();
+  weekOneExtensionCall();
+  weekTwoExtensionCall();
+  weekThreeExtensionCall();
+  weekFourExtensionCall();
+  weekFiveExtensionCall();
+  weekSixExtensionCall();
+  weekSevenExtensionCall();
+  weekEightExtensionCall();
+  weekNineExtensionCall();
+  weekTenExtensionCall();
+  weekElevenExtensionCall();
+  weekTwelveExtensionCall();
   nricAsyncCall();
+  
 
   const { timeData } = route.params;
 
@@ -2909,6 +2994,7 @@ const Goniometer = ({ navigation, route }) => {
       ) : null}
       {!shouldShow ? (
         <View>
+          <Text></Text>
           <Text
             style={{ textAlign: "center", fontSize: 30, fontStyle: "italic" }}
           >
@@ -2924,8 +3010,8 @@ const Goniometer = ({ navigation, route }) => {
       ) : null}
 
       <ScrollView>
-        <View style={styles.MainRecordStartStopContainer}>
-          {/* <TouchableOpacity
+        {/* <View style={styles.MainRecordStartStopContainer}> */}
+        {/* <TouchableOpacity
             onPress={subscription ? _unsubscribe : _subscribe}
             style={styles.SubmitButtonStyle}
           >
@@ -2933,7 +3019,7 @@ const Goniometer = ({ navigation, route }) => {
               {subscription ? "STOP" : "START"}
             </Text>
           </TouchableOpacity> */}
-        </View>
+        {/* </View> */}
 
         <FlatList
           // style={ppp.list}
@@ -2942,7 +3028,7 @@ const Goniometer = ({ navigation, route }) => {
           horizontal={false}
           numColumns={1}
           keyExtractor={(item) => {
-            return item.id;
+            return item.id.toString();
           }}
           renderItem={({ item }) => {
             return (
@@ -3068,14 +3154,14 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   MainRecordStartStopContainer: {
-    paddingTop: 20,
+    paddingTop: 2,
     justifyContent: "flex-end",
     backgroundColor: "#FFF",
   },
   MainRecordContainer: {
     justifyContent: "flex-start",
     backgroundColor: "#FFF",
-    paddingTop: 8,
+    paddingTop: 2,
   },
   MainRecordHistoryContainer: {
     justifyContent: "flex-end",
@@ -3362,6 +3448,10 @@ const pp = StyleSheet.create({
     backgroundColor: "#f6f6f6",
   },
   listContainer: {
+    paddingVertical: "5%",
+    paddingHorizontal: "5%",
+    paddingLeft: "5%",
+    paddingRight: "5%",
     alignItems: "center",
   },
   /******** card **************/
@@ -3449,7 +3539,7 @@ const ppp = StyleSheet.create({
     backgroundColor: "rgba(161,221,239,0.4)",
     //flexBasis: '42%',
     // width: 100,
-    height: 150,
+    height: 160,
     borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
