@@ -724,18 +724,12 @@ const Welcome = ({ navigation, route }) => {
       },
       {
         id: 4,
-        title: "Graph",
-        link: "Graph",
-        image: "https://img.icons8.com/material-rounded/64/000000/graph.png",
-      },
-      {
-        id: 5,
         title: "Guide",
         link: "GuidePage",
         image: "https://img.icons8.com/ios/50/000000/city-guide.png",
       },
       {
-        id: 6,
+        id: 5,
         title: "Contact Us",
         link: "Contact",
         image: "https://img.icons8.com/ios/50/000000/phone-disconnected.png",
@@ -2953,13 +2947,12 @@ const Goniometer = ({ navigation, route }) => {
           <Text
             style={{ textAlign: "center", fontSize: 30, fontStyle: "italic" }}
           >
-            Previous Flexion: {flexionDegree}°
+            Previous Extension: {extensionDegree}°
           </Text>
-
           <Text
             style={{ textAlign: "center", fontSize: 30, fontStyle: "italic" }}
           >
-            Previous Extension: {extensionDegree}°
+            Previous Flexion: {flexionDegree}°
           </Text>
         </View>
       ) : null}
@@ -2969,13 +2962,12 @@ const Goniometer = ({ navigation, route }) => {
           <Text
             style={{ textAlign: "center", fontSize: 30, fontStyle: "italic" }}
           >
-            Flexion: {flexionDegreeControl}
+            Extension: {extensionDegreeControl}
           </Text>
-
           <Text
             style={{ textAlign: "center", fontSize: 30, fontStyle: "italic" }}
           >
-            Extension: {extensionDegreeControl}
+            Flexion: {flexionDegreeControl}
           </Text>
         </View>
       ) : null}
@@ -3017,10 +3009,8 @@ const Goniometer = ({ navigation, route }) => {
             );
           }}
         />
-
         <View style={styles.MainRecordContainer}>
           {!(flexionDegree != 0 && extensionDegree != 0) ? <Text></Text> : null}
-
           {flexionDegree != 0 && extensionDegree != 0 ? (
             <TouchableOpacity
               style={styles.SubmitButtonFormStyle}
