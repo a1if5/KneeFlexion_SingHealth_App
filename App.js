@@ -327,6 +327,18 @@ const Data = ({ navigation, route }) => {
   weekTenExtensionCall();
   weekElevenExtensionCall();
   weekTwelveExtensionCall();
+  weekOneCall();
+  weekTwoCall();
+  weekThreeCall();
+  weekFourCall();
+  weekFiveCall();
+  weekSixCall();
+  weekSevenCall();
+  weekEightCall();
+  weekNineCall();
+  weekTenCall();
+  weekElevenCall();
+  weekTwelveCall();
   const directGraph = () => {
     navigation.navigate("Graph", {  });
   };
@@ -747,6 +759,7 @@ async function setDateForList() {
             // console.log(result.rows.item(0).value + " wow")
             // console.log(data);
             // resolve(data);
+            
             return data;
             } else {
               return 0;
@@ -1223,7 +1236,6 @@ async function weekTwoExtension() {
         [],
         (tx1, results1) => {
           var len1 = results1.rows.length;
-          //this console log not printing
           if (len1 > 0) {
             for (var x = 0; x < len1; x++) {
               var ans1 = results1.rows.item(x).value;
@@ -1795,6 +1807,8 @@ async function nricAsyncCall() {
 }
 //Flexion Measurement
 async function weekOne() {
+  console.log(weeks[0] + "AWW MAN")
+  console.log(weeks[1] + "AWW wMAN")
   var total = 0;
   var finals = 0;
   var today = "'" + weeks[0] + "%'";
@@ -1805,9 +1819,9 @@ async function weekOne() {
   var tmr5 = "'" + weeks[5] + "%'";
   var tmr6 = "'" + weeks[6] + "%'";
   return new Promise((resolve, reject) => {
-    kneeExtensionDataBase.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `S WHERE value LIKE ` +
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -1855,9 +1869,9 @@ async function weekTwo() {
   var tmr5 = "'" + weeks[12] + "%'";
   var tmr6 = "'" + weeks[13] + "%'";
   return new Promise((resolve, reject) => {
-    kneeExtensionDataBase.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `S WHERE value LIKE ` +
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -1905,9 +1919,9 @@ async function weekThree() {
   var tmr5 = "'" + weeks[19] + "%'";
   var tmr6 = "'" + weeks[20] + "%'";
   return new Promise((resolve, reject) => {
-    kneeExtensionDataBase.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `S WHERE value LIKE ` +
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -1954,9 +1968,9 @@ async function weekFour() {
   var tmr5 = "'" + weeks[26] + "%'";
   var tmr6 = "'" + weeks[27] + "%'";
   return new Promise((resolve, reject) => {
-    kneeExtensionDataBase.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `S WHERE value LIKE ` +
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -2003,9 +2017,9 @@ async function weekFive() {
   var tmr5 = "'" + weeks[33] + "%'";
   var tmr6 = "'" + weeks[34] + "%'";
   return new Promise((resolve, reject) => {
-    kneeExtensionDataBase.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `S WHERE value LIKE ` +
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -2052,9 +2066,9 @@ async function weekSix() {
   var tmr5 = "'" + weeks[40] + "%'";
   var tmr6 = "'" + weeks[41] + "%'";
   return new Promise((resolve, reject) => {
-    kneeExtensionDataBase.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `S WHERE value LIKE ` +
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -2101,9 +2115,9 @@ async function weekSeven() {
   var tmr5 = "'" + weeks[47] + "%'";
   var tmr6 = "'" + weeks[48] + "%'";
   return new Promise((resolve, reject) => {
-    kneeExtensionDataBase.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `S WHERE value LIKE ` +
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -2150,9 +2164,9 @@ async function weekEight() {
   var tmr5 = "'" + weeks[54] + "%'";
   var tmr6 = "'" + weeks[55] + "%'";
   return new Promise((resolve, reject) => {
-    kneeExtensionDataBase.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `S WHERE value LIKE ` +
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -2199,9 +2213,9 @@ async function weekNine() {
   var tmr5 = "'" + weeks[61] + "%'";
   var tmr6 = "'" + weeks[62] + "%'";
   return new Promise((resolve, reject) => {
-    kneeExtensionDataBase.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `S WHERE value LIKE ` +
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -2248,9 +2262,9 @@ async function weekTen() {
   var tmr5 = "'" + weeks[68] + "%'";
   var tmr6 = "'" + weeks[69] + "%'";
   return new Promise((resolve, reject) => {
-    kneeExtensionDataBase.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `S WHERE value LIKE ` +
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -2297,9 +2311,9 @@ async function weekEleven() {
   var tmr5 = "'" + weeks[75] + "%'";
   var tmr6 = "'" + weeks[76] + "%'";
   return new Promise((resolve, reject) => {
-    kneeExtensionDataBase.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `S WHERE value LIKE ` +
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
@@ -2346,9 +2360,9 @@ async function weekTwelve() {
   var tmr5 = "'" + weeks[82] + "%'";
   var tmr6 = "'" + weeks[83] + "%'";
   return new Promise((resolve, reject) => {
-    kneeExtensionDataBase.transaction((tx1) => {
+    kneeFlexionDataBase.transaction((tx1) => {
       tx1.executeSql(
-        `S WHERE value LIKE ` +
+        `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ` +
           tmr1 +
           ` or value LIKE ` +
           tmr2 +
