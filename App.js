@@ -3522,6 +3522,7 @@ const stylesSitStand = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: "#FFF",
     paddingTop: 8,
+    marginTop: 40,
   },
   title: {
     textAlign: "center",
