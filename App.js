@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import YoutubePlayer from "react-native-youtube-iframe";
 import {
   ScrollView,
@@ -13,39 +13,24 @@ import {
   Platform,
   TouchableHighlight,
   SafeAreaView,
-  Button,
+  Dimensions,
+  LogBox,
 } from "react-native";
-import { Dimensions } from "react-native";
-// const screenWidth = Dimensions.get("window").width;
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-const scale = SCREEN_WIDTH / 320;
-function normalize(size) {
-  const newSize = size * scale;
-  if (Platform.OS === "ios") {
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
-  } else {
-    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
-  }
-}
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { DeviceMotion } from "expo-sensors";
 import { WebView } from "react-native-webview";
-import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
 import moment from "moment";
-import RNPickerSelect, { defaultStyles } from "react-native-picker-select";
+import RNPickerSelect from "react-native-picker-select";
 import { Card } from "react-native-paper";
 import { Agenda } from "react-native-calendars";
 import { LineChart } from "react-native-chart-kit";
 import ButtonToggleGroup from "react-native-button-toggle-group";
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Stopwatch, Timer } from "react-native-stopwatch-timer";
-import { LogBox, PixelRatio } from "react-native";
+import { Stopwatch } from "react-native-stopwatch-timer";
 import * as Speech from "expo-speech";
-import { cos } from "react-native-reanimated";
 
 //LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -65,51 +50,32 @@ const stopWatchDataBase = SQLite.openDatabase("stopWatchDataBase.db");
 //Database for date
 const dateDataBase = SQLite.openDatabase("dateDataBase.db");
 
-var initCount = 0;
+//To reset all data
+function resetData() {
+  userNRICDataBase.transaction((tx) => {
+    tx.executeSql(`DROP TABLE userNRICDataBase`);
+  });
+  kneeFlexionDataBase.transaction((tx) => {
+    tx.executeSql(`DROP TABLE kneeFlexionDataBase`);
+  });
+  userGenderDataBase.transaction((tx1) => {
+    tx1.executeSql(`DROP TABLE userGenderDataBase`);
+  });
+  stopWatchDataBase.transaction((tx1) => {
+    tx1.executeSql(`DROP TABLE stopWatchDataBase`);
+  });
+  dateDataBase.transaction((tx1) => {
+    tx1.executeSql(`DROP TABLE dateDataBase`);
+  });
+}
+
+// resetData();
 var weeks = [];
 let initDate = [];
 let nricCheck = [];
 let nameCheck = [];
 let checker = [];
 var nricUser = [];
-
-function resetNRIC() {
-  userNRICDataBase.transaction((tx) => {
-    tx.executeSql(`DROP TABLE userNRICDataBase`);
-  });
-}
-function resetFlexion() {
-  kneeFlexionDataBase.transaction((tx) => {
-    tx.executeSql(`DROP TABLE kneeFlexionDataBase`);
-  });
-}
-function resetExtension() {
-  kneeExtensionDataBase.transaction((tx1) => {
-    tx1.executeSql(`DROP TABLE kneeExtensionDataBase`);
-  });
-}
-function resetGender() {
-  userGenderDataBase.transaction((tx1) => {
-    tx1.executeSql(`DROP TABLE userGenderDataBase`);
-  });
-}
-function resetStopWatch() {
-  stopWatchDataBase.transaction((tx1) => {
-    tx1.executeSql(`DROP TABLE stopWatchDataBase`);
-  });
-}
-function resetDate() {
-  dateDataBase.transaction((tx1) => {
-    tx1.executeSql(`DROP TABLE dateDataBase`);
-  });
-}
-// use this to reset application data
-// resetFlexion();
-// resetExtension();
-// resetNRIC();
-// resetGender();
-// resetStopWatch();
-// resetDate();
 nricAsyncCall();
 var weekOneList = [];
 var weekTwoList = [];
@@ -123,18 +89,6 @@ var weekNineList = [];
 var weekTenList = [];
 var weekTwelveList = [];
 var weekElevenList = [];
-weekOneCall();
-weekTwoCall();
-weekThreeCall();
-weekFourCall();
-weekFiveCall();
-weekSixCall();
-weekSevenCall();
-weekEightCall();
-weekNineCall();
-weekTenCall();
-weekElevenCall();
-weekTwelveCall();
 var weekOneExtensionList = [];
 var weekTwoExtensionList = [];
 var weekThreeExtensionList = [];
@@ -147,70 +101,15 @@ var weekNineExtensionList = [];
 var weekTenExtensionList = [];
 var weekTwelveExtensionList = [];
 var weekElevenExtensionList = [];
-if (initCount == 0) {
-  initCount++;
-} else {
-  weekOneExtensionCall();
-}
-// weekOneExtensionCall();
-weekTwoExtensionCall();
-weekThreeExtensionCall();
-weekFourExtensionCall();
-weekFiveExtensionCall();
-weekSixExtensionCall();
-weekSevenExtensionCall();
-weekEightExtensionCall();
-weekNineExtensionCall();
-weekTenExtensionCall();
-weekElevenExtensionCall();
-weekTwelveExtensionCall();
-
 var nricX;
 var stCheck;
-var listHeight;
-
-async function countNRIC() {
-  return new Promise((resolve, reject) => {
-    userNRICDataBase.transaction((tx1) => {
-      tx1.executeSql("SELECT * FROM userNRICDataBase", [], (tx1, results1) => {
-        if (results1.rows.length == null) {
-        } else {
-        }
-        nricX = results1.rows.length;
-        return results1.rows.length;
-      });
-    });
-  });
-}
-
-async function countNRICCall() {
-  countNRIC().then((val) => console.log());
-}
-
-async function countSt() {
-  return new Promise((resolve, reject) => {
-    stopWatchDataBase.transaction((tx1) => {
-      tx1.executeSql("SELECT * FROM stopWatchDataBase", [], (tx1, results1) => {
-        if (results1.rows.length == null) {
-        } else {
-        }
-        stCheck = results1.rows.length;
-        return results1.rows.length;
-      });
-    });
-  });
-}
-
-async function countStCall() {
-  countSt().then((val) => console.log());
-}
-
 countNRIC();
 countNRICCall();
 const windowWidth1 = Dimensions.get("window").width;
 const windowHeight1 = Dimensions.get("window").height;
 var headerHeightSize = 90;
 var headerFontSize = 25;
+//Settings for iphone 8 and iphone 12 pro max
 if (windowWidth1 <= 414 && windowHeight1 <= 736) {
   headerHeightSize = 50;
   headerFontSize = 20;
@@ -218,8 +117,7 @@ if (windowWidth1 <= 414 && windowHeight1 <= 736) {
   headerHeightSize = 90;
   headerFontSize = 25;
 }
-//mini 428,926
-//ip6 414,736
+
 //////////////////////////////////////////////////////////
 ////////////MAIN CONTROLLER & NAVIGATION//////////////////
 //////////////////////////////////////////////////////////
@@ -300,6 +198,7 @@ const Goniometer_App = () => {
 };
 
 const Data = ({ navigation, route }) => {
+  //these calls is essential to load the data
   weekOneExtensionCall();
   weekTwoExtensionCall();
   weekThreeExtensionCall();
@@ -358,7 +257,10 @@ const HomeScreen = ({ navigation, route }) => {
   }
   delay();
   return (
-    <View style={styles.container} onTouchStart={() => navigation.navigate("Welcome")}>
+    <View
+      style={styles.container}
+      onTouchStart={() => navigation.navigate("Welcome")}
+    >
       <Image
         style={{
           display: "block",
@@ -501,9 +403,9 @@ const SitStand = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={stylesSitStand.container}>
-      <View style={stylesSitStand.container}>
-        <View style={stylesSitStand.sectionStyle}>
+    <SafeAreaView style={sitStandPageStyle.container}>
+      <View style={sitStandPageStyle.container}>
+        <View style={sitStandPageStyle.sectionStyle}>
           <Stopwatch
             laps
             hrs={false}
@@ -521,10 +423,10 @@ const SitStand = ({ navigation, route }) => {
 
           {count % 2 == 0 ? (
             <TouchableHighlight
-              style={stylesSitStand.buttonStartStopSitToStand}
+              style={sitStandPageStyle.buttonStartStopSitToStand}
               onPress={speak}
             >
-              <Text style={stylesSitStand.buttonText}>
+              <Text style={sitStandPageStyle.buttonText}>
                 {!isStopwatchStart ? "START" : "STOP"}
               </Text>
             </TouchableHighlight>
@@ -532,30 +434,30 @@ const SitStand = ({ navigation, route }) => {
 
           {count % 2 != 0 && count == 0 ? <Text></Text> : null}
 
-          <View style={stylesSitStand.MainRecordContainer}>
+          <View style={sitStandPageStyle.MainRecordContainer}>
             {count % 2 != 0 ? (
               <TouchableOpacity
-                style={stylesSitStand.SubmitButtonStyleStopWatch}
+                style={sitStandPageStyle.SubmitButtonStyleStopWatch}
                 onPress={submitAlertStopWatch}
               >
-                <Text style={stylesSitStand.TextStyleButton}>
+                <Text style={sitStandPageStyle.TextStyleButton}>
                   Submit FormSG
                 </Text>
               </TouchableOpacity>
             ) : null}
           </View>
 
-          <View style={stylesSitStand.MainRecordContainer}>
+          <View style={sitStandPageStyle.MainRecordContainer}>
             {count % 2 != 0 ? (
               <TouchableOpacity
-                style={stylesSitStand.buttonStartStopSitToStandReset}
+                style={sitStandPageStyle.buttonStartStopSitToStandReset}
                 onPress={() => {
                   setIsStopwatchStart(false);
                   setResetStopwatch(true);
                   count = 0;
                 }}
               >
-                <Text style={stylesSitStand.TextStyleButton}>Reset</Text>
+                <Text style={sitStandPageStyle.TextStyleButton}>Reset</Text>
               </TouchableOpacity>
             ) : null}
           </View>
@@ -959,11 +861,6 @@ const Welcome = ({ navigation, route }) => {
     setShow(true);
     setMode(currentMode);
   };
-
-  const showDatepicker = () => {
-    showMode("date");
-  };
-
   setDateForList();
   if (
     (nricX == null || nricX == 0) &&
@@ -982,7 +879,7 @@ const Welcome = ({ navigation, route }) => {
           <Text></Text>
           <TextInput
             placeholder="S0000000N"
-            style={inpttext.input}
+            style={nricInputStyle.input}
             onSubmitEditing={(nric) => {
               nricCheck[0] = 1;
               addNRIC(nric.nativeEvent.text);
@@ -1038,10 +935,10 @@ const Welcome = ({ navigation, route }) => {
     );
   } else if (checker[0] == 1 || nricX == 1) {
     return (
-      // <View style={pp.container}>
+      // <View style={welcomePageStyle.container}>
       <FlatList
-        style={pp.list}
-        contentContainerStyle={pp.listContainer}
+        style={welcomePageStyle.list}
+        contentContainerStyle={welcomePageStyle.listContainer}
         data={state.data}
         horizontal={false}
         numColumns={2}
@@ -1052,22 +949,25 @@ const Welcome = ({ navigation, route }) => {
           return (
             <View>
               <TouchableOpacity
-                style={pp.card}
+                style={welcomePageStyle.card}
                 onPress={() => {
                   clickEventListener(item);
                 }}
               >
-                <Image style={pp.cardImage} source={{ uri: item.image }} />
+                <Image
+                  style={welcomePageStyle.cardImage}
+                  source={{ uri: item.image }}
+                />
               </TouchableOpacity>
 
-              <View style={pp.cardHeader}>
+              <View style={welcomePageStyle.cardHeader}>
                 <View
                   style={{
                     alignItems: "center",
                     justifyContent: "center",
                   }}
                 >
-                  <Text style={pp.title}>{item.title}</Text>
+                  <Text style={welcomePageStyle.title}>{item.title}</Text>
                 </View>
               </View>
             </View>
@@ -1082,6 +982,706 @@ const Welcome = ({ navigation, route }) => {
 //////////////////////////////////////////////////////////
 //////////////////////GRAPH PAGE//////////////////////////
 //////////////////////////////////////////////////////////
+const Graph = ({ navigation, route }) => {
+  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+  return (
+    <ScrollView>
+      <View style={{ backgroundColor: "white" }}>
+        <Text></Text>
+        <ButtonToggleGroup
+          highlightBackgroundColor={"blue"}
+          highlightTextColor={"white"}
+          inactiveBackgroundColor={"transparent"}
+          inactiveTextColor={"grey"}
+          textStyle={{ fontSize: 30 }}
+          values={["Flexion", "Extension"]}
+          onSelect={(val) => setSelectedLanguage(val.toLowerCase())}
+        />
+      </View>
+      <View>
+        {selectedLanguage == "extension"
+          ? kneeExtensionGraph()
+          : kneeFlexionGraph()}
+      </View>
+    </ScrollView>
+  );
+};
+
+const Contact = ({ navigation, route }) => {
+  weekOneExtensionCall();
+  return (
+    <View style={styles.container}>
+      <Image
+        style={{
+          display: "block",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
+        source={require("./sgh-logo2.png")}
+      />
+      <Text></Text>
+      <Text></Text>
+      <Text style={{ textAlign: "center", fontSize: 20 }}>
+        General Enquiries: {"\n"}+65 6222 3322
+      </Text>
+      <Text></Text>
+      <Text style={{ textAlign: "center", fontSize: 20 }}>
+        Address: {"\n"}Outram Road Singapore 169608
+      </Text>
+    </View>
+  );
+};
+//FormSG Page
+const SitStandFormSG = ({ navigation, route }) => {
+  countStCall();
+  nricAsyncCall();
+  const { timeData } = route.params;
+  const x = route.params.paramKey;
+  const timeValStr = "Timing: " + x;
+  const nricSubmitData = String(nricUser[0]);
+  const timingSubmitData = timeData;
+  const runFirst = `setTimeout(function() {
+    document.getElementById("603c3ccc399059001247a1ee").readOnly = true;
+    document.getElementById("6098d0a38a5d310012f967d3").readOnly = true;
+    document.getElementById("603c3ccc399059001247a1ee").className = "";
+    document.getElementById("6098d0a38a5d310012f967d3").className = "";
+    document.getElementById('603c3ccc399059001247a1ee').value = '${nricSubmitData}';
+    document.getElementById('603c3ccc399059001247a1ee').dispatchEvent(new Event("input"));
+    document.getElementById('6098d0a38a5d310012f967d3').value = '${timingSubmitData}';
+    document.getElementById('6098d0a38a5d310012f967d3').dispatchEvent(new Event("input"));
+  }, 1000)`;
+  return (
+    <WebView
+      javaScriptEnabled={true}
+      source={{ uri: "https://form.gov.sg/#!/6092586dbee1190011689234" }}
+      onMessage={(event) => {}}
+      injectedJavaScript={runFirst}
+      style={{ flex: 1 }}
+      javaScriptEnabled
+    />
+  );
+};
+
+//FormSG Page
+const FormSG = ({ navigation, route }) => {
+  nricAsyncCall();
+  const { flexData } = route.params;
+  const { extenData } = route.params;
+  const x = route.params.paramKey;
+  const flexStr = "Flexion: " + x;
+  const extenStr = "Extension: " + x;
+  const nricSubmitData = String(nricUser[0]);
+  const flexionSubmitData = parseInt(flexData);
+  const extensionSubmitData = parseInt(extenData);
+  const runFirst = `setTimeout(function() {
+    document.getElementById("603c3ccc399059001247a1ee").readOnly = true;
+    document.getElementById("603c3d41526b9e00127a488f").readOnly = true;
+    document.getElementById("603c3d5a7d837800126d12f7").readOnly = true;
+    document.getElementById("603c3ccc399059001247a1ee").className = "";
+    document.getElementById("603c3d41526b9e00127a488f").className = "";
+    document.getElementById("603c3d5a7d837800126d12f7").className = "";
+    document.getElementById('603c3ccc399059001247a1ee').value = '${nricSubmitData}';
+    document.getElementById('603c3ccc399059001247a1ee').dispatchEvent(new Event("input"));
+    document.getElementById('603c3d41526b9e00127a488f').value = '${flexionSubmitData}';
+    document.getElementById('603c3d41526b9e00127a488f').dispatchEvent(new Event("input"));
+    document.getElementById('603c3d5a7d837800126d12f7').value = '${extensionSubmitData}';
+    document.getElementById('603c3d5a7d837800126d12f7').dispatchEvent(new Event("input"));
+  }, 1000)`;
+  return (
+    <WebView
+      javaScriptEnabled={true}
+      source={{ uri: "https://form.gov.sg/#!/603c3ca2b3f2b10012a03bc4" }}
+      onMessage={(event) => {}}
+      injectedJavaScript={runFirst}
+      style={{ flex: 1 }}
+      javaScriptEnabled
+    />
+  );
+};
+
+//////////////////////////////////////////////////////////
+////////////////////MEASUREMENT PAGE//////////////////////
+//////////////////////////////////////////////////////////
+const Goniometer = ({ navigation, route }) => {
+  nricAsyncCall();
+  const [text, setText] = React.useState(null);
+  const [forceUpdate, forceUpdateId] = useForceUpdate();
+  function round(n) {
+    if (!n) {
+      return 0;
+    }
+    return Math.floor(n * 100) / 100;
+  }
+  function getDegrees(n) {
+    if (!n) {
+      return 0;
+    }
+    var pitchraw2 = Math.abs(radians_to_degrees(n));
+    var pitchtrig = Math.acos(Math.sin(n) / 1.2);
+    var pitch = Math.round(90 + pitchraw2 - radians_to_degrees(pitchtrig));
+    return pitch;
+  }
+  function radians_to_degrees(radians) {
+    var pi = Math.PI;
+    return radians * (180 / pi);
+  }
+  React.useEffect(() => {
+    kneeFlexionDataBase.transaction((tx) => {
+      tx.executeSql(
+        "create table if not exists kneeFlexionDataBase (id integer primary key not null, done int, value text);"
+      );
+    });
+  }, []);
+  React.useEffect(() => {
+    kneeExtensionDataBase.transaction((tx) => {
+      tx.executeSql(
+        "create table if not exists kneeExtensionDataBase (id integer primary key not null, done int, value text);"
+      );
+    });
+  }, []);
+  const add = (text) => {
+    var text = parseInt(text);
+    if (text === null || text === "") {
+      alert("Invalid Input!");
+      return false;
+    }
+    kneeFlexionDataBase.transaction(
+      (tx) => {
+        tx.executeSql(
+          "insert into kneeFlexionDataBase (done, value) values (0, ?)",
+          [
+            moment().utcOffset("+08:00").format("YYYY-MM-DD") +
+              " Flexion:    " +
+              text,
+          ]
+        );
+        tx.executeSql("SELECT * FROM kneeFlexionDataBase", [], (_, { rows }) =>
+          console
+            .log
+            // JSON.stringify(rows)
+            ()
+        );
+      },
+      null,
+      forceUpdate
+    );
+  };
+  const add1 = (text) => {
+    var text = parseInt(text);
+    if (text === null || text === "") {
+      alert("Invalid Input!");
+      return false;
+    }
+
+    kneeExtensionDataBase.transaction(
+      (tx) => {
+        tx.executeSql(
+          "insert into kneeExtensionDataBase (done, value) values (0, ?)",
+          [
+            moment().utcOffset("+08:00").format("YYYY-MM-DD") +
+              " Extension:    " +
+              text,
+          ]
+        );
+        tx.executeSql(
+          "SELECT * FROM kneeExtensionDataBase",
+          [],
+          (_, { rows }) =>
+            console
+              .log
+              // JSON.stringify(rows)
+              ()
+        );
+      },
+      null,
+      forceUpdate
+    );
+  };
+  const [data, setData] = useState({
+    alpha: 0,
+    beta: 0,
+    gamma: 0,
+  });
+  const [subscription, setSubscription] = useState(null);
+
+  const _subscribe = () => {
+    setSubscription(
+      DeviceMotion.addListener(({ rotation }) => {
+        setData(rotation);
+      })
+    );
+  };
+
+  const _unsubscribe = () => {
+    subscription && subscription.remove();
+    setSubscription(null);
+  };
+
+  useEffect(() => {
+    _subscribe();
+    return () => _unsubscribe();
+  }, []);
+
+  const { alpha, beta, gamma } = data;
+  var currDate = new Date();
+  var timeDiff;
+  if (initDate.length != 0) {
+    timeDiff = currDate.getTime() - initDate[0].getTime();
+  } else {
+    timeDiff = 0;
+  }
+  var dayDiff = Math.floor(timeDiff / (24 * 60 * 60 * 1000));
+  ///////////////////////////////////////////////////////////////////////
+  //Below portion is for the Conditional Rendering Based on the Angle/////
+  //////////////////////////////////////////////////////////////////////
+  //no week/gender function
+  function noGenderWeek(n) {
+    if (selectedGenderValue === "" || selectedValue === "") {
+      return true;
+    }
+    return false;
+  }
+  //green function to indicate above 75th Percentile
+  function green(n) {
+    if (selectedGenderValue === "Male") {
+      if (
+        (n >= 112 && dayDiff <= 14) ||
+        (n >= 115 && (dayDiff > 14) & (dayDiff <= 28)) ||
+        (n >= 117 && (dayDiff > 28) & (dayDiff <= 42)) ||
+        (n >= 120 && (dayDiff > 42) & (dayDiff <= 56)) ||
+        (n >= 121 && (dayDiff > 56) & (dayDiff <= 70)) ||
+        (n >= 123 && (dayDiff > 70) & (dayDiff <= 84))
+      ) {
+        return true;
+      }
+    } else if (selectedGenderValue === "Female") {
+      if (
+        (n >= 105 && dayDiff <= 14) ||
+        (n >= 110 && (dayDiff > 14) & (dayDiff <= 28)) ||
+        (n >= 115 && (dayDiff > 28) & (dayDiff <= 42)) ||
+        (n >= 117 && (dayDiff > 42) & (dayDiff <= 56)) ||
+        (n >= 118 && (dayDiff > 56) & (dayDiff <= 70)) ||
+        (n >= 120 && (dayDiff > 70) & (dayDiff <= 84))
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  //blue function to decide if 75th to 50th percentile
+  function blue(n) {
+    if (selectedGenderValue === "Male") {
+      if (
+        (n < 112 && n >= 101 && dayDiff <= 14) ||
+        (n < 115 && n >= 106 && (dayDiff > 14) & (dayDiff <= 28)) ||
+        (n < 117 && n >= 110 && (dayDiff > 28) & (dayDiff <= 42)) ||
+        (n < 120 && n >= 113 && (dayDiff > 42) & (dayDiff <= 56)) ||
+        (n < 121 && n >= 115 && (dayDiff > 56) & (dayDiff <= 70)) ||
+        (n < 123 && n >= 117 && (dayDiff > 70) & (dayDiff <= 84))
+      ) {
+        return true;
+      }
+    } else if (selectedGenderValue === "Female") {
+      if (
+        (n < 105 && n >= 95 && dayDiff <= 14) ||
+        (n < 110 && n >= 102 && (dayDiff > 14) & (dayDiff <= 28)) ||
+        (n < 115 && n >= 106 && (dayDiff > 28) & (dayDiff <= 42)) ||
+        (n < 117 && n >= 109 && (dayDiff > 42) & (dayDiff <= 56)) ||
+        (n < 118 && n >= 110 && (dayDiff > 56) & (dayDiff <= 70)) ||
+        (n < 120 && n >= 110 && (dayDiff > 70) & (dayDiff <= 84))
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  //red function to decide if 50th to 25th percentile
+  function red(n) {
+    if (selectedGenderValue === "Male") {
+      if (
+        (n > 90 && n < 101 && dayDiff <= 14) ||
+        (n > 96 && n < 106 && (dayDiff > 14) & (dayDiff <= 28)) ||
+        (n > 102 && n < 110 && (dayDiff > 28) & (dayDiff <= 42)) ||
+        (n > 105 && n < 113 && (dayDiff > 42) & (dayDiff <= 56)) ||
+        (n > 106 && n < 115 && (dayDiff > 56) & (dayDiff <= 70)) ||
+        (n > 107 && n < 117 && (dayDiff > 70) & (dayDiff <= 84))
+      ) {
+        return true;
+      }
+    } else if (selectedGenderValue === "Female") {
+      if (
+        (n > 88 && n < 95 && dayDiff <= 14) ||
+        (n > 93 && n < 102 && (dayDiff > 14) & (dayDiff <= 28)) ||
+        (n > 96 && n < 106 && (dayDiff > 28) & (dayDiff <= 42)) ||
+        (n > 99 && n < 109 && (dayDiff > 42) & (dayDiff <= 56)) ||
+        (n > 101 && n < 110 && (dayDiff > 56) & (dayDiff <= 70)) ||
+        (n > 103 && n < 110 && (dayDiff > 70) & (dayDiff <= 84))
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  //red function to decide if 25th percentile and below
+  function belowRed(n) {
+    if (selectedGenderValue === "Male") {
+      if (
+        (n <= 90 && dayDiff <= 14) ||
+        (n <= 96 && (dayDiff > 14) & (dayDiff <= 28)) ||
+        (n <= 102 && (dayDiff > 28) & (dayDiff <= 42)) ||
+        (n <= 105 && (dayDiff > 42) & (dayDiff <= 56)) ||
+        (n <= 106 && (dayDiff > 56) & (dayDiff <= 70)) ||
+        (n <= 107 && (dayDiff > 70) & (dayDiff <= 84))
+      ) {
+        return true;
+      }
+    } else if (selectedGenderValue === "Female") {
+      if (
+        (n <= 88 && dayDiff <= 14) ||
+        (n <= 93 && (dayDiff > 14) & (dayDiff <= 28)) ||
+        (n <= 96 && (dayDiff > 28) & (dayDiff <= 42)) ||
+        (n <= 99 && (dayDiff > 42) & (dayDiff <= 56)) ||
+        (n <= 101 && (dayDiff > 56) & (dayDiff <= 70)) ||
+        (n <= 103 && (dayDiff > 70) & (dayDiff <= 84))
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+  const [shouldShow, setShouldShow] = useState(true);
+  const [selectedValue, setSelectedValue] = useState(null);
+  const [selectedGenderValue, setSelectedGenderValue] = useState(null);
+  const [extensionDegree, setExtensionDegree] = useState("0");
+  const [flexionDegree, setFlexionDegree] = useState("0");
+  const [items, setItems] = useState({});
+  const [extensionDegreeControl, setExtensionDegreeControl] =
+    useState("Pending");
+  const [flexionDegreeControl, setFlexionDegreeControl] = useState("Pending");
+
+  function displayAngle() {
+    userGenderDataBase.transaction((tx) => {
+      tx.executeSql(
+        `select * from userGenderDataBase ORDER BY id DESC LIMIT ?`,
+        [1],
+        (tx, result) => {
+          var len = result.rows.length;
+          if (len > 0) {
+            //convert string
+            var gender = result.rows.item(0).value.toString();
+            setSelectedGenderValue(gender);
+          }
+        }
+      );
+    });
+  }
+  const [val, setVal] = useState("AboutReact");
+  const [vals, setVals] = useState("AboutReacts");
+
+  const submitAlert = () => {
+    Alert.alert("Are you sure you want to submit?", "", [
+      {
+        text: "Cancel",
+        onPress: () => console.log(),
+        style: "cancel",
+      },
+      {
+        text: "Yes",
+        onPress: () =>
+          navigation.navigate("FormSG", {
+            flexData: val,
+            extenData: vals,
+            name: "FormSG",
+            flex: 1,
+          }),
+      },
+    ]);
+  };
+
+  const state = {
+    data: [
+      {
+        id: 1,
+        title: "Record Extension",
+        link: "ke",
+        image: "./ke.png",
+      },
+      {
+        id: 2,
+        title: "Record Flexion",
+        link: "kf",
+        image: "./kf.png",
+      },
+    ],
+  };
+  const windowWidth = Dimensions.get("window").width;
+  const windowHeight = Dimensions.get("window").height;
+  //iphone 8: width: 414, height: 736
+  var kneeRangeSize;
+  var prevSize;
+  if (windowWidth <= 414 && windowHeight <= 736) {
+    kneeRangeSize = 22.5;
+    prevSize = 20;
+  } else {
+    kneeRangeSize = 45;
+    prevSize = 30;
+  }
+  return (
+    <View style={styles.container}>
+      <View style={{ alignItems: "center" }}>
+        <TouchableOpacity
+          onPress={() => setShouldShow(!shouldShow)}
+          style={styles.ShowHideButtonStyle}
+        >
+          <Text style={styles.ShowHideTextButtonStyle}>
+            {shouldShow ? "Hide Display" : "Show Display"}
+          </Text>
+        </TouchableOpacity>
+        {/*Here we will return the view when state is true 
+          and will return false if state is false*/}
+      </View>
+
+      {shouldShow ? (
+        <View>
+          {windowWidth <= 414 && windowHeight <= 736 ? (
+            <Text></Text>
+          ) : (
+            <Text style={{ textAlign: "center", fontSize: kneeRangeSize }}>
+              Knee Range{" "}
+            </Text>
+          )}
+
+          {noGenderWeek(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileBlack}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+          {green(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileGreen}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+          {blue(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileOrange}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+          {red(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileOrange}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+          {belowRed(getDegrees(round(beta))) ? (
+            <Text style={stylePercentile.textPercentileRed}>
+              {getDegrees(round(beta))}°
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
+
+      <View>
+        {useEffect(() => {
+          displayAngle();
+        }, [])}
+      </View>
+
+      {shouldShow ? (
+        <View>
+          <Text
+            style={{
+              textAlign: "center",
+              fontSize: prevSize,
+              fontStyle: "italic",
+            }}
+          >
+            Previous Extension: {extensionDegree}°
+          </Text>
+          <Text
+            style={{
+              textAlign: "center",
+              fontSize: prevSize,
+              fontStyle: "italic",
+            }}
+          >
+            Previous Flexion: {flexionDegree}°
+          </Text>
+        </View>
+      ) : null}
+      {!shouldShow ? (
+        <View>
+          <Text></Text>
+          <Text
+            style={{
+              textAlign: "center",
+              fontSize: prevSize,
+              fontStyle: "italic",
+            }}
+          >
+            Extension: {extensionDegreeControl}
+          </Text>
+          <Text
+            style={{
+              textAlign: "center",
+              fontSize: prevSize,
+              fontStyle: "italic",
+            }}
+          >
+            Flexion: {flexionDegreeControl}
+          </Text>
+        </View>
+      ) : null}
+      <ScrollView>
+        {Dimensions.get("window").width <= 414 &&
+        Dimensions.get("window").height <= 736 ? (
+          <FlatList
+            data={state.data}
+            horizontal={false}
+            numColumns={1}
+            keyExtractor={(item) => {
+              return item.id.toString();
+            }}
+            renderItem={({ item }) => {
+              return (
+                <View>
+                  <TouchableOpacity
+                    style={goniometerPageStyle.cardIp8}
+                    onPress={() => {
+                      if (item.link == "kf") {
+                        var degr = getDegrees(round(beta));
+                        add(degr);
+                        setFlexionDegree(getDegrees(round(beta)));
+                        setFlexionDegreeControl("Done");
+                        setVal(degr);
+                      } else {
+                        var a = getDegrees(round(beta));
+                        add1(a);
+                        setExtensionDegree(getDegrees(round(beta)));
+                        setExtensionDegreeControl("Done");
+                        setVals(a);
+                      }
+                    }}
+                  >
+                    <Text></Text>
+                    <Text></Text>
+                    {Dimensions.get("window").width <= 414 &&
+                    Dimensions.get("window").height <= 736 ? (
+                      item.link == "kf" ? (
+                        <Image
+                          style={goniometerPageStyle.cardImageIphone8}
+                          source={require("./kf.png")}
+                        />
+                      ) : (
+                        <Image
+                          style={goniometerPageStyle.cardImageIphone8}
+                          source={require("./ke.png")}
+                        />
+                      )
+                    ) : item.link == "kf" ? (
+                      <Image
+                        style={goniometerPageStyle.cardImage}
+                        source={require("./kf.png")}
+                      />
+                    ) : (
+                      <Image
+                        style={goniometerPageStyle.cardImage}
+                        source={require("./ke.png")}
+                      />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
+          />
+        ) : (
+          <FlatList
+            data={state.data}
+            horizontal={false}
+            numColumns={1}
+            keyExtractor={(item) => {
+              return item.id.toString();
+            }}
+            renderItem={({ item }) => {
+              return (
+                <View>
+                  <TouchableOpacity
+                    style={goniometerPageStyle.card}
+                    onPress={() => {
+                      if (item.link == "kf") {
+                        var degr = getDegrees(round(beta));
+                        add(degr);
+                        setFlexionDegree(getDegrees(round(beta)));
+                        setFlexionDegreeControl("Done");
+                        setVal(degr);
+                      } else {
+                        var a = getDegrees(round(beta));
+                        add1(a);
+                        setExtensionDegree(getDegrees(round(beta)));
+                        setExtensionDegreeControl("Done");
+                        setVals(a);
+                      }
+                    }}
+                  >
+                    <Text></Text>
+                    <Text></Text>
+                    {Dimensions.get("window").width <= 414 &&
+                    Dimensions.get("window").height <= 736 ? (
+                      item.link == "kf" ? (
+                        <Image
+                          style={goniometerPageStyle.cardImageIphone8}
+                          source={require("./kf.png")}
+                        />
+                      ) : (
+                        <Image
+                          style={goniometerPageStyle.cardImageIphone8}
+                          source={require("./ke.png")}
+                        />
+                      )
+                    ) : item.link == "kf" ? (
+                      <Image
+                        style={goniometerPageStyle.cardImage}
+                        source={require("./kf.png")}
+                      />
+                    ) : (
+                      <Image
+                        style={goniometerPageStyle.cardImage}
+                        source={require("./ke.png")}
+                      />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
+          />
+        )}
+        <View style={styles.MainRecordContainer}>
+          {!(flexionDegree != 0 && extensionDegree != 0) ? <Text></Text> : null}
+          {flexionDegree != 0 && extensionDegree != 0 ? (
+            <TouchableOpacity
+              style={styles.SubmitButtonFormStyle}
+              onPress={submitAlert}
+            >
+              <Text style={styles.TextStyleButton}>Submit FormSG</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      </ScrollView>
+    </View>
+  );
+};
+
+function useForceUpdate() {
+  const [value, setValue] = useState(0);
+  return [() => setValue(value + 1), value];
+}
+
 async function weekOneExtension() {
   var total = 0;
   var finals = 0;
@@ -2357,7 +2957,6 @@ async function weekElevenCall() {
 async function weekTwelveCall() {
   weekTwelve().then((val) => (weekTwelveList = val));
 }
-
 function kneeExtensionGraph() {
   return (
     <View style={{ backgroundColor: "white" }}>
@@ -2427,7 +3026,6 @@ function kneeExtensionGraph() {
     </View>
   );
 }
-
 function kneeFlexionGraph() {
   return (
     <View style={{ backgroundColor: "white" }}>
@@ -2499,731 +3097,45 @@ function kneeFlexionGraph() {
   );
 }
 
-const Graph = ({ navigation, route }) => {
-  const [selectedLanguage, setSelectedLanguage] = useState();
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
-  return (
-    <ScrollView>
-      <View style={{ backgroundColor: "white" }}>
-        <Text></Text>
-        <ButtonToggleGroup
-          highlightBackgroundColor={"blue"}
-          highlightTextColor={"white"}
-          inactiveBackgroundColor={"transparent"}
-          inactiveTextColor={"grey"}
-          textStyle={{ fontSize: 30 }}
-          values={["Flexion", "Extension"]}
-          onSelect={(val) => setSelectedLanguage(val.toLowerCase())}
-        />
-      </View>
-      <View>
-        {selectedLanguage == "extension"
-          ? kneeExtensionGraph()
-          : kneeFlexionGraph()}
-      </View>
-    </ScrollView>
-  );
-};
-
-const Contact = ({ navigation, route }) => {
-  weekOneExtensionCall();
-  return (
-    <View style={styles.container}>
-      <Image
-        style={{
-          display: "block",
-          marginLeft: "auto",
-          marginRight: "auto",
-        }}
-        source={require("./sgh-logo2.png")}
-      />
-      <Text></Text>
-      <Text></Text>
-      <Text style={{ textAlign: "center", fontSize: 20 }}>
-        General Enquiries: {"\n"}+65 6222 3322
-      </Text>
-      <Text></Text>
-      <Text style={{ textAlign: "center", fontSize: 20 }}>
-        Address: {"\n"}Outram Road Singapore 169608
-      </Text>
-    </View>
-  );
-};
-//FormSG Page
-const SitStandFormSG = ({ navigation, route }) => {
-  countStCall();
-  nricAsyncCall();
-  const { timeData } = route.params;
-  const x = route.params.paramKey;
-  const timeValStr = "Timing: " + x;
-  const nricSubmitData = String(nricUser[0]);
-  const timingSubmitData = timeData;
-  const runFirst = `setTimeout(function() {
-    document.getElementById("603c3ccc399059001247a1ee").readOnly = true;
-    document.getElementById("6098d0a38a5d310012f967d3").readOnly = true;
-    document.getElementById("603c3ccc399059001247a1ee").className = "";
-    document.getElementById("6098d0a38a5d310012f967d3").className = "";
-    document.getElementById('603c3ccc399059001247a1ee').value = '${nricSubmitData}';
-    document.getElementById('603c3ccc399059001247a1ee').dispatchEvent(new Event("input"));
-    document.getElementById('6098d0a38a5d310012f967d3').value = '${timingSubmitData}';
-    document.getElementById('6098d0a38a5d310012f967d3').dispatchEvent(new Event("input"));
-  }, 1000)`;
-  return (
-    <WebView
-      javaScriptEnabled={true}
-      source={{ uri: "https://form.gov.sg/#!/6092586dbee1190011689234" }}
-      onMessage={(event) => {}}
-      injectedJavaScript={runFirst}
-      style={{ flex: 1 }}
-      javaScriptEnabled
-    />
-  );
-};
-
-//FormSG Page
-const FormSG = ({ navigation, route }) => {
-  nricAsyncCall();
-  const { flexData } = route.params;
-  const { extenData } = route.params;
-  const x = route.params.paramKey;
-  const flexStr = "Flexion: " + x;
-  const extenStr = "Extension: " + x;
-  const nricSubmitData = String(nricUser[0]);
-  const flexionSubmitData = parseInt(flexData);
-  const extensionSubmitData = parseInt(extenData);
-  const runFirst = `setTimeout(function() {
-    document.getElementById("603c3ccc399059001247a1ee").readOnly = true;
-    document.getElementById("603c3d41526b9e00127a488f").readOnly = true;
-    document.getElementById("603c3d5a7d837800126d12f7").readOnly = true;
-    document.getElementById("603c3ccc399059001247a1ee").className = "";
-    document.getElementById("603c3d41526b9e00127a488f").className = "";
-    document.getElementById("603c3d5a7d837800126d12f7").className = "";
-    document.getElementById('603c3ccc399059001247a1ee').value = '${nricSubmitData}';
-    document.getElementById('603c3ccc399059001247a1ee').dispatchEvent(new Event("input"));
-    document.getElementById('603c3d41526b9e00127a488f').value = '${flexionSubmitData}';
-    document.getElementById('603c3d41526b9e00127a488f').dispatchEvent(new Event("input"));
-    document.getElementById('603c3d5a7d837800126d12f7').value = '${extensionSubmitData}';
-    document.getElementById('603c3d5a7d837800126d12f7').dispatchEvent(new Event("input"));
-  }, 1000)`;
-  return (
-    <WebView
-      javaScriptEnabled={true}
-      source={{ uri: "https://form.gov.sg/#!/603c3ca2b3f2b10012a03bc4" }}
-      onMessage={(event) => {}}
-      injectedJavaScript={runFirst}
-      style={{ flex: 1 }}
-      javaScriptEnabled
-    />
-  );
-};
-
-//////////////////////////////////////////////////////////
-////////////////////MEASUREMENT PAGE//////////////////////
-//////////////////////////////////////////////////////////
-const Goniometer = ({ navigation, route }) => {
-  nricAsyncCall();
-  const [text, setText] = React.useState(null);
-  const [forceUpdate, forceUpdateId] = useForceUpdate();
-  function round(n) {
-    if (!n) {
-      return 0;
-    }
-    return Math.floor(n * 100) / 100;
-  }
-  function getDegrees(n) {
-    if (!n) {
-      return 0;
-    }
-    var pitchraw2 = Math.abs(radians_to_degrees(n));
-    var pitchtrig = Math.acos(Math.sin(n) / 1.2);
-    var pitch = Math.round(90 + pitchraw2 - radians_to_degrees(pitchtrig));
-    return pitch;
-  }
-  function radians_to_degrees(radians) {
-    var pi = Math.PI;
-    return radians * (180 / pi);
-  }
-  React.useEffect(() => {
-    kneeFlexionDataBase.transaction((tx) => {
-      tx.executeSql(
-        "create table if not exists kneeFlexionDataBase (id integer primary key not null, done int, value text);"
-      );
-    });
-  }, []);
-  React.useEffect(() => {
-    kneeExtensionDataBase.transaction((tx) => {
-      tx.executeSql(
-        "create table if not exists kneeExtensionDataBase (id integer primary key not null, done int, value text);"
-      );
-    });
-  }, []);
-  const add = (text) => {
-    var text = parseInt(text);
-    if (text === null || text === "") {
-      alert("Invalid Input!");
-      return false;
-    }
-    kneeFlexionDataBase.transaction(
-      (tx) => {
-        tx.executeSql(
-          "insert into kneeFlexionDataBase (done, value) values (0, ?)",
-          [
-            moment().utcOffset("+08:00").format("YYYY-MM-DD") +
-              " Flexion:    " +
-              text,
-          ]
-        );
-        tx.executeSql("SELECT * FROM kneeFlexionDataBase", [], (_, { rows }) =>
-          console
-            .log
-            // JSON.stringify(rows)
-            ()
-        );
-      },
-      null,
-      forceUpdate
-    );
-  };
-  const add1 = (text) => {
-    var text = parseInt(text);
-    if (text === null || text === "") {
-      alert("Invalid Input!");
-      return false;
-    }
-
-    kneeExtensionDataBase.transaction(
-      (tx) => {
-        tx.executeSql(
-          "insert into kneeExtensionDataBase (done, value) values (0, ?)",
-          [
-            moment().utcOffset("+08:00").format("YYYY-MM-DD") +
-              " Extension:    " +
-              text,
-          ]
-        );
-        tx.executeSql(
-          "SELECT * FROM kneeExtensionDataBase",
-          [],
-          (_, { rows }) =>
-            console
-              .log
-              // JSON.stringify(rows)
-              ()
-        );
-      },
-      null,
-      forceUpdate
-    );
-  };
-  const [data, setData] = useState({
-    alpha: 0,
-    beta: 0,
-    gamma: 0,
-  });
-  const [subscription, setSubscription] = useState(null);
-
-  const _subscribe = () => {
-    setSubscription(
-      DeviceMotion.addListener(({ rotation }) => {
-        setData(rotation);
-      })
-    );
-  };
-
-  const _unsubscribe = () => {
-    subscription && subscription.remove();
-    setSubscription(null);
-  };
-
-  useEffect(() => {
-    _subscribe();
-    return () => _unsubscribe();
-  }, []);
-
-  const { alpha, beta, gamma } = data;
-  var currDate = new Date();
-  var timeDiff;
-  if (initDate.length != 0) {
-    timeDiff = currDate.getTime() - initDate[0].getTime();
-  } else {
-    timeDiff = 0;
-  }
-  var dayDiff = Math.floor(timeDiff / (24 * 60 * 60 * 1000));
-  ///////////////////////////////////////////////////////////////////////
-  //Below portion is for the Conditional Rendering Based on the Angle/////
-  //////////////////////////////////////////////////////////////////////
-  //no week/gender function
-  function noGenderWeek(n) {
-    if (selectedGenderValue === "" || selectedValue === "") {
-      return true;
-    }
-    return false;
-  }
-  //green function to indicate above 75th Percentile
-  function green(n) {
-    if (selectedGenderValue === "Male") {
-      if (
-        (n >= 112 && dayDiff <= 14) ||
-        (n >= 115 && (dayDiff > 14) & (dayDiff <= 28)) ||
-        (n >= 117 && (dayDiff > 28) & (dayDiff <= 42)) ||
-        (n >= 120 && (dayDiff > 42) & (dayDiff <= 56)) ||
-        (n >= 121 && (dayDiff > 56) & (dayDiff <= 70)) ||
-        (n >= 123 && (dayDiff > 70) & (dayDiff <= 84))
-      ) {
-        return true;
-      }
-    } else if (selectedGenderValue === "Female") {
-      if (
-        (n >= 105 && dayDiff <= 14) ||
-        (n >= 110 && (dayDiff > 14) & (dayDiff <= 28)) ||
-        (n >= 115 && (dayDiff > 28) & (dayDiff <= 42)) ||
-        (n >= 117 && (dayDiff > 42) & (dayDiff <= 56)) ||
-        (n >= 118 && (dayDiff > 56) & (dayDiff <= 70)) ||
-        (n >= 120 && (dayDiff > 70) & (dayDiff <= 84))
-      ) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  //blue function to decide if 75th to 50th percentile
-  function blue(n) {
-    if (selectedGenderValue === "Male") {
-      if (
-        (n < 112 && n >= 101 && dayDiff <= 14) ||
-        (n < 115 && n >= 106 && (dayDiff > 14) & (dayDiff <= 28)) ||
-        (n < 117 && n >= 110 && (dayDiff > 28) & (dayDiff <= 42)) ||
-        (n < 120 && n >= 113 && (dayDiff > 42) & (dayDiff <= 56)) ||
-        (n < 121 && n >= 115 && (dayDiff > 56) & (dayDiff <= 70)) ||
-        (n < 123 && n >= 117 && (dayDiff > 70) & (dayDiff <= 84))
-      ) {
-        return true;
-      }
-    } else if (selectedGenderValue === "Female") {
-      if (
-        (n < 105 && n >= 95 && dayDiff <= 14) ||
-        (n < 110 && n >= 102 && (dayDiff > 14) & (dayDiff <= 28)) ||
-        (n < 115 && n >= 106 && (dayDiff > 28) & (dayDiff <= 42)) ||
-        (n < 117 && n >= 109 && (dayDiff > 42) & (dayDiff <= 56)) ||
-        (n < 118 && n >= 110 && (dayDiff > 56) & (dayDiff <= 70)) ||
-        (n < 120 && n >= 110 && (dayDiff > 70) & (dayDiff <= 84))
-      ) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  //red function to decide if 50th to 25th percentile
-  function red(n) {
-    if (selectedGenderValue === "Male") {
-      if (
-        (n > 90 && n < 101 && dayDiff <= 14) ||
-        (n > 96 && n < 106 && (dayDiff > 14) & (dayDiff <= 28)) ||
-        (n > 102 && n < 110 && (dayDiff > 28) & (dayDiff <= 42)) ||
-        (n > 105 && n < 113 && (dayDiff > 42) & (dayDiff <= 56)) ||
-        (n > 106 && n < 115 && (dayDiff > 56) & (dayDiff <= 70)) ||
-        (n > 107 && n < 117 && (dayDiff > 70) & (dayDiff <= 84))
-      ) {
-        return true;
-      }
-    } else if (selectedGenderValue === "Female") {
-      if (
-        (n > 88 && n < 95 && dayDiff <= 14) ||
-        (n > 93 && n < 102 && (dayDiff > 14) & (dayDiff <= 28)) ||
-        (n > 96 && n < 106 && (dayDiff > 28) & (dayDiff <= 42)) ||
-        (n > 99 && n < 109 && (dayDiff > 42) & (dayDiff <= 56)) ||
-        (n > 101 && n < 110 && (dayDiff > 56) & (dayDiff <= 70)) ||
-        (n > 103 && n < 110 && (dayDiff > 70) & (dayDiff <= 84))
-      ) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  //red function to decide if 25th percentile and below
-  function belowRed(n) {
-    if (selectedGenderValue === "Male") {
-      if (
-        (n <= 90 && dayDiff <= 14) ||
-        (n <= 96 && (dayDiff > 14) & (dayDiff <= 28)) ||
-        (n <= 102 && (dayDiff > 28) & (dayDiff <= 42)) ||
-        (n <= 105 && (dayDiff > 42) & (dayDiff <= 56)) ||
-        (n <= 106 && (dayDiff > 56) & (dayDiff <= 70)) ||
-        (n <= 107 && (dayDiff > 70) & (dayDiff <= 84))
-      ) {
-        return true;
-      }
-    } else if (selectedGenderValue === "Female") {
-      if (
-        (n <= 88 && dayDiff <= 14) ||
-        (n <= 93 && (dayDiff > 14) & (dayDiff <= 28)) ||
-        (n <= 96 && (dayDiff > 28) & (dayDiff <= 42)) ||
-        (n <= 99 && (dayDiff > 42) & (dayDiff <= 56)) ||
-        (n <= 101 && (dayDiff > 56) & (dayDiff <= 70)) ||
-        (n <= 103 && (dayDiff > 70) & (dayDiff <= 84))
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }
-  const [shouldShow, setShouldShow] = useState(true);
-  const [selectedValue, setSelectedValue] = useState(null);
-  const [selectedGenderValue, setSelectedGenderValue] = useState(null);
-  const [extensionDegree, setExtensionDegree] = useState("0");
-  const [flexionDegree, setFlexionDegree] = useState("0");
-  const [items, setItems] = useState({});
-  const [extensionDegreeControl, setExtensionDegreeControl] =
-    useState("Pending");
-  const [flexionDegreeControl, setFlexionDegreeControl] = useState("Pending");
-
-  function displayAngle() {
-    userGenderDataBase.transaction((tx) => {
-      tx.executeSql(
-        `select * from userGenderDataBase ORDER BY id DESC LIMIT ?`,
-        [1],
-        (tx, result) => {
-          var len = result.rows.length;
-          if (len > 0) {
-            //convert string
-            var gender = result.rows.item(0).value.toString();
-            setSelectedGenderValue(gender);
-          }
+async function countNRIC() {
+  return new Promise((resolve, reject) => {
+    userNRICDataBase.transaction((tx1) => {
+      tx1.executeSql("SELECT * FROM userNRICDataBase", [], (tx1, results1) => {
+        if (results1.rows.length == null) {
+        } else {
         }
-      );
+        nricX = results1.rows.length;
+        return results1.rows.length;
+      });
     });
-  }
-  const [val, setVal] = useState("AboutReact");
-  const [vals, setVals] = useState("AboutReacts");
+  });
+}
 
-  const submitAlert = () => {
-    Alert.alert("Are you sure you want to submit?", "", [
-      {
-        text: "Cancel",
-        onPress: () => console.log(),
-        style: "cancel",
-      },
-      {
-        text: "Yes",
-        onPress: () =>
-          navigation.navigate("FormSG", {
-            flexData: val,
-            extenData: vals,
-            name: "FormSG",
-            flex: 1,
-          }),
-      },
-    ]);
-  };
+async function countNRICCall() {
+  countNRIC().then((val) => console.log());
+}
 
-  const state = {
-    data: [
-      {
-        id: 1,
-        title: "Record Extension",
-        link: "ke",
-        image: "./ke.png",
-      },
-      {
-        id: 2,
-        title: "Record Flexion",
-        link: "kf",
-        image: "./kf.png",
-      },
-    ],
-  };
-  const windowWidth = Dimensions.get("window").width;
-  const windowHeight = Dimensions.get("window").height;
-  //mini 428,926
-  //ip6 414,736
+async function countSt() {
+  return new Promise((resolve, reject) => {
+    stopWatchDataBase.transaction((tx1) => {
+      tx1.executeSql("SELECT * FROM stopWatchDataBase", [], (tx1, results1) => {
+        if (results1.rows.length == null) {
+        } else {
+        }
+        stCheck = results1.rows.length;
+        return results1.rows.length;
+      });
+    });
+  });
+}
 
-  // console.log(windowWidth + "wid");
-  // console.log(windowHeight);
-  var kneeRangeSize;
-  var prevSize;
-  var recordExtensionSize;
-  var recordFlexionSize;
-  if (windowWidth <= 414 && windowHeight <= 736) {
-    kneeRangeSize = 22.5;
-    prevSize = 20;
-    listHeight = 125;
-  } else {
-    kneeRangeSize = 45;
-    prevSize = 30;
-    listHeight = 150;
-  }
-
-  // if (
-  //   Dimensions.get("window").width <= 414 &&
-  //   Dimensions.get("window").height <= 736
-  // ) {
-  //   listHeight = 125;
-  // } else {
-  //   listHeight = 150;
-  // }
-  return (
-    <View style={styles.container}>
-      <View style={{ alignItems: "center" }}>
-        <TouchableOpacity
-          onPress={() => setShouldShow(!shouldShow)}
-          style={styles.ShowHideButtonStyle}
-        >
-          <Text style={styles.ShowHideTextButtonStyle}>
-            {shouldShow ? "Hide Display" : "Show Display"}
-          </Text>
-        </TouchableOpacity>
-        {/*Here we will return the view when state is true 
-          and will return false if state is false*/}
-      </View>
-
-      {shouldShow ? (
-        <View>
-          {windowWidth <= 414 && windowHeight <= 736 ? (
-            <Text></Text>
-          ) : (
-            <Text style={{ textAlign: "center", fontSize: kneeRangeSize }}>
-              Knee Range{" "}
-            </Text>
-          )}
-
-          {noGenderWeek(getDegrees(round(beta))) ? (
-            <Text style={stylePercentile.textPercentileBlack}>
-              {getDegrees(round(beta))}°
-            </Text>
-          ) : null}
-          {green(getDegrees(round(beta))) ? (
-            <Text style={stylePercentile.textPercentileGreen}>
-              {getDegrees(round(beta))}°
-            </Text>
-          ) : null}
-          {blue(getDegrees(round(beta))) ? (
-            <Text style={stylePercentile.textPercentileOrange}>
-              {getDegrees(round(beta))}°
-            </Text>
-          ) : null}
-          {red(getDegrees(round(beta))) ? (
-            <Text style={stylePercentile.textPercentileOrange}>
-              {getDegrees(round(beta))}°
-            </Text>
-          ) : null}
-          {belowRed(getDegrees(round(beta))) ? (
-            <Text style={stylePercentile.textPercentileRed}>
-              {getDegrees(round(beta))}°
-            </Text>
-          ) : null}
-        </View>
-      ) : null}
-
-      <View>
-        {useEffect(() => {
-          displayAngle();
-        }, [])}
-      </View>
-
-      {shouldShow ? (
-        <View>
-          <Text
-            style={{
-              textAlign: "center",
-              fontSize: prevSize,
-              fontStyle: "italic",
-            }}
-          >
-            Previous Extension: {extensionDegree}°
-          </Text>
-          <Text
-            style={{
-              textAlign: "center",
-              fontSize: prevSize,
-              fontStyle: "italic",
-            }}
-          >
-            Previous Flexion: {flexionDegree}°
-          </Text>
-        </View>
-      ) : null}
-      {!shouldShow ? (
-        <View>
-          <Text></Text>
-          <Text
-            style={{
-              textAlign: "center",
-              fontSize: prevSize,
-              fontStyle: "italic",
-            }}
-          >
-            Extension: {extensionDegreeControl}
-          </Text>
-          <Text
-            style={{
-              textAlign: "center",
-              fontSize: prevSize,
-              fontStyle: "italic",
-            }}
-          >
-            Flexion: {flexionDegreeControl}
-          </Text>
-        </View>
-      ) : null}
-      <ScrollView>
-        {Dimensions.get("window").width <= 414 &&
-        Dimensions.get("window").height <= 736 ? (
-          <FlatList
-            data={state.data}
-            horizontal={false}
-            numColumns={1}
-            keyExtractor={(item) => {
-              return item.id.toString();
-            }}
-            renderItem={({ item }) => {
-              return (
-                <View>
-                  <TouchableOpacity
-                    style={ppp.cardIp8}
-                    onPress={() => {
-                      if (item.link == "kf") {
-                        var degr = getDegrees(round(beta));
-                        add(degr);
-                        setFlexionDegree(getDegrees(round(beta)));
-                        setFlexionDegreeControl("Done");
-                        setVal(degr);
-                      } else {
-                        var a = getDegrees(round(beta));
-                        add1(a);
-                        setExtensionDegree(getDegrees(round(beta)));
-                        setExtensionDegreeControl("Done");
-                        setVals(a);
-                      }
-                    }}
-                  >
-                    {/* <Text style={ppp.title}>{item.title}</Text> */}
-                    {/* source={require("./sgh-logo2.png")} */}
-                    <Text></Text>
-                    <Text></Text>
-                    {Dimensions.get("window").width <= 414 &&
-                    Dimensions.get("window").height <= 736 ? (
-                      item.link == "kf" ? (
-                        <Image
-                          style={ppp.cardImageIphone8}
-                          source={require("./kf.png")}
-                        />
-                      ) : (
-                        <Image
-                          style={ppp.cardImageIphone8}
-                          source={require("./ke.png")}
-                        />
-                      )
-                    ) : item.link == "kf" ? (
-                      <Image
-                        style={ppp.cardImage}
-                        source={require("./kf.png")}
-                      />
-                    ) : (
-                      <Image
-                        style={ppp.cardImage}
-                        source={require("./ke.png")}
-                      />
-                    )}
-                  </TouchableOpacity>
-                </View>
-              );
-            }}
-          />
-        ) : (
-          <FlatList
-            data={state.data}
-            horizontal={false}
-            numColumns={1}
-            keyExtractor={(item) => {
-              return item.id.toString();
-            }}
-            renderItem={({ item }) => {
-              return (
-                <View>
-                  <TouchableOpacity
-                    style={ppp.card}
-                    onPress={() => {
-                      if (item.link == "kf") {
-                        var degr = getDegrees(round(beta));
-                        add(degr);
-                        setFlexionDegree(getDegrees(round(beta)));
-                        setFlexionDegreeControl("Done");
-                        setVal(degr);
-                      } else {
-                        var a = getDegrees(round(beta));
-                        add1(a);
-                        setExtensionDegree(getDegrees(round(beta)));
-                        setExtensionDegreeControl("Done");
-                        setVals(a);
-                      }
-                    }}
-                  >
-                    {/* <Text style={ppp.title}>{item.title}</Text> */}
-                    {/* source={require("./sgh-logo2.png")} */}
-                    <Text></Text>
-                    <Text></Text>
-                    {Dimensions.get("window").width <= 414 &&
-                    Dimensions.get("window").height <= 736 ? (
-                      item.link == "kf" ? (
-                        <Image
-                          style={ppp.cardImageIphone8}
-                          source={require("./kf.png")}
-                        />
-                      ) : (
-                        <Image
-                          style={ppp.cardImageIphone8}
-                          source={require("./ke.png")}
-                        />
-                      )
-                    ) : item.link == "kf" ? (
-                      <Image
-                        style={ppp.cardImage}
-                        source={require("./kf.png")}
-                      />
-                    ) : (
-                      <Image
-                        style={ppp.cardImage}
-                        source={require("./ke.png")}
-                      />
-                    )}
-                  </TouchableOpacity>
-                </View>
-              );
-            }}
-          />
-        )}
-        <View style={styles.MainRecordContainer}>
-          {!(flexionDegree != 0 && extensionDegree != 0) ? <Text></Text> : null}
-          {flexionDegree != 0 && extensionDegree != 0 ? (
-            <TouchableOpacity
-              style={styles.SubmitButtonFormStyle}
-              onPress={submitAlert}
-            >
-              <Text style={styles.TextStyleButton}>Submit FormSG</Text>
-            </TouchableOpacity>
-          ) : null}
-        </View>
-      </ScrollView>
-    </View>
-  );
-};
-function useForceUpdate() {
-  const [value, setValue] = useState(0);
-  return [() => setValue(value + 1), value];
+async function countStCall() {
+  countSt().then((val) => console.log());
 }
 
 ////////////////////////////////////////////////////////////////////////////
 //////////////////////////STYLESHEET SECTION////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
-
-/** Start of style sheet */
 const styles = StyleSheet.create({
   input1: {
     height: 40,
@@ -3267,13 +3179,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   pickerContainerDate: {
-    // paddingLeft:"50%",
-    // paddingRight:"20%",
     marginLeft: "auto",
     marginRight: "auto",
     width: "35%",
-    // textAlign: "center",
-    // backgroundColor: "#000000",
   },
   text: {
     textAlign: "center",
@@ -3445,49 +3353,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-/** End of style sheet */
-
-const a = StyleSheet.create({
-  baseText: {
-    fontFamily: "Cochin-Bold",
-  },
-  container: {
-    backgroundColor: "#fff",
-    flex: 1,
-    paddingTop: Constants.statusBarHeight,
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  flexRow: {
-    flexDirection: "row",
-  },
-  input: {
-    borderColor: "#4630eb",
-    borderRadius: 4,
-    borderWidth: 1,
-    flex: 1,
-    height: 48,
-    margin: 16,
-    padding: 8,
-  },
-  listArea: {
-    backgroundColor: "#f0f0f0",
-    flex: 1,
-    paddingTop: 16,
-  },
-  sectionContainer: {
-    marginBottom: 16,
-    marginHorizontal: 16,
-  },
-  sectionHeading: {
-    fontSize: 18,
-    marginBottom: 8,
-  },
-});
-
 const stylePicker = StyleSheet.create({
   inputIOS: {
     marginTop: 6,
@@ -3517,7 +3382,6 @@ const stylePicker = StyleSheet.create({
     textAlign: "center",
   },
 });
-
 const stylePercentile = StyleSheet.create({
   textPercentileBlack: {
     color: "black",
@@ -3544,8 +3408,7 @@ const stylePercentile = StyleSheet.create({
     paddingLeft: 20,
   },
 });
-
-const inpttext = StyleSheet.create({
+const nricInputStyle = StyleSheet.create({
   container: {
     paddingTop: 23,
   },
@@ -3572,8 +3435,7 @@ const inpttext = StyleSheet.create({
     color: "white",
   },
 });
-
-const pp = StyleSheet.create({
+const welcomePageStyle = StyleSheet.create({
   container: {
     justifyContent: "center",
     paddingHorizontal: 10,
@@ -3647,8 +3509,7 @@ const pp = StyleSheet.create({
     color: "#696969",
   },
 });
-
-const ppp = StyleSheet.create({
+const goniometerPageStyle = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f6f6f6",
@@ -3740,28 +3601,7 @@ const ppp = StyleSheet.create({
     color: "#000000",
   },
 });
-const styless = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-});
-const duh = StyleSheet.create({
-  welcome: {
-    fontSize: RFValue(24, 580), // second argument is standardScreenHeight(optional),
-    textAlign: "center",
-    margin: 10,
-  },
-  instructions: {
-    textAlign: "center",
-    color: "#333333",
-    marginBottom: 5,
-    fontSize: RFPercentage(5),
-  },
-});
-
-const stylesSitStand = StyleSheet.create({
+const sitStandPageStyle = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
@@ -3829,7 +3669,6 @@ const stylesSitStand = StyleSheet.create({
     fontSize: 40,
   },
 });
-
 const options = {
   container: {
     backgroundColor: "#2b2e6d",
@@ -3844,23 +3683,4 @@ const options = {
     marginLeft: 7,
   },
 };
-
-const sideButton = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonContainer: {
-    flex: 1,
-  },
-});
-
-const stt = StyleSheet.create({
-  width: 100,
-  height: undefined,
-  aspectRatio: 1,
-});
-
 export default Goniometer_App;
