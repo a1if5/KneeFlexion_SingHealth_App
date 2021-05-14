@@ -16,7 +16,20 @@ import {
   Button,
 } from "react-native";
 import { Dimensions } from "react-native";
-const screenWidth = Dimensions.get("window").width;
+// const screenWidth = Dimensions.get("window").width;
+const {
+  width: SCREEN_WIDTH,
+  height: SCREEN_HEIGHT,
+} = Dimensions.get('window');
+const scale = SCREEN_WIDTH / 320;
+function normalize(size) {
+  const newSize = size * scale 
+  if (Platform.OS === 'ios') {
+    return Math.round(PixelRatio.roundToNearestPixel(newSize))
+  } else {
+    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2
+  }
+}
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -33,9 +46,10 @@ import ButtonToggleGroup from "react-native-button-toggle-group";
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Stopwatch, Timer } from "react-native-stopwatch-timer";
-import { LogBox } from "react-native";
+import { LogBox, PixelRatio } from "react-native";
 import * as Speech from "expo-speech";
 import { cos } from "react-native-reanimated";
+
 
 //LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -193,6 +207,16 @@ async function countStCall() {
 
 countNRIC();
 countNRICCall();
+const windowWidth1 = Dimensions.get('window').width;
+const windowHeight1 = Dimensions.get('window').height;
+var headerHeightSize;
+if(windowWidth1 <= 414 && windowHeight1 <= 736) {
+  headerHeightSize = 35
+} else {
+  headerHeightSize = 90
+}
+//mini 428,926
+//ip6 414,736
 //////////////////////////////////////////////////////////
 ////////////MAIN CONTROLLER & NAVIGATION//////////////////
 //////////////////////////////////////////////////////////
@@ -203,7 +227,7 @@ const Goniometer_App = () => {
         screenOptions={{
           headerStyle: {
             backgroundColor: "#2B6D6A",
-            height: 90,
+            height: headerHeightSize,
           },
           headerTintColor: "#fff",
           headerTitleStyle: {
@@ -995,7 +1019,7 @@ const Welcome = ({ navigation, route }) => {
     );
   } else if (checker[0] == 1 || nricX == 1) {
     return (
-      <View style={pp.container}>
+      // <View style={pp.container}>
         <FlatList
           style={pp.list}
           contentContainerStyle={pp.listContainer}
@@ -1031,7 +1055,7 @@ const Welcome = ({ navigation, route }) => {
             );
           }}
         />
-      </View>
+      // </View>
     );
   }
 };
@@ -2889,6 +2913,25 @@ const Goniometer = ({ navigation, route }) => {
       },
     ],
   };
+  const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+//mini 428,926
+//ip6 414,736
+
+// console.log(windowWidth + "wid");
+// console.log(windowHeight);
+var kneeRangeSize;
+var prevSize;
+var recordExtensionSize;
+var recordFlexionSize;
+if (windowWidth <= 414 && windowHeight <=736) {
+  kneeRangeSize = 22.5;
+  prevSize = 15
+  
+} else {
+  kneeRangeSize = 45;
+  prevSize = 30
+}
 
   return (
     <View style={styles.container}>
@@ -2907,7 +2950,8 @@ const Goniometer = ({ navigation, route }) => {
 
       {shouldShow ? (
         <View>
-          <Text style={{ textAlign: "center", fontSize: 45 }}>Knee Range </Text>
+          {(windowWidth <= 414 && windowHeight <=736) ? <Text></Text>:<Text style={{ textAlign: "center", fontSize: kneeRangeSize }}>Knee Range </Text>}
+          
           {noGenderWeek(getDegrees(round(beta))) ? (
             <Text style={stylePercentile.textPercentileBlack}>
               {getDegrees(round(beta))}°
@@ -2945,12 +2989,12 @@ const Goniometer = ({ navigation, route }) => {
       {shouldShow ? (
         <View>
           <Text
-            style={{ textAlign: "center", fontSize: 30, fontStyle: "italic" }}
+            style={{ textAlign: "center", fontSize: prevSize, fontStyle: "italic" }}
           >
             Previous Extension: {extensionDegree}°
           </Text>
           <Text
-            style={{ textAlign: "center", fontSize: 30, fontStyle: "italic" }}
+            style={{ textAlign: "center", fontSize: prevSize, fontStyle: "italic" }}
           >
             Previous Flexion: {flexionDegree}°
           </Text>
@@ -2960,18 +3004,17 @@ const Goniometer = ({ navigation, route }) => {
         <View>
           <Text></Text>
           <Text
-            style={{ textAlign: "center", fontSize: 30, fontStyle: "italic" }}
+            style={{ textAlign: "center", fontSize: prevSize, fontStyle: "italic" }}
           >
             Extension: {extensionDegreeControl}
           </Text>
           <Text
-            style={{ textAlign: "center", fontSize: 30, fontStyle: "italic" }}
+            style={{ textAlign: "center", fontSize: prevSize, fontStyle: "italic" }}
           >
             Flexion: {flexionDegreeControl}
           </Text>
         </View>
       ) : null}
-
       <ScrollView>
         <FlatList
           data={state.data}
@@ -3077,8 +3120,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   pickerContainerDate: {
-    marginLeft: "33%",
-    textAlign: "center",
+    // paddingLeft:"50%",
+    // paddingRight:"20%",
+    marginLeft:"auto",
+    marginRight:"auto",
+    width:"35%",
+    // textAlign: "center",
+    // backgroundColor: "#000000",
   },
   text: {
     textAlign: "center",
@@ -3378,8 +3426,10 @@ const inpttext = StyleSheet.create({
 
 const pp = StyleSheet.create({
   container: {
+    justifyContent: "center",
+    paddingHorizontal: 10,
     flex: 1,
-    backgroundColor: "#f6f6f6",
+    backgroundColor: "#000000",
   },
   list: {
     paddingHorizontal: 5,
