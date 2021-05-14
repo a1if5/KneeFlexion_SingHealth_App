@@ -17,17 +17,14 @@ import {
 } from "react-native";
 import { Dimensions } from "react-native";
 // const screenWidth = Dimensions.get("window").width;
-const {
-  width: SCREEN_WIDTH,
-  height: SCREEN_HEIGHT,
-} = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const scale = SCREEN_WIDTH / 320;
 function normalize(size) {
-  const newSize = size * scale 
-  if (Platform.OS === 'ios') {
-    return Math.round(PixelRatio.roundToNearestPixel(newSize))
+  const newSize = size * scale;
+  if (Platform.OS === "ios") {
+    return Math.round(PixelRatio.roundToNearestPixel(newSize));
   } else {
-    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2
+    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
   }
 }
 import "react-native-gesture-handler";
@@ -49,7 +46,6 @@ import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 import { LogBox, PixelRatio } from "react-native";
 import * as Speech from "expo-speech";
 import { cos } from "react-native-reanimated";
-
 
 //LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -151,9 +147,11 @@ var weekNineExtensionList = [];
 var weekTenExtensionList = [];
 var weekTwelveExtensionList = [];
 var weekElevenExtensionList = [];
-if(initCount == 0) {
-initCount++;
-} else {weekOneExtensionCall()}
+if (initCount == 0) {
+  initCount++;
+} else {
+  weekOneExtensionCall();
+}
 // weekOneExtensionCall();
 weekTwoExtensionCall();
 weekThreeExtensionCall();
@@ -169,6 +167,8 @@ weekTwelveExtensionCall();
 
 var nricX;
 var stCheck;
+var listHeight;
+
 async function countNRIC() {
   return new Promise((resolve, reject) => {
     userNRICDataBase.transaction((tx1) => {
@@ -207,13 +207,16 @@ async function countStCall() {
 
 countNRIC();
 countNRICCall();
-const windowWidth1 = Dimensions.get('window').width;
-const windowHeight1 = Dimensions.get('window').height;
-var headerHeightSize;
-if(windowWidth1 <= 414 && windowHeight1 <= 736) {
-  headerHeightSize = 35
+const windowWidth1 = Dimensions.get("window").width;
+const windowHeight1 = Dimensions.get("window").height;
+var headerHeightSize = 90;
+var headerFontSize = 25;
+if (windowWidth1 <= 414 && windowHeight1 <= 736) {
+  headerHeightSize = 50;
+  headerFontSize = 20;
 } else {
-  headerHeightSize = 90
+  headerHeightSize = 90;
+  headerFontSize = 25;
 }
 //mini 428,926
 //ip6 414,736
@@ -231,7 +234,7 @@ const Goniometer_App = () => {
           },
           headerTintColor: "#fff",
           headerTitleStyle: {
-            fontSize: 25,
+            fontSize: headerFontSize,
             textAlign: "center",
           },
         }}
@@ -254,12 +257,12 @@ const Goniometer_App = () => {
         <Stack.Screen
           name="Goniometer"
           component={Goniometer}
-          options={{ title: "MEASUREMENT" }}
+          options={{ title: "MEASURE" }}
         />
         <Stack.Screen
           name="FormSG"
           component={FormSG}
-          options={{ title: "FORMSG" }}
+          options={{ title: "FORM SG" }}
         />
         <Stack.Screen
           name="SitStandFormSG"
@@ -269,12 +272,12 @@ const Goniometer_App = () => {
         <Stack.Screen
           name="Contact"
           component={Contact}
-          options={{ title: "Contact Us" }}
+          options={{ title: "CONTACT US" }}
         />
         <Stack.Screen
           name="CalenderDataPage"
           component={CalenderDataPage}
-          options={{ title: "HISTORY CALENDAR" }}
+          options={{ title: "CALENDAR" }}
         />
         <Stack.Screen
           name="GuidePage"
@@ -284,7 +287,7 @@ const Goniometer_App = () => {
         <Stack.Screen
           name="Graph"
           component={Graph}
-          options={{ title: "HISTORY CHART" }}
+          options={{ title: "CHART" }}
         />
         <Stack.Screen
           name="SitStand"
@@ -295,8 +298,6 @@ const Goniometer_App = () => {
     </NavigationContainer>
   );
 };
-
-
 
 const Data = ({ navigation, route }) => {
   weekOneExtensionCall();
@@ -324,25 +325,28 @@ const Data = ({ navigation, route }) => {
   weekElevenCall();
   weekTwelveCall();
   const directGraph = () => {
-    navigation.navigate("Graph", {  });
+    navigation.navigate("Graph", {});
   };
   const directCalendar = () => {
-    navigation.navigate("CalenderDataPage", {  });
+    navigation.navigate("CalenderDataPage", {});
   };
   return (
     <View>
-      <TouchableOpacity onPress={directGraph}
-      style={styles.NavigateMeasurementData}>
-        <Text style = {styles.TextStyleButton}>Chart</Text>
+      <TouchableOpacity
+        onPress={directGraph}
+        style={styles.NavigateMeasurementData}
+      >
+        <Text style={styles.TextStyleButton}>Chart</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={directCalendar}
-      style={styles.NavigateMeasurementData}>
-        <Text style = {styles.TextStyleButton}>Calendar</Text>
+      <TouchableOpacity
+        onPress={directCalendar}
+        style={styles.NavigateMeasurementData}
+      >
+        <Text style={styles.TextStyleButton}>Calendar</Text>
       </TouchableOpacity>
     </View>
-  )
-
-}
+  );
+};
 
 const HomeScreen = ({ navigation, route }) => {
   countNRICCall();
@@ -354,12 +358,26 @@ const HomeScreen = ({ navigation, route }) => {
   }
   delay();
   return (
-    <View style={styles.container}>
-      <Image source={require("./sgh-logo.png")} />
+    <View style={styles.container} onTouchStart={() => navigation.navigate("Welcome")}>
+      <Image
+        style={{
+          display: "block",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
+        source={require("./sgh-logo2.png")}
+      />
       <Text></Text>
       <Text></Text>
-      <Text style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}>
-        Goniometer Application
+      <Text
+        style={{
+          textAlign: "center",
+          fontSize: 40,
+          fontWeight: "bold",
+          fontStyle: "italic",
+        }}
+      >
+        Mo-Knee-Tor
       </Text>
       <Text></Text>
       <Text style={{ textAlign: "center", fontSize: 20 }}>
@@ -461,9 +479,11 @@ const SitStand = ({ navigation, route }) => {
               tx.executeSql(
                 "select * from stopWatchDataBase",
                 [],
-                (_, { rows }) => console.log(
-                  // JSON.stringify(rows)
-                  )
+                (_, { rows }) =>
+                  console
+                    .log
+                    // JSON.stringify(rows)
+                    ()
               );
             },
             null,
@@ -687,34 +707,31 @@ async function setDateForList() {
   var h = 1;
   var k;
   dateDataBase.transaction((tx) => {
-    tx.executeSql(
-      `select * from dateDataBase LIMIT ?`,
-      [1],
-      (tx, result) => {
-        if (result.rows.length > 0) {
-          weeks[0] = result.rows.item(0).value;
-        }
-      })
-    })
+    tx.executeSql(`select * from dateDataBase LIMIT ?`, [1], (tx, result) => {
+      if (result.rows.length > 0) {
+        weeks[0] = result.rows.item(0).value;
+      }
+    });
+  });
   for (var x = 1; x < 84; x++) {
-      dateDataBase.transaction((tx) => {
-        tx.executeSql(
-          `select * from dateDataBase ORDER BY id ASC LIMIT ${h},${g}`,
-          [],
-          (tx, result) => {
-            if (result.rows.length > 0) {
+    dateDataBase.transaction((tx) => {
+      tx.executeSql(
+        `select * from dateDataBase ORDER BY id ASC LIMIT ${h},${g}`,
+        [],
+        (tx, result) => {
+          if (result.rows.length > 0) {
             var len = result.rows.length;
             weeks[h] = result.rows.item(0).value;
             h++;
             var data = [];
             data.push(result.rows.item(0).value);
             return data;
-            } else {
-              return 0;
-            }
+          } else {
+            return 0;
           }
-        );
-      });
+        }
+      );
+    });
   }
 }
 
@@ -845,9 +862,10 @@ const Welcome = ({ navigation, route }) => {
           [text]
         );
         tx.executeSql("select * from userNRICDataBase", [], (_, { rows }) =>
-          console.log(
+          console
+            .log
             // JSON.stringify(rows)
-            )
+            ()
         );
       },
       null,
@@ -863,9 +881,10 @@ const Welcome = ({ navigation, route }) => {
           text,
         ]);
         tx.executeSql("select * from dateDataBase", [], (_, { rows }) =>
-          console.log(
+          console
+            .log
             // JSON.stringify(rows)
-            )
+            ()
         );
       },
       null,
@@ -1020,41 +1039,41 @@ const Welcome = ({ navigation, route }) => {
   } else if (checker[0] == 1 || nricX == 1) {
     return (
       // <View style={pp.container}>
-        <FlatList
-          style={pp.list}
-          contentContainerStyle={pp.listContainer}
-          data={state.data}
-          horizontal={false}
-          numColumns={2}
-          keyExtractor={(item) => {
-            return item.id;
-          }}
-          renderItem={({ item }) => {
-            return (
-              <View>
-                <TouchableOpacity
-                  style={pp.card}
-                  onPress={() => {
-                    clickEventListener(item);
+      <FlatList
+        style={pp.list}
+        contentContainerStyle={pp.listContainer}
+        data={state.data}
+        horizontal={false}
+        numColumns={2}
+        keyExtractor={(item) => {
+          return item.id;
+        }}
+        renderItem={({ item }) => {
+          return (
+            <View>
+              <TouchableOpacity
+                style={pp.card}
+                onPress={() => {
+                  clickEventListener(item);
+                }}
+              >
+                <Image style={pp.cardImage} source={{ uri: item.image }} />
+              </TouchableOpacity>
+
+              <View style={pp.cardHeader}>
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
-                  <Image style={pp.cardImage} source={{ uri: item.image }} />
-                </TouchableOpacity>
-
-                <View style={pp.cardHeader}>
-                  <View
-                    style={{
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Text style={pp.title}>{item.title}</Text>
-                  </View>
+                  <Text style={pp.title}>{item.title}</Text>
                 </View>
               </View>
-            );
-          }}
-        />
+            </View>
+          );
+        }}
+      />
       // </View>
     );
   }
@@ -1092,7 +1111,6 @@ async function weekOneExtension() {
           tmr6,
         [],
         (tx1, results1) => {
-          
           var len1 = results1.rows.length;
           if (len1 > 0) {
             for (var x = 0; x < len1; x++) {
@@ -2343,7 +2361,6 @@ async function weekTwelveCall() {
 function kneeExtensionGraph() {
   return (
     <View style={{ backgroundColor: "white" }}>
-      <Text></Text>
       <Text
         style={{ backgroundColor: "white", textAlign: "center", fontSize: 40 }}
       >
@@ -2385,8 +2402,8 @@ function kneeExtensionGraph() {
             },
           ],
         }}
-        width={Dimensions.get("window").width} // from react-native
-        height={850}
+        width={Dimensions.get("window").width - 5} // from react-native
+        height={Dimensions.get("window").height - 85}
         yAxisLabel=""
         yAxisSuffix="°"
         yAxisInterval={1} // optional, defaults to 1
@@ -2456,8 +2473,8 @@ function kneeFlexionGraph() {
             },
           ],
         }}
-        width={Dimensions.get("window").width} // from react-native
-        height={850}
+        width={Dimensions.get("window").width - 5} // from react-native
+        height={Dimensions.get("window").height - 85}
         yAxisLabel=""
         yAxisSuffix="°"
         yAxisInterval={1} // optional, defaults to 1
@@ -2495,7 +2512,6 @@ const Graph = ({ navigation, route }) => {
           highlightTextColor={"white"}
           inactiveBackgroundColor={"transparent"}
           inactiveTextColor={"grey"}
-          style={{}}
           textStyle={{ fontSize: 30 }}
           values={["Flexion", "Extension"]}
           onSelect={(val) => setSelectedLanguage(val.toLowerCase())}
@@ -2511,10 +2527,17 @@ const Graph = ({ navigation, route }) => {
 };
 
 const Contact = ({ navigation, route }) => {
-  weekOneExtensionCall()
+  weekOneExtensionCall();
   return (
     <View style={styles.container}>
-      <Image source={require("./sgh-logo.png")} />
+      <Image
+        style={{
+          display: "block",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
+        source={require("./sgh-logo2.png")}
+      />
       <Text></Text>
       <Text></Text>
       <Text style={{ textAlign: "center", fontSize: 20 }}>
@@ -2652,9 +2675,10 @@ const Goniometer = ({ navigation, route }) => {
           ]
         );
         tx.executeSql("SELECT * FROM kneeFlexionDataBase", [], (_, { rows }) =>
-          console.log(
+          console
+            .log
             // JSON.stringify(rows)
-            )
+            ()
         );
       },
       null,
@@ -2681,9 +2705,11 @@ const Goniometer = ({ navigation, route }) => {
         tx.executeSql(
           "SELECT * FROM kneeExtensionDataBase",
           [],
-          (_, { rows }) => console.log(
-            // JSON.stringify(rows)
-            )
+          (_, { rows }) =>
+            console
+              .log
+              // JSON.stringify(rows)
+              ()
         );
       },
       null,
@@ -2903,36 +2929,45 @@ const Goniometer = ({ navigation, route }) => {
         id: 1,
         title: "Record Extension",
         link: "ke",
-        image: "https://i.imgur.com/8JOdzj4.png",
+        image: "./ke.png",
       },
       {
         id: 2,
         title: "Record Flexion",
         link: "kf",
-        image: "https://i.imgur.com/rcy7V5j.png",
+        image: "./kf.png",
       },
     ],
   };
-  const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
-//mini 428,926
-//ip6 414,736
+  const windowWidth = Dimensions.get("window").width;
+  const windowHeight = Dimensions.get("window").height;
+  //mini 428,926
+  //ip6 414,736
 
-// console.log(windowWidth + "wid");
-// console.log(windowHeight);
-var kneeRangeSize;
-var prevSize;
-var recordExtensionSize;
-var recordFlexionSize;
-if (windowWidth <= 414 && windowHeight <=736) {
-  kneeRangeSize = 22.5;
-  prevSize = 15
-  
-} else {
-  kneeRangeSize = 45;
-  prevSize = 30
-}
+  // console.log(windowWidth + "wid");
+  // console.log(windowHeight);
+  var kneeRangeSize;
+  var prevSize;
+  var recordExtensionSize;
+  var recordFlexionSize;
+  if (windowWidth <= 414 && windowHeight <= 736) {
+    kneeRangeSize = 22.5;
+    prevSize = 20;
+    listHeight = 125;
+  } else {
+    kneeRangeSize = 45;
+    prevSize = 30;
+    listHeight = 150;
+  }
 
+  // if (
+  //   Dimensions.get("window").width <= 414 &&
+  //   Dimensions.get("window").height <= 736
+  // ) {
+  //   listHeight = 125;
+  // } else {
+  //   listHeight = 150;
+  // }
   return (
     <View style={styles.container}>
       <View style={{ alignItems: "center" }}>
@@ -2950,8 +2985,14 @@ if (windowWidth <= 414 && windowHeight <=736) {
 
       {shouldShow ? (
         <View>
-          {(windowWidth <= 414 && windowHeight <=736) ? <Text></Text>:<Text style={{ textAlign: "center", fontSize: kneeRangeSize }}>Knee Range </Text>}
-          
+          {windowWidth <= 414 && windowHeight <= 736 ? (
+            <Text></Text>
+          ) : (
+            <Text style={{ textAlign: "center", fontSize: kneeRangeSize }}>
+              Knee Range{" "}
+            </Text>
+          )}
+
           {noGenderWeek(getDegrees(round(beta))) ? (
             <Text style={stylePercentile.textPercentileBlack}>
               {getDegrees(round(beta))}°
@@ -2989,12 +3030,20 @@ if (windowWidth <= 414 && windowHeight <=736) {
       {shouldShow ? (
         <View>
           <Text
-            style={{ textAlign: "center", fontSize: prevSize, fontStyle: "italic" }}
+            style={{
+              textAlign: "center",
+              fontSize: prevSize,
+              fontStyle: "italic",
+            }}
           >
             Previous Extension: {extensionDegree}°
           </Text>
           <Text
-            style={{ textAlign: "center", fontSize: prevSize, fontStyle: "italic" }}
+            style={{
+              textAlign: "center",
+              fontSize: prevSize,
+              fontStyle: "italic",
+            }}
           >
             Previous Flexion: {flexionDegree}°
           </Text>
@@ -3004,54 +3053,152 @@ if (windowWidth <= 414 && windowHeight <=736) {
         <View>
           <Text></Text>
           <Text
-            style={{ textAlign: "center", fontSize: prevSize, fontStyle: "italic" }}
+            style={{
+              textAlign: "center",
+              fontSize: prevSize,
+              fontStyle: "italic",
+            }}
           >
             Extension: {extensionDegreeControl}
           </Text>
           <Text
-            style={{ textAlign: "center", fontSize: prevSize, fontStyle: "italic" }}
+            style={{
+              textAlign: "center",
+              fontSize: prevSize,
+              fontStyle: "italic",
+            }}
           >
             Flexion: {flexionDegreeControl}
           </Text>
         </View>
       ) : null}
       <ScrollView>
-        <FlatList
-          data={state.data}
-          horizontal={false}
-          numColumns={1}
-          keyExtractor={(item) => {
-            return item.id.toString();
-          }}
-          renderItem={({ item }) => {
-            return (
-              <View>
-                <TouchableOpacity
-                  style={ppp.card}
-                  onPress={() => {
-                    if (item.link == "kf") {
-                      var degr = getDegrees(round(beta));
-                      add(degr);
-                      setFlexionDegree(getDegrees(round(beta)));
-                      setFlexionDegreeControl("Done");
-                      setVal(degr);
-                    } else {
-                      var a = getDegrees(round(beta));
-                      add1(a);
-                      setExtensionDegree(getDegrees(round(beta)));
-                      setExtensionDegreeControl("Done");
-                      setVals(a);
-                    }
-                  }}
-                >
-                  <Text style={ppp.title}>{item.title}</Text>
-                  <Text></Text>
-                  <Image style={ppp.cardImage} source={{ uri: item.image }} />
-                </TouchableOpacity>
-              </View>
-            );
-          }}
-        />
+        {Dimensions.get("window").width <= 414 &&
+        Dimensions.get("window").height <= 736 ? (
+          <FlatList
+            data={state.data}
+            horizontal={false}
+            numColumns={1}
+            keyExtractor={(item) => {
+              return item.id.toString();
+            }}
+            renderItem={({ item }) => {
+              return (
+                <View>
+                  <TouchableOpacity
+                    style={ppp.cardIp8}
+                    onPress={() => {
+                      if (item.link == "kf") {
+                        var degr = getDegrees(round(beta));
+                        add(degr);
+                        setFlexionDegree(getDegrees(round(beta)));
+                        setFlexionDegreeControl("Done");
+                        setVal(degr);
+                      } else {
+                        var a = getDegrees(round(beta));
+                        add1(a);
+                        setExtensionDegree(getDegrees(round(beta)));
+                        setExtensionDegreeControl("Done");
+                        setVals(a);
+                      }
+                    }}
+                  >
+                    {/* <Text style={ppp.title}>{item.title}</Text> */}
+                    {/* source={require("./sgh-logo2.png")} */}
+                    <Text></Text>
+                    <Text></Text>
+                    {Dimensions.get("window").width <= 414 &&
+                    Dimensions.get("window").height <= 736 ? (
+                      item.link == "kf" ? (
+                        <Image
+                          style={ppp.cardImageIphone8}
+                          source={require("./kf.png")}
+                        />
+                      ) : (
+                        <Image
+                          style={ppp.cardImageIphone8}
+                          source={require("./ke.png")}
+                        />
+                      )
+                    ) : item.link == "kf" ? (
+                      <Image
+                        style={ppp.cardImage}
+                        source={require("./kf.png")}
+                      />
+                    ) : (
+                      <Image
+                        style={ppp.cardImage}
+                        source={require("./ke.png")}
+                      />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
+          />
+        ) : (
+          <FlatList
+            data={state.data}
+            horizontal={false}
+            numColumns={1}
+            keyExtractor={(item) => {
+              return item.id.toString();
+            }}
+            renderItem={({ item }) => {
+              return (
+                <View>
+                  <TouchableOpacity
+                    style={ppp.card}
+                    onPress={() => {
+                      if (item.link == "kf") {
+                        var degr = getDegrees(round(beta));
+                        add(degr);
+                        setFlexionDegree(getDegrees(round(beta)));
+                        setFlexionDegreeControl("Done");
+                        setVal(degr);
+                      } else {
+                        var a = getDegrees(round(beta));
+                        add1(a);
+                        setExtensionDegree(getDegrees(round(beta)));
+                        setExtensionDegreeControl("Done");
+                        setVals(a);
+                      }
+                    }}
+                  >
+                    {/* <Text style={ppp.title}>{item.title}</Text> */}
+                    {/* source={require("./sgh-logo2.png")} */}
+                    <Text></Text>
+                    <Text></Text>
+                    {Dimensions.get("window").width <= 414 &&
+                    Dimensions.get("window").height <= 736 ? (
+                      item.link == "kf" ? (
+                        <Image
+                          style={ppp.cardImageIphone8}
+                          source={require("./kf.png")}
+                        />
+                      ) : (
+                        <Image
+                          style={ppp.cardImageIphone8}
+                          source={require("./ke.png")}
+                        />
+                      )
+                    ) : item.link == "kf" ? (
+                      <Image
+                        style={ppp.cardImage}
+                        source={require("./kf.png")}
+                      />
+                    ) : (
+                      <Image
+                        style={ppp.cardImage}
+                        source={require("./ke.png")}
+                      />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
+          />
+        )}
         <View style={styles.MainRecordContainer}>
           {!(flexionDegree != 0 && extensionDegree != 0) ? <Text></Text> : null}
           {flexionDegree != 0 && extensionDegree != 0 ? (
@@ -3122,9 +3269,9 @@ const styles = StyleSheet.create({
   pickerContainerDate: {
     // paddingLeft:"50%",
     // paddingRight:"20%",
-    marginLeft:"auto",
-    marginRight:"auto",
-    width:"35%",
+    marginLeft: "auto",
+    marginRight: "auto",
+    width: "35%",
     // textAlign: "center",
     // backgroundColor: "#000000",
   },
@@ -3259,19 +3406,21 @@ const styles = StyleSheet.create({
     fontSize: 60,
   },
   ShowHideTextButtonStyle: {
-    fontSize: 25,
+    fontSize: 18,
+    // fontSize: 25,
     color: "#fff",
     textAlign: "center",
     alignItems: "center",
   },
   ShowHideButtonStyle: {
-    marginTop: 20,
+    marginTop: 10,
     backgroundColor: "#2b2e6d",
-    borderRadius: 35,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: "#fff",
-    height: 50,
-    width: 220,
+    height: 25,
+    //height: 50,
+    width: "40%",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -3511,7 +3660,7 @@ const ppp = StyleSheet.create({
     alignItems: "center",
   },
   /******** card **************/
-  card: {
+  cardIp8: {
     shadowColor: "#474747",
     shadowOffset: {
       width: 0,
@@ -3523,7 +3672,25 @@ const ppp = StyleSheet.create({
     elevation: 12,
     marginVertical: 20,
     backgroundColor: "rgba(161,221,239,0.4)",
-    height: 160,
+    // height: 125, ip8
+    height: 125,
+    // height: 160,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  card: {
+    shadowColor: "#474747",
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+    elevation: 12,
+    marginVertical: 20,
+    backgroundColor: "rgba(161,221,239,0.4)",
+    height: 200,
     borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
@@ -3550,12 +3717,23 @@ const ppp = StyleSheet.create({
     borderBottomLeftRadius: 1,
     borderBottomRightRadius: 1,
   },
+
   cardImage: {
-    height: 80,
-    width: 300,
+    // backgroundColor:"#fff",
+    resizeMode: "stretch",
+    height: "130%",
+    width: 260,
+    alignSelf: "center",
+  },
+  cardImageIphone8: {
+    // backgroundColor:"#fff",
+    resizeMode: "stretch",
+    height: "140%",
+    width: 220,
     alignSelf: "center",
   },
   title: {
+    backgroundColor: "#fff",
     fontSize: 30,
     fontWeight: "bold",
     alignSelf: "center",
