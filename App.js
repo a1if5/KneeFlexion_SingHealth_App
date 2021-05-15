@@ -64,7 +64,9 @@ function resetData() {
     tx1.executeSql(`DROP TABLE dateDataBase`);
   });
 }
-
+//  UNCOMMENT THE LINE 70 TO RESET THE APPLICATION
+//  OR 
+//  REINSTALL EXPO OR APK TO RESET THE APPLICATION
 // resetData();
 var weeks = [];
 let initDate = [];
@@ -115,7 +117,7 @@ if (windowWidth1 <= 414 && windowHeight1 <= 736) {
   headerFontSize = 25;
 }
 
-//  Navigation Setup
+//  Navigation Routing
 const Goniometer_App = () => {
   return (
     <NavigationContainer>
@@ -296,324 +298,6 @@ const HomeScreen = ({ navigation, route }) => {
     </View>
   );
 };
-
-//  Guide Page
-//  Guide videos can be placed here (For future developement)
-const GuidePage = ({ navigation, route }) => {
-  const [playing, setPlaying] = useState(false);
-  const onStateChange = useCallback((state) => {
-    if (state === "ended") {
-      setPlaying(false);
-      Alert.alert("video has finished playing!");
-    }
-  }, []);
-  const togglePlaying = useCallback(() => {
-    setPlaying((prev) => !prev);
-  }, []);
-  return (
-    <View>
-      <Text></Text>
-      <Text style={{ textAlign: "center", fontSize: 40 }}> Exercise Video</Text>
-      <Text></Text>
-      <YoutubePlayer
-        height={300}
-        play={playing}
-        videoId={"yL5maSn3M-g"}
-        onChangeState={onStateChange}
-      />
-    </View>
-  );
-};
-
-//  SitStand Page
-//  Countdown voice will be activated once the user clicks on the start button.
-//  Timer will only run AFTER then countdown voice
-//  User will need to press the stop button to stop the stopwatch and submit the 
-//  readings to SitStandFormSG
-//  **IMPORTANT**
-//  Bug issue: If the start button is clicked twice, the stopwatch will not work
-//  Pending future fix
-const SitStand = ({ navigation, route }) => {
-  const [isTimerStart, setIsTimerStart] = useState(false);
-  const [isStopwatchStart, setIsStopwatchStart] = useState(false);
-  const [timerDuration, setTimerDuration] = useState(90000);
-  const [resetTimer, setResetTimer] = useState(false);
-  const [resetStopwatch, setResetStopwatch] = useState(false);
-  const [forceUpdate1, forceUpdateId1] = useForceUpdate();
-  const [timeVal, setVal] = useState("AboutReact");
-  var seconds = "";
-  var nowTime = 0;
-  const doStuff = () => {
-    setIsStopwatchStart(!isStopwatchStart);
-    setResetStopwatch(false);
-    var b = nowTime.split(":");
-    seconds = +b[0] * 60 * 60 + +b[1] * 60 + +b[2];
-    seconds = seconds + "." + b[3];
-    setVal(seconds);
-    count = count + 1;
-  };
-  const speak = () => {
-    var thingToSay;
-    if (count == 0 || count % 2 == 0) {
-      thingToSay = "3.......... 2......... 1......... Start";
-    } else {
-      thingToSay = "";
-    }
-    Speech.speak(thingToSay, {
-      onDone: doStuff,
-      rate: 0.7,
-    });
-  };
-  const submitAlertStopWatch = () => {
-    var a = nowTime.split(":");
-    seconds = +a[0] * 60 * 60 + +a[1] * 60 + +a[2];
-    seconds = seconds + "." + a[3];
-    setVal(seconds);
-    Alert.alert("Are you sure you want to submit?", "", [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      {
-        text: "Yes",
-        onPress: () => {
-          stopWatchDataBase.transaction(
-            (tx) => {
-              tx.executeSql(
-                "insert into stopWatchDataBase (done, value) values (0, ?)",
-                [
-                  moment().utcOffset("+08:00").format("YYYY-MM-DD") +
-                    " Timing:    " +
-                    seconds.toString(),
-                ]
-              );
-              tx.executeSql(
-                "select * from stopWatchDataBase",
-                [],
-                (_, { rows }) =>
-                  console
-                    .log
-                    // JSON.stringify(rows)
-                    ()
-              );
-            },
-            null,
-            forceUpdate1
-          );
-          navigation.navigate("SitStandFormSG", {
-            timeData: timeVal,
-            name: "SitStandFormSG",
-            flex: 1,
-          });
-          setResetStopwatch(true);
-        },
-      },
-    ]);
-  };
-
-  return (
-    <SafeAreaView style={sitStandPageStyle.container}>
-      <View style={sitStandPageStyle.container}>
-        <View style={sitStandPageStyle.sectionStyle}>
-          <Stopwatch
-            laps
-            hrs={false}
-            msecs={true}
-            start={isStopwatchStart}
-            //To start
-            reset={resetStopwatch}
-            //To reset
-            options={options}
-            //options for the styling
-            getTime={(time) => {
-              nowTime = time;
-            }}
-          />
-
-          {count % 2 == 0 ? (
-            <TouchableHighlight
-              style={sitStandPageStyle.buttonStartStopSitToStand}
-              onPress={speak}
-            >
-              <Text style={sitStandPageStyle.buttonText}>
-                {!isStopwatchStart ? "START" : "STOP"}
-              </Text>
-            </TouchableHighlight>
-          ) : null}
-
-          {count % 2 != 0 && count == 0 ? <Text></Text> : null}
-
-          <View style={sitStandPageStyle.MainRecordContainer}>
-            {count % 2 != 0 ? (
-              <TouchableOpacity
-                style={sitStandPageStyle.SubmitButtonStyleStopWatch}
-                onPress={submitAlertStopWatch}
-              >
-                <Text style={sitStandPageStyle.TextStyleButton}>
-                  Submit FormSG
-                </Text>
-              </TouchableOpacity>
-            ) : null}
-          </View>
-
-          <View style={sitStandPageStyle.MainRecordContainer}>
-            {count % 2 != 0 ? (
-              <TouchableOpacity
-                style={sitStandPageStyle.buttonStartStopSitToStandReset}
-                onPress={() => {
-                  setIsStopwatchStart(false);
-                  setResetStopwatch(true);
-                  count = 0;
-                }}
-              >
-                <Text style={sitStandPageStyle.TextStyleButton}>Reset</Text>
-              </TouchableOpacity>
-            ) : null}
-          </View>
-        </View>
-      </View>
-    </SafeAreaView>
-  );
-};
-
-//  Calendar Page
-//  Displays all the days where the user have recorded their extension, flexion and 
-//  stopwatch readings. Pull down calendar will show a blue dot if recording is done 
-//  for the day
-const CalenderDataPage = ({ navigation, route }) => {
-  const [a, b] = useState({});
-  const [x, y] = useState({});
-  const timeToString = (time) => {
-    const date = new Date(time);
-    return date.toISOString().split("T")[0];
-  };
-  const [items, setItems] = useState({});
-  const loadItems = (day) => {
-    setTimeout(() => {
-      for (let i = -15; i < 85; i++) {
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strTime = timeToString(time);
-        if (!items[strTime]) {
-          items[strTime] = [];
-          kneeFlexionDataBase.transaction((tx) => {
-            tx.executeSql(
-              `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
-              [strTime + "%"],
-              (tx, results) => {
-                var len = results.rows.length;
-                if (len > 0) {
-                  var ans = results.rows.item(0).value;
-                  var g = ans.substr(-3);
-
-                  kneeExtensionDataBase.transaction((tx1) => {
-                    tx1.executeSql(
-                      `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
-                      [strTime + "%"],
-                      (tx1, results1) => {
-                        var len1 = results1.rows.length;
-                        if (len1 > 0) {
-                          var ans1 = results1.rows.item(0).value;
-                          var h = ans1.substr(-3);
-                          var k = "Not Recorded";
-                          if (stCheck == null || stCheck == 0) {
-                            items[strTime].push({
-                              dat: strTime + " ",
-                              name: g + "°",
-                              name1: +h + "°",
-                              name2: k,
-                              height: Math.max(
-                                50,
-                                Math.floor(Math.random() * 150)
-                              ),
-                            });
-                            b(results.rows.item(0));
-                            y(results1.rows.item(0));
-                          } else {
-                            stopWatchDataBase.transaction((tx2) => {
-                              tx2.executeSql(
-                                `SELECT * FROM stopWatchDataBase WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
-                                [strTime + "%"],
-                                (tx2, results1) => {
-                                  var len1 = results1.rows.length;
-                                  if (len1 > 0) {
-                                    var ans2 = results1.rows.item(0).value;
-                                    k = ans2.substr(-6);
-                                    items[strTime].push({
-                                      dat: strTime + " ",
-                                      name: g + "°",
-                                      name1: +h + "°",
-                                      name2: k + " seconds",
-                                      height: Math.max(
-                                        50,
-                                        Math.floor(Math.random() * 150)
-                                      ),
-                                    });
-                                    b(results.rows.item(0));
-                                    y(results1.rows.item(0));
-                                  }
-                                }
-                              );
-                            });
-                          }
-                        }
-                      }
-                    );
-                  });
-                }
-              }
-            );
-          });
-        }
-      }
-      const newItems = {};
-      Object.keys(items).forEach((key) => {
-        newItems[key] = items[key];
-      });
-      setItems(newItems);
-    }, 1000);
-  };
-  const [forceUpdate, forceUpdateId] = useForceUpdate();
-  const renderItem = (x) => {
-    return (
-      <TouchableOpacity style={{ marginRight: 10, marginTop: 17 }}>
-        <Card>
-          <Card.Content>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text>
-                Date: {x.dat}
-                {"\n"}
-                {"\n"}
-                Flexion: {x.name} {"\n"}
-                {"\n"}
-                Extension: {x.name1} {"\n"}
-                {"\n"}
-                Time: {x.name2}
-              </Text>
-            </View>
-          </Card.Content>
-        </Card>
-      </TouchableOpacity>
-    );
-  };
-
-  return (
-    <View style={{ flex: 1 }}>
-      <Agenda
-        items={items}
-        loadItemsForMonth={loadItems}
-        selected={moment().utcOffset("+08:00").format("YYYY-MM-DD")}
-        renderItem={renderItem}
-      />
-    </View>
-  );
-};
-
 //  Welcome Page
 //  **IMPORTANT**
 //  Initialisation of the user's data is a one time initialisation. If user accidentally 
@@ -976,7 +660,320 @@ const Welcome = ({ navigation, route }) => {
     );
   }
 };
+//  Guide Page
+//  Guide videos can be placed here (For future developement)
+const GuidePage = ({ navigation, route }) => {
+  const [playing, setPlaying] = useState(false);
+  const onStateChange = useCallback((state) => {
+    if (state === "ended") {
+      setPlaying(false);
+      Alert.alert("video has finished playing!");
+    }
+  }, []);
+  const togglePlaying = useCallback(() => {
+    setPlaying((prev) => !prev);
+  }, []);
+  return (
+    <View>
+      <Text></Text>
+      <Text style={{ textAlign: "center", fontSize: 40 }}> Exercise Video</Text>
+      <Text></Text>
+      <YoutubePlayer
+        height={300}
+        play={playing}
+        videoId={"yL5maSn3M-g"}
+        onChangeState={onStateChange}
+      />
+    </View>
+  );
+};
+//  SitStand Page
+//  Countdown voice will be activated once the user clicks on the start button.
+//  Timer will only run AFTER then countdown voice
+//  User will need to press the stop button to stop the stopwatch and submit the 
+//  readings to SitStandFormSG
+//  **IMPORTANT**
+//  Bug issue: If the start button is clicked twice, the stopwatch will not work
+//  Pending future fix
+const SitStand = ({ navigation, route }) => {
+  const [isTimerStart, setIsTimerStart] = useState(false);
+  const [isStopwatchStart, setIsStopwatchStart] = useState(false);
+  const [timerDuration, setTimerDuration] = useState(90000);
+  const [resetTimer, setResetTimer] = useState(false);
+  const [resetStopwatch, setResetStopwatch] = useState(false);
+  const [forceUpdate1, forceUpdateId1] = useForceUpdate();
+  const [timeVal, setVal] = useState("AboutReact");
+  var seconds = "";
+  var nowTime = 0;
+  const doStuff = () => {
+    setIsStopwatchStart(!isStopwatchStart);
+    setResetStopwatch(false);
+    var b = nowTime.split(":");
+    seconds = +b[0] * 60 * 60 + +b[1] * 60 + +b[2];
+    seconds = seconds + "." + b[3];
+    setVal(seconds);
+    count = count + 1;
+  };
+  const speak = () => {
+    var thingToSay;
+    if (count == 0 || count % 2 == 0) {
+      thingToSay = "3.......... 2......... 1......... Start";
+    } else {
+      thingToSay = "";
+    }
+    Speech.speak(thingToSay, {
+      onDone: doStuff,
+      rate: 0.7,
+    });
+  };
+  const submitAlertStopWatch = () => {
+    var a = nowTime.split(":");
+    seconds = +a[0] * 60 * 60 + +a[1] * 60 + +a[2];
+    seconds = seconds + "." + a[3];
+    setVal(seconds);
+    Alert.alert("Are you sure you want to submit?", "", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Yes",
+        onPress: () => {
+          stopWatchDataBase.transaction(
+            (tx) => {
+              tx.executeSql(
+                "insert into stopWatchDataBase (done, value) values (0, ?)",
+                [
+                  moment().utcOffset("+08:00").format("YYYY-MM-DD") +
+                    " Timing:    " +
+                    seconds.toString(),
+                ]
+              );
+              tx.executeSql(
+                "select * from stopWatchDataBase",
+                [],
+                (_, { rows }) =>
+                  console
+                    .log
+                    // JSON.stringify(rows)
+                    ()
+              );
+            },
+            null,
+            forceUpdate1
+          );
+          navigation.navigate("SitStandFormSG", {
+            timeData: timeVal,
+            name: "SitStandFormSG",
+            flex: 1,
+          });
+          setResetStopwatch(true);
+        },
+      },
+    ]);
+  };
 
+  return (
+    <SafeAreaView style={sitStandPageStyle.container}>
+      <View style={sitStandPageStyle.container}>
+        <View style={sitStandPageStyle.sectionStyle}>
+          <Stopwatch
+            laps
+            hrs={false}
+            msecs={true}
+            start={isStopwatchStart}
+            //To start
+            reset={resetStopwatch}
+            //To reset
+            options={options}
+            //options for the styling
+            getTime={(time) => {
+              nowTime = time;
+            }}
+          />
+
+          {count % 2 == 0 ? (
+            <TouchableHighlight
+              style={sitStandPageStyle.buttonStartStopSitToStand}
+              onPress={speak}
+            >
+              <Text style={sitStandPageStyle.buttonText}>
+                {!isStopwatchStart ? "START" : "STOP"}
+              </Text>
+            </TouchableHighlight>
+          ) : null}
+
+          {count % 2 != 0 && count == 0 ? <Text></Text> : null}
+
+          <View style={sitStandPageStyle.MainRecordContainer}>
+            {count % 2 != 0 ? (
+              <TouchableOpacity
+                style={sitStandPageStyle.SubmitButtonStyleStopWatch}
+                onPress={submitAlertStopWatch}
+              >
+                <Text style={sitStandPageStyle.TextStyleButton}>
+                  Submit FormSG
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+
+          <View style={sitStandPageStyle.MainRecordContainer}>
+            {count % 2 != 0 ? (
+              <TouchableOpacity
+                style={sitStandPageStyle.buttonStartStopSitToStandReset}
+                onPress={() => {
+                  setIsStopwatchStart(false);
+                  setResetStopwatch(true);
+                  count = 0;
+                }}
+              >
+                <Text style={sitStandPageStyle.TextStyleButton}>Reset</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+};
+//  Calendar Page
+//  Displays all the days where the user have recorded their extension, flexion and 
+//  stopwatch readings. Pull down calendar will show a blue dot if recording is done 
+//  for the day
+const CalenderDataPage = ({ navigation, route }) => {
+  const [a, b] = useState({});
+  const [x, y] = useState({});
+  const timeToString = (time) => {
+    const date = new Date(time);
+    return date.toISOString().split("T")[0];
+  };
+  const [items, setItems] = useState({});
+  const loadItems = (day) => {
+    setTimeout(() => {
+      for (let i = -15; i < 85; i++) {
+        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
+        const strTime = timeToString(time);
+        if (!items[strTime]) {
+          items[strTime] = [];
+          kneeFlexionDataBase.transaction((tx) => {
+            tx.executeSql(
+              `SELECT * FROM kneeFlexionDataBase WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
+              [strTime + "%"],
+              (tx, results) => {
+                var len = results.rows.length;
+                if (len > 0) {
+                  var ans = results.rows.item(0).value;
+                  var g = ans.substr(-3);
+
+                  kneeExtensionDataBase.transaction((tx1) => {
+                    tx1.executeSql(
+                      `SELECT * FROM kneeExtensionDataBase WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
+                      [strTime + "%"],
+                      (tx1, results1) => {
+                        var len1 = results1.rows.length;
+                        if (len1 > 0) {
+                          var ans1 = results1.rows.item(0).value;
+                          var h = ans1.substr(-3);
+                          var k = "Not Recorded";
+                          if (stCheck == null || stCheck == 0) {
+                            items[strTime].push({
+                              dat: strTime + " ",
+                              name: g + "°",
+                              name1: +h + "°",
+                              name2: k,
+                              height: Math.max(
+                                50,
+                                Math.floor(Math.random() * 150)
+                              ),
+                            });
+                            b(results.rows.item(0));
+                            y(results1.rows.item(0));
+                          } else {
+                            stopWatchDataBase.transaction((tx2) => {
+                              tx2.executeSql(
+                                `SELECT * FROM stopWatchDataBase WHERE value LIKE ? ORDER BY id DESC LIMIT 1`,
+                                [strTime + "%"],
+                                (tx2, results1) => {
+                                  var len1 = results1.rows.length;
+                                  if (len1 > 0) {
+                                    var ans2 = results1.rows.item(0).value;
+                                    k = ans2.substr(-6);
+                                    items[strTime].push({
+                                      dat: strTime + " ",
+                                      name: g + "°",
+                                      name1: +h + "°",
+                                      name2: k + " seconds",
+                                      height: Math.max(
+                                        50,
+                                        Math.floor(Math.random() * 150)
+                                      ),
+                                    });
+                                    b(results.rows.item(0));
+                                    y(results1.rows.item(0));
+                                  }
+                                }
+                              );
+                            });
+                          }
+                        }
+                      }
+                    );
+                  });
+                }
+              }
+            );
+          });
+        }
+      }
+      const newItems = {};
+      Object.keys(items).forEach((key) => {
+        newItems[key] = items[key];
+      });
+      setItems(newItems);
+    }, 1000);
+  };
+  const [forceUpdate, forceUpdateId] = useForceUpdate();
+  const renderItem = (x) => {
+    return (
+      <TouchableOpacity style={{ marginRight: 10, marginTop: 17 }}>
+        <Card>
+          <Card.Content>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text>
+                Date: {x.dat}
+                {"\n"}
+                {"\n"}
+                Flexion: {x.name} {"\n"}
+                {"\n"}
+                Extension: {x.name1} {"\n"}
+                {"\n"}
+                Time: {x.name2}
+              </Text>
+            </View>
+          </Card.Content>
+        </Card>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Agenda
+        items={items}
+        loadItemsForMonth={loadItems}
+        selected={moment().utcOffset("+08:00").format("YYYY-MM-DD")}
+        renderItem={renderItem}
+      />
+    </View>
+  );
+};
 //  Chart Page
 //  Application will display the AVERAGE weekly degree readings for knee flexion and extension
 //  **IMPORTANT**
@@ -1068,7 +1065,6 @@ const Graph = ({ navigation, route }) => {
     </ScrollView>
   );
 };
-
 //  SGH/SingHealth Contact Page
 //  SGH contact details
 const Contact = ({ navigation, route }) => {
@@ -1095,8 +1091,6 @@ const Contact = ({ navigation, route }) => {
     </View>
   );
 };
-
-
 //  Knee Measurement Form SG Page
 //  Data is automatically retrieved from local database
 //  **IMPORTANT**
@@ -1130,7 +1124,6 @@ const SitStandFormSG = ({ navigation, route }) => {
     />
   );
 };
-
 //  Sit-stand Form SG Page
 //  Data is automatically retrieved from local database
 //  **IMPORTANT**
@@ -1170,7 +1163,6 @@ const FormSG = ({ navigation, route }) => {
     />
   );
 };
-
 //  Goniometer Measurement Page
 //  Function for knee degree measurements
 const Goniometer = ({ navigation, route }) => {
@@ -1756,7 +1748,6 @@ const Goniometer = ({ navigation, route }) => {
     </View>
   );
 };
-
 //  Saves all the dates for the 12 week recovery process in the dateDataBase database
 //  Will be needed for the graph page to load the correct values
 async function setDateForList() {
@@ -1791,12 +1782,10 @@ async function setDateForList() {
     });
   }
 }
-
 function useForceUpdate() {
   const [value, setValue] = useState(0);
   return [() => setValue(value + 1), value];
 }
-
 //  Calculations for the average weekly extension readings
 async function weekOneExtension() {
   var total = 0;
