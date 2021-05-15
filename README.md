@@ -1,8 +1,7 @@
 # KneeFlexionROM
 ReactNative Mobile App to support the tele-monitoring of knee range of motion for patients that have undergone knee replacement surgery
 
-
-https://user-images.githubusercontent.com/19281796/116437975-942a1c00-a880-11eb-9e16-9e83364201c7.mp4
+https://user-images.githubusercontent.com/19281796/118369479-2139d880-b5d6-11eb-9de7-09459a818b3a.mp4
 
 Initial Setup commands to ensure installation is ready
 
