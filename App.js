@@ -8,6 +8,8 @@
 //  to search for the matching page
 //  **END OF SEARCH GUIDE**
 //
+//  Styling from line 3318 onwards
+//
 //  Home Screen Page
 //    Welcome Page
 //        Goniometer Page
@@ -35,6 +37,7 @@ import {
   TouchableHighlight,
   SafeAreaView,
   Dimensions,
+  LogBox,
 } from "react-native";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
@@ -50,7 +53,7 @@ import { LineChart } from "react-native-chart-kit";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Stopwatch } from "react-native-stopwatch-timer";
 import * as Speech from "expo-speech";
-
+LogBox.ignoreAllLogs();
 //  Navigation Routing
 const Goniometer_App = () => {
   return (
@@ -227,7 +230,6 @@ const HomeScreen = ({ navigation, route }) => {
       <Text></Text>
       <Text style={{ textAlign: "center", fontSize: 20 }}>
         Created by {"\n"} Alif and Ismahfaris {"\n"}
-        (National University of Singapore)
       </Text>
     </View>
   );
@@ -955,7 +957,7 @@ const Graph = ({ navigation, route }) => {
               <Text
                 style={{
                   color: selectedLanguage === "flexion" ? "white" : "black",
-                  fontSize: 40,
+                  fontSize: 35,
                   textAlign: "center",
                 }}
               >
@@ -981,7 +983,7 @@ const Graph = ({ navigation, route }) => {
               <Text
                 style={{
                   color: selectedLanguage === "extension" ? "white" : "black",
-                  fontSize: 40,
+                  fontSize: 35,
                   textAlign: "center",
                 }}
               >
@@ -1422,7 +1424,7 @@ const Goniometer = ({ navigation, route }) => {
   //iphone 8: width: 414, height: 736
   var kneeRangeSize;
   var prevSize;
-  if (windowWidth <= 414 && windowHeight <= 736) {
+  if (windowWidth <= 414 && windowHeight <= 844) {
     kneeRangeSize = 22.5;
     prevSize = 20;
   } else {
@@ -1447,7 +1449,8 @@ const Goniometer = ({ navigation, route }) => {
       {shouldShow ? (
         <View>
           {windowWidth <= 414 && windowHeight <= 736 ? (
-            <Text></Text>
+            <Text>
+          </Text>
           ) : (
             <Text style={{ textAlign: "center", fontSize: kneeRangeSize }}>
               Knee Range{" "}
@@ -3303,6 +3306,7 @@ const windowHeight1 = Dimensions.get("window").height;
 var headerHeightSize = 90;
 var headerFontSize = 25;
 //Settings for iphone 8 and iphone 12 pro max
+// console.log(windowWidth1 + " " + windowHeight1);
 if (windowWidth1 <= 414 && windowHeight1 <= 736) {
   headerHeightSize = 50;
   headerFontSize = 20;
@@ -3695,7 +3699,7 @@ const welcomePageStyle = StyleSheet.create({
     color: "black",
   },
   title: {
-    fontSize: 35,
+    fontSize: 28,
     fontWeight: "bold",
     flex: 1,
     alignSelf: "center",
