@@ -1,3 +1,24 @@
+//  APPLICATION OVERVIEW
+//
+//  **SEARCH GUIDE**
+//  Highlight the page that you need and press
+//  cmd + d 
+//  OR 
+//  control + d
+//  to search for the matching page
+//  **END OF SEARCH GUIDE**
+//
+//  Home Screen Page
+//    Welcome Page
+//        Goniometer Page
+//          Goniometer Form SG Page
+//        Sit Stand Page
+//          Sit Stand Form SG Page
+//        Data Page
+//          Chart Page
+//          Calendar Page
+//        Guide Page
+//        Contact Us Page
 import React, { useState, useEffect, useCallback } from "react";
 import YoutubePlayer from "react-native-youtube-iframe";
 import {
@@ -14,7 +35,6 @@ import {
   TouchableHighlight,
   SafeAreaView,
   Dimensions,
-  LogBox,
 } from "react-native";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
@@ -30,92 +50,6 @@ import { LineChart } from "react-native-chart-kit";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Stopwatch } from "react-native-stopwatch-timer";
 import * as Speech from "expo-speech";
-
-//To handle all the pages
-const Stack = createStackNavigator();
-//Database for knee flexion
-const kneeFlexionDataBase = SQLite.openDatabase("kneeFlexionDataBase.db");
-//Database for knee extension
-const kneeExtensionDataBase = SQLite.openDatabase("kneeExtensionDataBase.db");
-//Database for user gender (Percentile)
-const userGenderDataBase = SQLite.openDatabase("userGenderDataBase.db");
-//Database for NRIC
-const userNRICDataBase = SQLite.openDatabase("userNRICDataBase.db");
-//Database for stopwatch
-const stopWatchDataBase = SQLite.openDatabase("stopWatchDataBase.db");
-//Database for date
-const dateDataBase = SQLite.openDatabase("dateDataBase.db");
-
-//To reset all data
-function resetData() {
-  userNRICDataBase.transaction((tx) => {
-    tx.executeSql(`DROP TABLE userNRICDataBase`);
-  });
-  kneeFlexionDataBase.transaction((tx) => {
-    tx.executeSql(`DROP TABLE kneeFlexionDataBase`);
-  });
-  userGenderDataBase.transaction((tx1) => {
-    tx1.executeSql(`DROP TABLE userGenderDataBase`);
-  });
-  stopWatchDataBase.transaction((tx1) => {
-    tx1.executeSql(`DROP TABLE stopWatchDataBase`);
-  });
-  dateDataBase.transaction((tx1) => {
-    tx1.executeSql(`DROP TABLE dateDataBase`);
-  });
-}
-//  UNCOMMENT THE LINE 70 TO RESET THE APPLICATION
-//  OR 
-//  REINSTALL EXPO OR APK TO RESET THE APPLICATION
-// resetData();
-var weeks = [];
-let initDate = [];
-let nricCheck = [];
-let nameCheck = [];
-let checker = [];
-var nricUser = [];
-nricAsyncCall();
-var weekOneList = [];
-var weekTwoList = [];
-var weekThreeList = [];
-var weekFourList = [];
-var weekFiveList = [];
-var weekSixList = [];
-var weekSevenList = [];
-var weekEightList = [];
-var weekNineList = [];
-var weekTenList = [];
-var weekTwelveList = [];
-var weekElevenList = [];
-var weekOneExtensionList = [];
-var weekTwoExtensionList = [];
-var weekThreeExtensionList = [];
-var weekFourExtensionList = [];
-var weekFiveExtensionList = [];
-var weekSixExtensionList = [];
-var weekSevenExtensionList = [];
-var weekEightExtensionList = [];
-var weekNineExtensionList = [];
-var weekTenExtensionList = [];
-var weekTwelveExtensionList = [];
-var weekElevenExtensionList = [];
-var nricX;
-var stCheck;
-countNRIC();
-countNRICCall();
-var count = 0;
-const windowWidth1 = Dimensions.get("window").width;
-const windowHeight1 = Dimensions.get("window").height;
-var headerHeightSize = 90;
-var headerFontSize = 25;
-//Settings for iphone 8 and iphone 12 pro max
-if (windowWidth1 <= 414 && windowHeight1 <= 736) {
-  headerHeightSize = 50;
-  headerFontSize = 20;
-} else {
-  headerHeightSize = 90;
-  headerFontSize = 25;
-}
 
 //  Navigation Routing
 const Goniometer_App = () => {
@@ -247,10 +181,10 @@ const Data = ({ navigation, route }) => {
   );
 };
 
-//  HomeScreen Page
+//  Home Screen Page
 //  Application will try to retrieve user's NRIC, gender and surgery date from the phone. 
 //  If there is no data, the application will display the setup page. 
-//  Else, the application will direct the user to the welcome page.
+//  Else, the application will direct the user to welcome.
 //  **IMPORTANT**
 //  Initialisation of the user's data is a one time initialisation. If user accidentally 
 //  types in the wrong info, he/she must reinstall the application.
@@ -272,7 +206,7 @@ const HomeScreen = ({ navigation, route }) => {
     >
       <Image
         style={{
-          display: "block",
+          display: "flex",
           marginLeft: "auto",
           marginRight: "auto",
         }}
@@ -687,7 +621,7 @@ const GuidePage = ({ navigation, route }) => {
     </View>
   );
 };
-//  SitStand Page
+//  Sit Stand Page
 //  Countdown voice will be activated once the user clicks on the start button.
 //  Timer will only run AFTER then countdown voice
 //  User will need to press the stop button to stop the stopwatch and submit the 
@@ -1065,7 +999,7 @@ const Graph = ({ navigation, route }) => {
     </ScrollView>
   );
 };
-//  SGH/SingHealth Contact Page
+//  Contact Us Page
 //  SGH contact details
 const Contact = ({ navigation, route }) => {
   weekOneExtensionCall();
@@ -1091,7 +1025,7 @@ const Contact = ({ navigation, route }) => {
     </View>
   );
 };
-//  Knee Measurement Form SG Page
+//  Sit Stand Form SG Page
 //  Data is automatically retrieved from local database
 //  **IMPORTANT**
 //  Form input values cannot be changed by the user
@@ -1124,7 +1058,7 @@ const SitStandFormSG = ({ navigation, route }) => {
     />
   );
 };
-//  Sit-stand Form SG Page
+//  Goniometer Form SG Page
 //  Data is automatically retrieved from local database
 //  **IMPORTANT**
 //  Form input values cannot be changed by the user
@@ -1163,7 +1097,7 @@ const FormSG = ({ navigation, route }) => {
     />
   );
 };
-//  Goniometer Measurement Page
+//  Goniometer Page
 //  Function for knee degree measurements
 const Goniometer = ({ navigation, route }) => {
   nricAsyncCall();
@@ -3288,6 +3222,95 @@ async function countSt() {
 async function countStCall() {
   countSt().then((val) => console.log());
 }
+
+//To handle all the pages
+const Stack = createStackNavigator();
+//Database for knee flexion
+const kneeFlexionDataBase = SQLite.openDatabase("kneeFlexionDataBase.db");
+//Database for knee extension
+const kneeExtensionDataBase = SQLite.openDatabase("kneeExtensionDataBase.db");
+//Database for user gender (Percentile)
+const userGenderDataBase = SQLite.openDatabase("userGenderDataBase.db");
+//Database for NRIC
+const userNRICDataBase = SQLite.openDatabase("userNRICDataBase.db");
+//Database for stopwatch
+const stopWatchDataBase = SQLite.openDatabase("stopWatchDataBase.db");
+//Database for date
+const dateDataBase = SQLite.openDatabase("dateDataBase.db");
+
+//To reset all data
+function resetData() {
+  userNRICDataBase.transaction((tx) => {
+    tx.executeSql(`DROP TABLE userNRICDataBase`);
+  });
+  kneeFlexionDataBase.transaction((tx) => {
+    tx.executeSql(`DROP TABLE kneeFlexionDataBase`);
+  });
+  userGenderDataBase.transaction((tx1) => {
+    tx1.executeSql(`DROP TABLE userGenderDataBase`);
+  });
+  stopWatchDataBase.transaction((tx1) => {
+    tx1.executeSql(`DROP TABLE stopWatchDataBase`);
+  });
+  dateDataBase.transaction((tx1) => {
+    tx1.executeSql(`DROP TABLE dateDataBase`);
+  });
+}
+//  UNCOMMENT THE LINE 3262 TO RESET THE APPLICATION
+//  OR 
+//  REINSTALL EXPO OR APK TO RESET THE APPLICATION
+// resetData();
+
+//  Initialisation of var / const / functions on application load
+var weeks = [];
+let initDate = [];
+let nricCheck = [];
+let nameCheck = [];
+let checker = [];
+var nricUser = [];
+nricAsyncCall();
+var weekOneList = [];
+var weekTwoList = [];
+var weekThreeList = [];
+var weekFourList = [];
+var weekFiveList = [];
+var weekSixList = [];
+var weekSevenList = [];
+var weekEightList = [];
+var weekNineList = [];
+var weekTenList = [];
+var weekTwelveList = [];
+var weekElevenList = [];
+var weekOneExtensionList = [];
+var weekTwoExtensionList = [];
+var weekThreeExtensionList = [];
+var weekFourExtensionList = [];
+var weekFiveExtensionList = [];
+var weekSixExtensionList = [];
+var weekSevenExtensionList = [];
+var weekEightExtensionList = [];
+var weekNineExtensionList = [];
+var weekTenExtensionList = [];
+var weekTwelveExtensionList = [];
+var weekElevenExtensionList = [];
+var nricX;
+var stCheck;
+countNRIC();
+countNRICCall();
+var count = 0;
+const windowWidth1 = Dimensions.get("window").width;
+const windowHeight1 = Dimensions.get("window").height;
+var headerHeightSize = 90;
+var headerFontSize = 25;
+//Settings for iphone 8 and iphone 12 pro max
+if (windowWidth1 <= 414 && windowHeight1 <= 736) {
+  headerHeightSize = 50;
+  headerFontSize = 20;
+} else {
+  headerHeightSize = 90;
+  headerFontSize = 25;
+}
+
 
 //  Stylesheet
 const styles = StyleSheet.create({
