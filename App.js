@@ -27,13 +27,9 @@ import RNPickerSelect from "react-native-picker-select";
 import { Card } from "react-native-paper";
 import { Agenda } from "react-native-calendars";
 import { LineChart } from "react-native-chart-kit";
-import ButtonToggleGroup from "react-native-button-toggle-group";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Stopwatch } from "react-native-stopwatch-timer";
 import * as Speech from "expo-speech";
-
-//LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
-LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 //To handle all the pages
 const Stack = createStackNavigator();
@@ -105,6 +101,7 @@ var nricX;
 var stCheck;
 countNRIC();
 countNRICCall();
+var count = 0;
 const windowWidth1 = Dimensions.get("window").width;
 const windowHeight1 = Dimensions.get("window").height;
 var headerHeightSize = 90;
@@ -118,9 +115,7 @@ if (windowWidth1 <= 414 && windowHeight1 <= 736) {
   headerFontSize = 25;
 }
 
-//////////////////////////////////////////////////////////
-////////////MAIN CONTROLLER & NAVIGATION//////////////////
-//////////////////////////////////////////////////////////
+//  Navigation Setup
 const Goniometer_App = () => {
   return (
     <NavigationContainer>
@@ -197,6 +192,9 @@ const Goniometer_App = () => {
   );
 };
 
+//  Data Page
+//  Helps to call data from the goniometer and stopwatch readings before displaying
+//  it in calendar / graph format
 const Data = ({ navigation, route }) => {
   //these calls is essential to load the data
   weekOneExtensionCall();
@@ -247,6 +245,15 @@ const Data = ({ navigation, route }) => {
   );
 };
 
+//  HomeScreen Page
+//  Application will try to retrieve user's NRIC, gender and surgery date from the phone. 
+//  If there is no data, the application will display the setup page. 
+//  Else, the application will direct the user to the welcome page.
+//  **IMPORTANT**
+//  Initialisation of the user's data is a one time initialisation. If user accidentally 
+//  types in the wrong info, he/she must reinstall the application.
+//  User will be prompted with a confirm alert before submission to prevent this issue from 
+//  occuring
 const HomeScreen = ({ navigation, route }) => {
   countNRICCall();
   countStCall();
@@ -290,10 +297,8 @@ const HomeScreen = ({ navigation, route }) => {
   );
 };
 
-//////////////////////////////////////////////////////////
-/////////////////////GUIDE PAGE///////////////////////////
-//////////////////////////////////////////////////////////
-
+//  Guide Page
+//  Guide videos can be placed here (For future developement)
 const GuidePage = ({ navigation, route }) => {
   const [playing, setPlaying] = useState(false);
   const onStateChange = useCallback((state) => {
@@ -320,10 +325,14 @@ const GuidePage = ({ navigation, route }) => {
   );
 };
 
-//////////////////////////////////////////////////////////
-/////////////////////STOP WATCH PAGE//////////////////////
-//////////////////////////////////////////////////////////
-var count = 0;
+//  SitStand Page
+//  Countdown voice will be activated once the user clicks on the start button.
+//  Timer will only run AFTER then countdown voice
+//  User will need to press the stop button to stop the stopwatch and submit the 
+//  readings to SitStandFormSG
+//  **IMPORTANT**
+//  Bug issue: If the start button is clicked twice, the stopwatch will not work
+//  Pending future fix
 const SitStand = ({ navigation, route }) => {
   const [isTimerStart, setIsTimerStart] = useState(false);
   const [isStopwatchStart, setIsStopwatchStart] = useState(false);
@@ -467,9 +476,10 @@ const SitStand = ({ navigation, route }) => {
   );
 };
 
-//////////////////////////////////////////////////////////
-////////////////////HISTORY PAGE//////////////////////////
-//////////////////////////////////////////////////////////
+//  Calendar Page
+//  Displays all the days where the user have recorded their extension, flexion and 
+//  stopwatch readings. Pull down calendar will show a blue dot if recording is done 
+//  for the day
 const CalenderDataPage = ({ navigation, route }) => {
   const [a, b] = useState({});
   const [x, y] = useState({});
@@ -604,42 +614,13 @@ const CalenderDataPage = ({ navigation, route }) => {
   );
 };
 
-async function setDateForList() {
-  var g = 1;
-  var h = 1;
-  var k;
-  dateDataBase.transaction((tx) => {
-    tx.executeSql(`select * from dateDataBase LIMIT ?`, [1], (tx, result) => {
-      if (result.rows.length > 0) {
-        weeks[0] = result.rows.item(0).value;
-      }
-    });
-  });
-  for (var x = 1; x < 84; x++) {
-    dateDataBase.transaction((tx) => {
-      tx.executeSql(
-        `select * from dateDataBase ORDER BY id ASC LIMIT ${h},${g}`,
-        [],
-        (tx, result) => {
-          if (result.rows.length > 0) {
-            var len = result.rows.length;
-            weeks[h] = result.rows.item(0).value;
-            h++;
-            var data = [];
-            data.push(result.rows.item(0).value);
-            return data;
-          } else {
-            return 0;
-          }
-        }
-      );
-    });
-  }
-}
-
-//////////////////////////////////////////////////////////
-//////////////////MAIN NAVIGATION PAGE////////////////////
-//////////////////////////////////////////////////////////
+//  Welcome Page
+//  **IMPORTANT**
+//  Initialisation of the user's data is a one time initialisation. If user accidentally 
+//  types in the wrong info, he/she must reinstall the application.
+//  User will be prompted with a confirm alert before submission to prevent this issue from 
+//  occuring
+//  Once data is initialised, the application will direct the user to the main page by default
 const Welcome = ({ navigation, route }) => {
   setDateForList();
   weekOneExtensionCall();
@@ -873,11 +854,23 @@ const Welcome = ({ navigation, route }) => {
     return (
       <View style={styles.container}>
         <Text></Text>
-        <Text></Text>
+
         <View style={styles.pickerContainerGender}>
           <Text style={{ textAlign: "center", fontSize: 40 }}>NRIC</Text>
           <Text></Text>
+          {/* <TextInput
+          label="NRIC"
+          placeholder="S0000000N"
+          returnKeyType="done"
+          mode="outlined"
+          onSubmitEditing={(nric) => {
+            nricCheck[0] = 1;
+            addNRIC(nric.nativeEvent.text)
+            onChangeText(nric.nativeEvent.text);
+          }}
+        /> */}
           <TextInput
+            returnKeyType="done"
             placeholder="S0000000N"
             style={nricInputStyle.input}
             onSubmitEditing={(nric) => {
@@ -967,7 +960,12 @@ const Welcome = ({ navigation, route }) => {
                     justifyContent: "center",
                   }}
                 >
-                  <Text style={welcomePageStyle.title}>{item.title}</Text>
+                  {Dimensions.get("window").width <= 414 &&
+                  Dimensions.get("window").height <= 736 ? (
+                    <Text style={welcomePageStyle.titleIp8}>{item.title}</Text>
+                  ) : (
+                    <Text style={welcomePageStyle.title}>{item.title}</Text>
+                  )}
                 </View>
               </View>
             </View>
@@ -979,26 +977,88 @@ const Welcome = ({ navigation, route }) => {
   }
 };
 
-//////////////////////////////////////////////////////////
-//////////////////////GRAPH PAGE//////////////////////////
-//////////////////////////////////////////////////////////
+//  Chart Page
+//  Application will display the AVERAGE weekly degree readings for knee flexion and extension
+//  **IMPORTANT**
+//  Data is retrieved each time the user clicks on record extension or flexion
+//  Data can be retrieved only when the user submits to formSG but will require code amendments
 const Graph = ({ navigation, route }) => {
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  var [selectedLanguage, setSelectedLanguage] = useState("flexion");
+  var [selectedFontColor, setSelectedFontColor] = useState("black");
+
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+  const [checked, setChecked] = React.useState(false);
+
+  const horizontalButtons = StyleSheet.create({
+    container: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    buttonContainer: {
+      flex: 1,
+    },
+  });
+
   return (
     <ScrollView>
       <View style={{ backgroundColor: "white" }}>
-        <Text></Text>
-        <ButtonToggleGroup
-          highlightBackgroundColor={"blue"}
-          highlightTextColor={"white"}
-          inactiveBackgroundColor={"transparent"}
-          inactiveTextColor={"grey"}
-          textStyle={{ fontSize: 30 }}
-          values={["Flexion", "Extension"]}
-          onSelect={(val) => setSelectedLanguage(val.toLowerCase())}
-        />
+        <View style={horizontalButtons.container}>
+          <View style={horizontalButtons.buttonContainer}>
+            <TouchableOpacity
+              style={{
+                backgroundColor:
+                  selectedLanguage === "flexion"
+                    ? "#2b2e6d"
+                    : "rgba(232, 232, 232, 1)",
+                padding: 15,
+                borderRadius: 20,
+              }}
+              onPress={() => {
+                setSelectedLanguage("flexion");
+                setSelectedFontColor("white");
+              }}
+            >
+              <Text
+                style={{
+                  color: selectedLanguage === "flexion" ? "white" : "black",
+                  fontSize: 40,
+                  textAlign: "center",
+                }}
+              >
+                Flexion
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={horizontalButtons.buttonContainer}>
+            <TouchableOpacity
+              style={{
+                backgroundColor:
+                  selectedLanguage === "extension"
+                    ? "#2b2e6d"
+                    : "rgba(232, 232, 232, 1)",
+                padding: 15,
+                borderRadius: 20,
+              }}
+              onPress={() => {
+                setSelectedLanguage("extension");
+                setSelectedFontColor("white");
+              }}
+            >
+              <Text
+                style={{
+                  color: selectedLanguage === "extension" ? "white" : "black",
+                  fontSize: 40,
+                  textAlign: "center",
+                }}
+              >
+                Extension
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
       <View>
         {selectedLanguage == "extension"
@@ -1009,6 +1069,8 @@ const Graph = ({ navigation, route }) => {
   );
 };
 
+//  SGH/SingHealth Contact Page
+//  SGH contact details
 const Contact = ({ navigation, route }) => {
   weekOneExtensionCall();
   return (
@@ -1033,7 +1095,12 @@ const Contact = ({ navigation, route }) => {
     </View>
   );
 };
-//FormSG Page
+
+
+//  Knee Measurement Form SG Page
+//  Data is automatically retrieved from local database
+//  **IMPORTANT**
+//  Form input values cannot be changed by the user
 const SitStandFormSG = ({ navigation, route }) => {
   countStCall();
   nricAsyncCall();
@@ -1064,7 +1131,10 @@ const SitStandFormSG = ({ navigation, route }) => {
   );
 };
 
-//FormSG Page
+//  Sit-stand Form SG Page
+//  Data is automatically retrieved from local database
+//  **IMPORTANT**
+//  Form input values cannot be changed by the user
 const FormSG = ({ navigation, route }) => {
   nricAsyncCall();
   const { flexData } = route.params;
@@ -1101,9 +1171,8 @@ const FormSG = ({ navigation, route }) => {
   );
 };
 
-//////////////////////////////////////////////////////////
-////////////////////MEASUREMENT PAGE//////////////////////
-//////////////////////////////////////////////////////////
+//  Goniometer Measurement Page
+//  Function for knee degree measurements
 const Goniometer = ({ navigation, route }) => {
   nricAsyncCall();
   const [text, setText] = React.useState(null);
@@ -1539,6 +1608,17 @@ const Goniometer = ({ navigation, route }) => {
         </View>
       ) : null}
       <ScrollView>
+      {/* Start Stop Function */}
+      {/* <View style={styles.MainRecordStartStopContainer}>
+          <TouchableOpacity
+            onPress={subscription ? _unsubscribe : _subscribe}
+            style={styles.SubmitButtonStyle}
+          >
+            <Text style={styles.TextStyleButton}>
+              {subscription ? "STOP" : "START"}
+            </Text>
+          </TouchableOpacity>
+        </View> */}
         {Dimensions.get("window").width <= 414 &&
         Dimensions.get("window").height <= 736 ? (
           <FlatList
@@ -1677,11 +1757,47 @@ const Goniometer = ({ navigation, route }) => {
   );
 };
 
+//  Saves all the dates for the 12 week recovery process in the dateDataBase database
+//  Will be needed for the graph page to load the correct values
+async function setDateForList() {
+  var g = 1;
+  var h = 1;
+  var k;
+  dateDataBase.transaction((tx) => {
+    tx.executeSql(`select * from dateDataBase LIMIT ?`, [1], (tx, result) => {
+      if (result.rows.length > 0) {
+        weeks[0] = result.rows.item(0).value;
+      }
+    });
+  });
+  for (var x = 1; x < 84; x++) {
+    dateDataBase.transaction((tx) => {
+      tx.executeSql(
+        `select * from dateDataBase ORDER BY id ASC LIMIT ${h},${g}`,
+        [],
+        (tx, result) => {
+          if (result.rows.length > 0) {
+            var len = result.rows.length;
+            weeks[h] = result.rows.item(0).value;
+            h++;
+            var data = [];
+            data.push(result.rows.item(0).value);
+            return data;
+          } else {
+            return 0;
+          }
+        }
+      );
+    });
+  }
+}
+
 function useForceUpdate() {
   const [value, setValue] = useState(0);
   return [() => setValue(value + 1), value];
 }
 
+//  Calculations for the average weekly extension readings
 async function weekOneExtension() {
   var total = 0;
   var finals = 0;
@@ -1731,6 +1847,7 @@ async function weekOneExtension() {
     });
   });
 }
+//  Calculations for the average weekly extension readings
 async function weekTwoExtension() {
   var total = 0;
   var finals = 0;
@@ -1780,6 +1897,7 @@ async function weekTwoExtension() {
     });
   });
 }
+//  Calculations for the average weekly extension readings
 async function weekThreeExtension() {
   var total = 0;
   var finals = 0;
@@ -1829,6 +1947,7 @@ async function weekThreeExtension() {
     });
   });
 }
+//  Calculations for the average weekly extension readings
 async function weekFourExtension() {
   var total = 0;
   var finals = 0;
@@ -1878,6 +1997,7 @@ async function weekFourExtension() {
     });
   });
 }
+//  Calculations for the average weekly extension readings
 async function weekFiveExtension() {
   var total = 0;
   var finals = 0;
@@ -1927,6 +2047,7 @@ async function weekFiveExtension() {
     });
   });
 }
+//  Calculations for the average weekly extension readings
 async function weekSixExtension() {
   var total = 0;
   var finals = 0;
@@ -1976,6 +2097,7 @@ async function weekSixExtension() {
     });
   });
 }
+//  Calculations for the average weekly extension readings
 async function weekSevenExtension() {
   var total = 0;
   var finals = 0;
@@ -2025,6 +2147,7 @@ async function weekSevenExtension() {
     });
   });
 }
+//  Calculations for the average weekly extension readings
 async function weekEightExtension() {
   var total = 0;
   var finals = 0;
@@ -2074,6 +2197,7 @@ async function weekEightExtension() {
     });
   });
 }
+//  Calculations for the average weekly extension readings
 async function weekNineExtension() {
   var total = 0;
   var finals = 0;
@@ -2123,6 +2247,7 @@ async function weekNineExtension() {
     });
   });
 }
+//  Calculations for the average weekly extension readings
 async function weekTenExtension() {
   var total = 0;
   var finals = 0;
@@ -2172,6 +2297,7 @@ async function weekTenExtension() {
     });
   });
 }
+//  Calculations for the average weekly extension readings
 async function weekElevenExtension() {
   var total = 0;
   var finals = 0;
@@ -2221,6 +2347,7 @@ async function weekElevenExtension() {
     });
   });
 }
+//  Calculations for the average weekly extension readings
 async function weekTwelveExtension() {
   var total = 0;
   var finals = 0;
@@ -2270,42 +2397,56 @@ async function weekTwelveExtension() {
     });
   });
 }
+
+//  Async call for the average weekly extension readings
 async function weekOneExtensionCall() {
   weekOneExtension().then((val) => (weekOneExtensionList = val));
 }
+//  Async call for the average weekly extension readings
 async function weekTwoExtensionCall() {
   weekTwoExtension().then((val) => (weekTwoExtensionList = val));
 }
+//  Async call for the average weekly extension readings
 async function weekThreeExtensionCall() {
   weekThreeExtension().then((val) => (weekThreeExtensionList = val));
 }
+//  Async call for the average weekly extension readings
 async function weekFourExtensionCall() {
   weekFourExtension().then((val) => (weekFourExtensionList = val));
 }
+//  Async call for the average weekly extension readings
 async function weekFiveExtensionCall() {
   weekFiveExtension().then((val) => (weekFiveExtensionList = val));
 }
+//  Async call for the average weekly extension readings
 async function weekSixExtensionCall() {
   weekSixExtension().then((val) => (weekSixExtensionList = val));
 }
+//  Async call for the average weekly extension readings
 async function weekSevenExtensionCall() {
   weekSevenExtension().then((val) => (weekSevenExtensionList = val));
 }
+//  Async call for the average weekly extension readings
 async function weekEightExtensionCall() {
   weekEightExtension().then((val) => (weekEightExtensionList = val));
 }
+//  Async call for the average weekly extension readings
 async function weekNineExtensionCall() {
   weekNineExtension().then((val) => (weekNineExtensionList = val));
 }
+//  Async call for the average weekly extension readings
 async function weekTenExtensionCall() {
   weekTenExtension().then((val) => (weekTenExtensionList = val));
 }
+//  Async call for the average weekly extension readings
 async function weekElevenExtensionCall() {
   weekElevenExtension().then((val) => (weekElevenExtensionList = val));
 }
+//  Async call for the average weekly extension readings
 async function weekTwelveExtensionCall() {
   weekTwelveExtension().then((val) => (weekTwelveExtensionList = val));
 }
+//  Retrieve the NRIC value for the formSG submission
 async function nricAsync() {
   var total = "";
   return new Promise((resolve, reject) => {
@@ -2327,10 +2468,11 @@ async function nricAsync() {
     });
   });
 }
+//  Async call for nricAsync()
 async function nricAsyncCall() {
   nricAsync().then((val) => (nricUser = val));
 }
-//Flexion Measurement
+//  Calculations for the average weekly flexion readings
 async function weekOne() {
   var total = 0;
   var finals = 0;
@@ -2381,6 +2523,7 @@ async function weekOne() {
     });
   });
 }
+//  Calculations for the average weekly flexion readings
 async function weekTwo() {
   var total = 0;
   var finals = 0;
@@ -2431,6 +2574,7 @@ async function weekTwo() {
     });
   });
 }
+//  Calculations for the average weekly flexion readings
 async function weekThree() {
   var total = 0;
   var finals = 0;
@@ -2480,6 +2624,7 @@ async function weekThree() {
     });
   });
 }
+//  Calculations for the average weekly flexion readings
 async function weekFour() {
   var total = 0;
   var finals = 0;
@@ -2529,6 +2674,7 @@ async function weekFour() {
     });
   });
 }
+//  Calculations for the average weekly flexion readings
 async function weekFive() {
   var total = 0;
   var finals = 0;
@@ -2578,6 +2724,7 @@ async function weekFive() {
     });
   });
 }
+//  Calculations for the average weekly flexion readings
 async function weekSix() {
   var total = 0;
   var finals = 0;
@@ -2627,6 +2774,7 @@ async function weekSix() {
     });
   });
 }
+//  Calculations for the average weekly flexion readings
 async function weekSeven() {
   var total = 0;
   var finals = 0;
@@ -2676,6 +2824,7 @@ async function weekSeven() {
     });
   });
 }
+//  Calculations for the average weekly flexion readings
 async function weekEight() {
   var total = 0;
   var finals = 0;
@@ -2725,6 +2874,7 @@ async function weekEight() {
     });
   });
 }
+//  Calculations for the average weekly flexion readings
 async function weekNine() {
   var total = 0;
   var finals = 0;
@@ -2774,6 +2924,7 @@ async function weekNine() {
     });
   });
 }
+//  Calculations for the average weekly flexion readings
 async function weekTen() {
   var total = 0;
   var finals = 0;
@@ -2823,6 +2974,7 @@ async function weekTen() {
     });
   });
 }
+//  Calculations for the average weekly flexion readings
 async function weekEleven() {
   var total = 0;
   var finals = 0;
@@ -2872,6 +3024,7 @@ async function weekEleven() {
     });
   });
 }
+//  Calculations for the average weekly flexion readings
 async function weekTwelve() {
   var total = 0;
   var finals = 0;
@@ -2921,50 +3074,63 @@ async function weekTwelve() {
     });
   });
 }
+//  Async call for the average weekly flexion readings
 async function weekOneCall() {
   weekOne().then((val) => (weekOneList = val));
 }
+//  Async call for the average weekly flexion readings
 async function weekTwoCall() {
   weekTwo().then((val) => (weekTwoList = val));
 }
+//  Async call for the average weekly flexion readings
 async function weekThreeCall() {
   weekThree().then((val) => (weekThreeList = val));
 }
+//  Async call for the average weekly flexion readings
 async function weekFourCall() {
   weekFour().then((val) => (weekFourList = val));
 }
+//  Async call for the average weekly flexion readings
 async function weekFiveCall() {
   weekFive().then((val) => (weekFiveList = val));
 }
+//  Async call for the average weekly flexion readings
 async function weekSixCall() {
   weekSix().then((val) => (weekSixList = val));
 }
+//  Async call for the average weekly flexion readings
 async function weekSevenCall() {
   weekSeven().then((val) => (weekSevenList = val));
 }
+//  Async call for the average weekly flexion readings
 async function weekEightCall() {
   weekEight().then((val) => (weekEightList = val));
 }
+//  Async call for the average weekly flexion readings
 async function weekNineCall() {
   weekNine().then((val) => (weekNineList = val));
 }
+//  Async call for the average weekly flexion readings
 async function weekTenCall() {
   weekTen().then((val) => (weekTenList = val));
 }
+//  Async call for the average weekly flexion readings
 async function weekElevenCall() {
   weekEleven().then((val) => (weekElevenList = val));
 }
+//  Async call for the average weekly flexion readings
 async function weekTwelveCall() {
   weekTwelve().then((val) => (weekTwelveList = val));
 }
+//  Function to load the knee extension graph
 function kneeExtensionGraph() {
   return (
     <View style={{ backgroundColor: "white" }}>
-      <Text
+      {/* <Text
         style={{ backgroundColor: "white", textAlign: "center", fontSize: 40 }}
       >
         Knee Extension
-      </Text>
+      </Text> */}
       <Text></Text>
       <LineChart
         data={{
@@ -3026,14 +3192,15 @@ function kneeExtensionGraph() {
     </View>
   );
 }
+//  Function to load the knee flexion graph
 function kneeFlexionGraph() {
   return (
     <View style={{ backgroundColor: "white" }}>
-      <Text
+      {/* <Text
         style={{ backgroundColor: "white", textAlign: "center", fontSize: 40 }}
       >
         Knee Flexion
-      </Text>
+      </Text> */}
       <Text></Text>
       <LineChart
         data={{
@@ -3096,7 +3263,7 @@ function kneeFlexionGraph() {
     </View>
   );
 }
-
+//  Function to determine if there is a NRIC record in the database for conditional rendering
 async function countNRIC() {
   return new Promise((resolve, reject) => {
     userNRICDataBase.transaction((tx1) => {
@@ -3110,11 +3277,11 @@ async function countNRIC() {
     });
   });
 }
-
+//  Async call for countNRIC()
 async function countNRICCall() {
   countNRIC().then((val) => console.log());
 }
-
+//  Function to retrieve the number of sit-stand record in the database
 async function countSt() {
   return new Promise((resolve, reject) => {
     stopWatchDataBase.transaction((tx1) => {
@@ -3128,14 +3295,12 @@ async function countSt() {
     });
   });
 }
-
+//  Async call for countSt()
 async function countStCall() {
   countSt().then((val) => console.log());
 }
 
-////////////////////////////////////////////////////////////////////////////
-//////////////////////////STYLESHEET SECTION////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
+//  Stylesheet
 const styles = StyleSheet.create({
   input1: {
     height: 40,
@@ -3341,6 +3506,15 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: "grey",
   },
+  activebutton: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#eee",
+    padding: 20,
+    borderWidth: 3,
+    borderColor: "#000000",
+  },
   middleButton: {
     borderLeftWidth: 1,
     borderRightWidth: 1,
@@ -3501,12 +3675,19 @@ const welcomePageStyle = StyleSheet.create({
     width: 60,
     alignSelf: "center",
   },
-  title: {
+  titleIp8: {
     fontSize: 20,
     fontWeight: "bold",
     flex: 1,
     alignSelf: "center",
-    color: "#696969",
+    color: "black",
+  },
+  title: {
+    fontSize: 35,
+    fontWeight: "bold",
+    flex: 1,
+    alignSelf: "center",
+    color: "black",
   },
 });
 const goniometerPageStyle = StyleSheet.create({
