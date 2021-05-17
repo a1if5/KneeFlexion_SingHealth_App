@@ -7,7 +7,11 @@ Initial Setup commands to ensure installation is ready
 
 1) npm install
 2) npm install expo-cli --global
-3) expo install expo-sensors
+
+Manual Setup commands
+
+Set up of Expo-Sensors
+1) expo install expo-sensors
 
 Set up of Navigation
 1) npm install @react-navigation/native
