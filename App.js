@@ -462,6 +462,11 @@ const Welcome = ({ navigation, route }) => {
     setShow(true);
     setMode(currentMode);
   };
+
+  const showDatepicker = () => {
+    showMode('date');
+  };
+
   setDateForList();
   if (
     (nricX == null || nricX == 0) &&
@@ -1004,28 +1009,71 @@ const Graph = ({ navigation, route }) => {
 //  Contact Us Page
 //  SGH contact details
 const Contact = ({ navigation, route }) => {
-  weekOneExtensionCall();
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode('date');
+  };
+
+  const showTimepicker = () => {
+    showMode('time');
+  };
+
   return (
-    <View style={styles.container}>
-      <Image
-        style={{
-          display: "block",
-          marginLeft: "auto",
-          marginRight: "auto",
-        }}
-        source={require("./sgh-logo2.png")}
-      />
-      <Text></Text>
-      <Text></Text>
-      <Text style={{ textAlign: "center", fontSize: 20 }}>
-        General Enquiries: {"\n"}+65 6222 3322
-      </Text>
-      <Text></Text>
-      <Text style={{ textAlign: "center", fontSize: 20 }}>
-        Address: {"\n"}Outram Road Singapore 169608
-      </Text>
+    <View>
+      <View>
+       
+      </View>
+      <View>
+       
+      </View>
+      
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={date}
+          mode={mode}
+          is24Hour={true}
+          display="default"
+          onChange={onChange}
+        />
+     
     </View>
-  );
+  )
+  // weekOneExtensionCall();
+  // return (
+  //   <View style={styles.container}>
+  //     <Image
+  //       style={{
+  //         display: "block",
+  //         marginLeft: "auto",
+  //         marginRight: "auto",
+  //       }}
+  //       source={require("./sgh-logo2.png")}
+  //     />
+  //     <Text></Text>
+  //     <Text></Text>
+  //     <Text style={{ textAlign: "center", fontSize: 20 }}>
+  //       General Enquiries: {"\n"}+65 6222 3322
+  //     </Text>
+  //     <Text></Text>
+  //     <Text style={{ textAlign: "center", fontSize: 20 }}>
+  //       Address: {"\n"}Outram Road Singapore 169608
+  //     </Text>
+  //   </View>
+  // );
 };
 //  Sit Stand Form SG Page
 //  Data is automatically retrieved from local database
