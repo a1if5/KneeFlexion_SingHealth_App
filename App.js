@@ -3273,10 +3273,10 @@ function resetData() {
     tx1.executeSql(`DROP TABLE dateDataBase`);
   });
 }
-//  UNCOMMENT THE LINE 3262 TO RESET THE APPLICATION
+//  UNCOMMENT THE LINE 3279 TO RESET THE APPLICATION
 //  OR
 //  REINSTALL EXPO OR APK TO RESET THE APPLICATION
-resetData();
+// resetData();
 
 //  Initialisation of var / const / functions on application load
 var weeks = [];
