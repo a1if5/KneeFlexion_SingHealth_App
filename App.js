@@ -2,8 +2,8 @@
 //
 //  **SEARCH GUIDE**
 //  Highlight the page that you need and press
-//  cmd + d 
-//  OR 
+//  cmd + d
+//  OR
 //  control + d
 //  to search for the matching page
 //  **END OF SEARCH GUIDE**
@@ -186,13 +186,13 @@ const Data = ({ navigation, route }) => {
 };
 
 //  Home Screen Page
-//  Application will try to retrieve user's NRIC, gender and surgery date from the phone. 
-//  If there is no data, the application will display the setup page. 
+//  Application will try to retrieve user's NRIC, gender and surgery date from the phone.
+//  If there is no data, the application will display the setup page.
 //  Else, the application will direct the user to welcome.
 //  **IMPORTANT**
-//  Initialisation of the user's data is a one time initialisation. If user accidentally 
+//  Initialisation of the user's data is a one time initialisation. If user accidentally
 //  types in the wrong info, he/she must reinstall the application.
-//  User will be prompted with a confirm alert before submission to prevent this issue from 
+//  User will be prompted with a confirm alert before submission to prevent this issue from
 //  occuring
 const HomeScreen = ({ navigation, route }) => {
   countNRICCall();
@@ -237,9 +237,9 @@ const HomeScreen = ({ navigation, route }) => {
 };
 //  Welcome Page
 //  **IMPORTANT**
-//  Initialisation of the user's data is a one time initialisation. If user accidentally 
+//  Initialisation of the user's data is a one time initialisation. If user accidentally
 //  types in the wrong info, he/she must reinstall the application.
-//  User will be prompted with a confirm alert before submission to prevent this issue from 
+//  User will be prompted with a confirm alert before submission to prevent this issue from
 //  occuring
 //  Once data is initialised, the application will direct the user to the main page by default
 const Welcome = ({ navigation, route }) => {
@@ -465,7 +465,7 @@ const Welcome = ({ navigation, route }) => {
   };
 
   const showDatepicker = () => {
-    showMode('date');
+    showMode("date");
   };
 
   setDateForList();
@@ -528,24 +528,28 @@ const Welcome = ({ navigation, route }) => {
           <Text></Text>
           <Text></Text>
           <View>
-            <Text style={{ textAlign: "center", fontSize: 40 }}>
+            {/* <Text style={{ textAlign: "center", fontSize: 40 }}>
               Surgery Date
-            </Text>
+            </Text> */}
             <View>
-        <Button onPress={showDatepicker} title="Show date picker!" />
-      </View>
+              <TouchableOpacity onPress={showDatepicker}>
+                <Text style={{ textAlign: "center", fontSize: 40 }}>
+                  Surgery Date
+                </Text>
+              </TouchableOpacity>
+            </View>
             <Text></Text>
             {show && (
-            <View style={styles.pickerContainerDate}>
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={date}
-                mode={mode}
-                is24Hour={true}
-                display="default"
-                onChange={onChange}
-              />
-            </View>
+              <View style={styles.pickerContainerDate}>
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={date}
+                  mode={mode}
+                  is24Hour={true}
+                  display="default"
+                  onChange={onChange}
+                />
+              </View>
             )}
           </View>
           <TouchableOpacity
@@ -637,7 +641,7 @@ const GuidePage = ({ navigation, route }) => {
 //  Sit Stand Page
 //  Countdown voice will be activated once the user clicks on the start button.
 //  Timer will only run AFTER then countdown voice
-//  User will need to press the stop button to stop the stopwatch and submit the 
+//  User will need to press the stop button to stop the stopwatch and submit the
 //  readings to SitStandFormSG
 //  **IMPORTANT**
 //  Bug issue: If the start button is clicked twice, the stopwatch will not work
@@ -785,8 +789,8 @@ const SitStand = ({ navigation, route }) => {
   );
 };
 //  Calendar Page
-//  Displays all the days where the user have recorded their extension, flexion and 
-//  stopwatch readings. Pull down calendar will show a blue dot if recording is done 
+//  Displays all the days where the user have recorded their extension, flexion and
+//  stopwatch readings. Pull down calendar will show a blue dot if recording is done
 //  for the day
 const CalenderDataPage = ({ navigation, route }) => {
   const [a, b] = useState({});
@@ -1015,71 +1019,28 @@ const Graph = ({ navigation, route }) => {
 //  Contact Us Page
 //  SGH contact details
 const Contact = ({ navigation, route }) => {
-  const [date, setDate] = useState(new Date(1598051730000));
-  const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
-
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
-    setDate(currentDate);
-  };
-
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode('date');
-  };
-
-  const showTimepicker = () => {
-    showMode('time');
-  };
-
+  weekOneExtensionCall();
   return (
-    <View>
-      <View>
-        <Button onPress={showDatepicker} title="Show date picker!" />
-      </View>
-      <View>
-        <Button onPress={showTimepicker} title="Show time picker!" />
-      </View>
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode={mode}
-          is24Hour={true}
-          display="default"
-          onChange={onChange}
-        />
-      )}
+    <View style={styles.container}>
+      <Image
+        style={{
+          display: "block",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
+        source={require("./sgh-logo2.png")}
+      />
+      <Text></Text>
+      <Text></Text>
+      <Text style={{ textAlign: "center", fontSize: 20 }}>
+        General Enquiries: {"\n"}+65 6222 3322
+      </Text>
+      <Text></Text>
+      <Text style={{ textAlign: "center", fontSize: 20 }}>
+        Address: {"\n"}Outram Road Singapore 169608
+      </Text>
     </View>
-  )
-  // weekOneExtensionCall();
-  // return (
-  //   <View style={styles.container}>
-  //     <Image
-  //       style={{
-  //         display: "block",
-  //         marginLeft: "auto",
-  //         marginRight: "auto",
-  //       }}
-  //       source={require("./sgh-logo2.png")}
-  //     />
-  //     <Text></Text>
-  //     <Text></Text>
-  //     <Text style={{ textAlign: "center", fontSize: 20 }}>
-  //       General Enquiries: {"\n"}+65 6222 3322
-  //     </Text>
-  //     <Text></Text>
-  //     <Text style={{ textAlign: "center", fontSize: 20 }}>
-  //       Address: {"\n"}Outram Road Singapore 169608
-  //     </Text>
-  //   </View>
-  // );
+  );
 };
 //  Sit Stand Form SG Page
 //  Data is automatically retrieved from local database
@@ -1503,8 +1464,7 @@ const Goniometer = ({ navigation, route }) => {
       {shouldShow ? (
         <View>
           {windowWidth <= 414 && windowHeight <= 736 ? (
-            <Text>
-          </Text>
+            <Text></Text>
           ) : (
             <Text style={{ textAlign: "center", fontSize: kneeRangeSize }}>
               Knee Range{" "}
@@ -1591,8 +1551,8 @@ const Goniometer = ({ navigation, route }) => {
         </View>
       ) : null}
       <ScrollView>
-      {/* Start Stop Function */}
-      {/* <View style={styles.MainRecordStartStopContainer}>
+        {/* Start Stop Function */}
+        {/* <View style={styles.MainRecordStartStopContainer}>
           <TouchableOpacity
             onPress={subscription ? _unsubscribe : _subscribe}
             style={styles.SubmitButtonStyle}
@@ -3314,7 +3274,7 @@ function resetData() {
   });
 }
 //  UNCOMMENT THE LINE 3262 TO RESET THE APPLICATION
-//  OR 
+//  OR
 //  REINSTALL EXPO OR APK TO RESET THE APPLICATION
 resetData();
 
@@ -3368,7 +3328,6 @@ if (windowWidth1 <= 414 && windowHeight1 <= 736) {
   headerHeightSize = 90;
   headerFontSize = 25;
 }
-
 
 //  Stylesheet
 const styles = StyleSheet.create({
