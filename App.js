@@ -38,6 +38,7 @@ import {
   SafeAreaView,
   Dimensions,
   LogBox,
+  Button,
 } from "react-native";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
@@ -530,7 +531,11 @@ const Welcome = ({ navigation, route }) => {
             <Text style={{ textAlign: "center", fontSize: 40 }}>
               Surgery Date
             </Text>
+            <View>
+        <Button onPress={showDatepicker} title="Show date picker!" />
+      </View>
             <Text></Text>
+            {show && (
             <View style={styles.pickerContainerDate}>
               <DateTimePicker
                 testID="dateTimePicker"
@@ -541,6 +546,7 @@ const Welcome = ({ navigation, route }) => {
                 onChange={onChange}
               />
             </View>
+            )}
           </View>
           <TouchableOpacity
             onPress={submitUserDateAlert}
@@ -1035,12 +1041,12 @@ const Contact = ({ navigation, route }) => {
   return (
     <View>
       <View>
-       
+        <Button onPress={showDatepicker} title="Show date picker!" />
       </View>
       <View>
-       
+        <Button onPress={showTimepicker} title="Show time picker!" />
       </View>
-      
+      {show && (
         <DateTimePicker
           testID="dateTimePicker"
           value={date}
@@ -1049,7 +1055,7 @@ const Contact = ({ navigation, route }) => {
           display="default"
           onChange={onChange}
         />
-     
+      )}
     </View>
   )
   // weekOneExtensionCall();
@@ -3310,7 +3316,7 @@ function resetData() {
 //  UNCOMMENT THE LINE 3262 TO RESET THE APPLICATION
 //  OR 
 //  REINSTALL EXPO OR APK TO RESET THE APPLICATION
-// resetData();
+resetData();
 
 //  Initialisation of var / const / functions on application load
 var weeks = [];
