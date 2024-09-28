@@ -7,7 +7,7 @@ Initial Setup commands to ensure installation is ready
 
 1) npm install
 2) npm install expo-cli --global
-
+ 
 Manual Setup commands
 
 Set up of Expo-Sensors
